@@ -21,7 +21,7 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 
 ## Acknowledgements
 
-This work is partially supported by the Russian Foundation for the Humanities, project no. 13-04-12020 “New Open Electronic Thesaurus for Russian”.
+This work is partially supported by the Russian Foundation for the Humanities, project № 13-04-12020 “New Open Electronic Thesaurus for Russian”.
 
 ## Copyright
 
