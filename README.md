@@ -19,6 +19,10 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 4. Push to the branch (`git push origin my-new-feature`);
 5. Create new Pull Request.
 
+## Acknowledgements
+
+This work is partially supported by the Russian Foundation for the Humanities, project no. 13-04-12020 “New Open Electronic Thesaurus for Russian”.
+
 ## Copyright
 
 Copyright (c) 2014-2015 [Dmitry Ustalov]. See LICENSE for details.
