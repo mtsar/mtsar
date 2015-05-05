@@ -14,7 +14,7 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 ## Documentation
 
 * [GitHub Wiki](https://github.com/dustalov/mtsar/wiki)
-* [NLPub/MTsar](https://nlpub.ru/Mechanical_Tsar) (in Russian)
+* [NLPub](https://nlpub.ru/Mechanical_Tsar) (in Russian)
 
 ## Citation
 
