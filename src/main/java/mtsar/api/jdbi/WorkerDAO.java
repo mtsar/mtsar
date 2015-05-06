@@ -1,0 +1,33 @@
+package mtsar.api.jdbi;
+
+import mtsar.api.Worker;
+import org.skife.jdbi.v2.sqlobject.Bind;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+
+import java.util.List;
+
+@RegisterMapper(WorkerMapper.class)
+public interface WorkerDAO {
+    @SqlQuery("select * from workers where process = :process")
+    List<Worker> listForProcess(@Bind("process") String process);
+
+    @SqlQuery("select * from workers where id = :id and process = :process limit 1")
+    Worker find(@Bind("id") Integer id, @Bind("process") String process);
+
+    @SqlQuery("insert into workers (process, datetime) values (:process, :dateTime) returning id")
+    int insert(@BindBean Worker t);
+
+    @SqlQuery("select count(*) from workers")
+    int count();
+
+    @SqlQuery("select count(*) from workers where process = :process")
+    int count(@Bind("process") String process);
+
+    @SqlUpdate("delete from workers")
+    void deleteAll();
+
+    void close();
+}
