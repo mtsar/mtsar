@@ -1,6 +1,9 @@
+sudo: false
 language: java
 jdk:
   - oraclejdk8
 addons:
   postgresql: 9.4
-
+before_script:
+  - mvn versions:display-dependency-updates
+  - mvn versions:display-plugin-updates
