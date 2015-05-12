@@ -39,7 +39,7 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("3").build()
         ));
-        final Optional<Answer> winner = majorityVoting.aggregateAnswers(task);
+        final Optional<Answer> winner = majorityVoting.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
         final Answer answer = winner.get();
         assertThat(answer.getAnswer()).isEqualTo("1");
@@ -52,7 +52,7 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("1").build()
         ));
-        final Optional<Answer> winner = majorityVoting.aggregateAnswers(task);
+        final Optional<Answer> winner = majorityVoting.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
         final Answer answer = winner.get();
         assertThat(answer.getAnswer()).isEqualTo("1");
@@ -62,7 +62,7 @@ public class MajorityVotingTest {
     public void testEmptyCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        final Optional<Answer> winner = majorityVoting.aggregateAnswers(task);
+        final Optional<Answer> winner = majorityVoting.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }
 }

@@ -18,7 +18,7 @@ public class RandomAllocator extends Processor implements TaskAllocator {
     }
 
     @Override
-    public Optional<Task> assignTask(Worker w) {
+    public Optional<Task> allocate(Worker w) {
         return Optional.ofNullable(taskDAO.random(getProcess().getId()));
     }
 }

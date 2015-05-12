@@ -6,5 +6,5 @@ import mtsar.api.Task;
 import java.util.Optional;
 
 public interface AnswerAggregator {
-    Optional<Answer> aggregateAnswers(Task task);
+    Optional<Answer> aggregate(Task task);
 }

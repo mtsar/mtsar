@@ -7,12 +7,12 @@ import mtsar.processors.WorkerRanker;
 
 public class ZeroRanker extends Processor implements WorkerRanker {
     @Override
-    public double estimatePerformance(Worker worker) {
+    public double rank(Worker worker) {
         return 0;
     }
 
     @Override
-    public double estimatePerformance(Worker worker, Task task) {
+    public double rank(Worker worker, Task task) {
         return 0;
     }
 }

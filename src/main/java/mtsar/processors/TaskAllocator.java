@@ -6,5 +6,5 @@ import mtsar.api.Worker;
 import java.util.Optional;
 
 public interface TaskAllocator {
-    Optional<Task> assignTask(Worker w);
+    Optional<Task> allocate(Worker w);
 }

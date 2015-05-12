@@ -4,7 +4,6 @@ import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.Worker;
 import mtsar.processors.worker.RandomRanker;
-import mtsar.processors.worker.ZeroRanker;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +25,7 @@ public class RandomRankerTest {
 
     @Test
     public void testRanking() {
-        assertThat(randomRanker.estimatePerformance(worker)).isBetween(0.0, 1.0);
-        assertThat(randomRanker.estimatePerformance(worker, task)).isBetween(0.0, 1.0);
+        assertThat(randomRanker.rank(worker)).isBetween(0.0, 1.0);
+        assertThat(randomRanker.rank(worker, task)).isBetween(0.0, 1.0);
     }
 }

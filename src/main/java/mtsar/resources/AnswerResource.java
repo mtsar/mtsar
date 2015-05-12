@@ -4,6 +4,7 @@ import mtsar.api.*;
 import mtsar.api.Process;
 
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,8 +29,9 @@ public class AnswerResource {
     }
 
     @POST
-    public Answer postAnswer(@FormParam("worker") String worker, @FormParam("task") String task, @FormParam("processors") String answer) {
-        Answer a = Answer.builder().
+    public Answer postAnswer(@FormParam("worker") String worker, @FormParam("task") String task, @FormParam("processors") String answer, @FormParam("timestamp") String timestamp) {
+//        final Timestamp
+        final Answer a = Answer.builder().
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
                 build();

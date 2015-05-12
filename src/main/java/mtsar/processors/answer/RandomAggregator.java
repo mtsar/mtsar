@@ -19,7 +19,7 @@ public class RandomAggregator extends Processor implements AnswerAggregator {
     }
 
     @Override
-    public Optional<Answer> aggregateAnswers(Task task) {
+    public Optional<Answer> aggregate(Task task) {
         final List<Answer> answers = answerDAO.listForTask(task.getId(), process.getId());
         if (answers.isEmpty()) return Optional.empty();
         Collections.shuffle(answers);

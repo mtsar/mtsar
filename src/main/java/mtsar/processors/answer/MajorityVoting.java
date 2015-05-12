@@ -25,7 +25,7 @@ public class MajorityVoting extends Processor implements AnswerAggregator {
     }
 
     @Override
-    public Optional<Answer> aggregateAnswers(Task task) {
+    public Optional<Answer> aggregate(Task task) {
         final List<Answer> answers = answerDAO.listForTask(task.getId(), getProcess().getId());
         final Map<String, Long> votes = answers.stream().collect(
                 Collectors.groupingBy(Answer::getAnswer, Collectors.counting()));

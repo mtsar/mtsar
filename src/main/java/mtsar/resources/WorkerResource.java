@@ -46,7 +46,7 @@ public class WorkerResource {
     @Path("{worker}/task")
     public Task getWorkerTask(@PathParam("worker") Integer id) {
         final Worker w = fetchWorker(id);
-        return process.getTaskAllocator().assignTask(w).get();
+        return process.getTaskAllocator().allocate(w).get();
     }
 
     @GET

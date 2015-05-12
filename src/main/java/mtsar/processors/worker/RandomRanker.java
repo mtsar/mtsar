@@ -7,12 +7,12 @@ import mtsar.processors.WorkerRanker;
 
 public class RandomRanker extends Processor implements WorkerRanker {
     @Override
-    public double estimatePerformance(Worker worker) {
+    public double rank(Worker worker) {
         return Math.random();
     }
 
     @Override
-    public double estimatePerformance(Worker worker, Task task) {
+    public double rank(Worker worker, Task task) {
         return Math.random();
     }
 }

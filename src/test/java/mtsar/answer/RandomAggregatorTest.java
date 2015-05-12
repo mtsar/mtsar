@@ -38,7 +38,7 @@ public class RandomAggregatorTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("3").build()
         ));
-        final Optional<Answer> winner = randomAggregator.aggregateAnswers(task);
+        final Optional<Answer> winner = randomAggregator.aggregate(task);
         assertThat(winner.isPresent());
         final Answer answer = winner.get();
         assertThat(answer.getAnswer()).isIn("1", "2", "3");
@@ -48,7 +48,7 @@ public class RandomAggregatorTest {
     public void testEmptyCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        final Optional<Answer> winner = randomAggregator.aggregateAnswers(task);
+        final Optional<Answer> winner = randomAggregator.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }
 }
