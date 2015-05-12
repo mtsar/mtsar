@@ -29,13 +29,16 @@ public class AnswerResource {
     }
 
     @POST
-    public Answer postAnswer(@FormParam("worker") String worker, @FormParam("task") String task, @FormParam("processors") String answer, @FormParam("timestamp") String timestamp) {
-//        final Timestamp
-        final Answer a = Answer.builder().
+    public Answer postAnswer(@FormParam("worker") String worker, @FormParam("task") String task, @FormParam("processors") String answerParam, @FormParam("timestamp") String timestampParam) {
+        final Timestamp timestamp = (timestampParam == null) ?
+                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
+                Timestamp.valueOf(timestampParam);
+        final Answer answer = Answer.builder().
                 setProcess(process.getId()).
-                setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
+                setAnswer(answerParam).
+                setDateTime(timestamp).
                 build();
-        int answerId = process.getAnswerDAO().insert(a);
+        int answerId = process.getAnswerDAO().insert(answer);
         return process.getAnswerDAO().find(answerId, process.getId());
     }
 }
