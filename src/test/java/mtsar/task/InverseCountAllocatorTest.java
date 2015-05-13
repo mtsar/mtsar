@@ -50,7 +50,7 @@ public class InverseCountAllocatorTest {
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers2);
         final Optional<Task> task = inverseCountAllocator.allocate(worker);
         assertThat(task.isPresent()).isTrue();
-        assertThat(task.get()).isEqualTo(tasks.get(1));
+        assertThat(task.get()).isEqualTo(tasks.get(0));
     }
 
     @Test
