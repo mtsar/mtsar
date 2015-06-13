@@ -27,7 +27,7 @@ public interface TaskDAO {
     @SqlQuery("select count(*) from tasks where process = :process")
     int count(@Bind("process") String process);
 
-    @SqlQuery("insert into tasks (type, external_id, description, answers, datetime) values (:type, :externalId, :description, :answers, :dateTime) returning id")
+    @SqlQuery("insert into tasks (type, process, external_id, description, answers, datetime) values (:type, :process, :externalId, :description, cast(:answersTextArray as text[]), :dateTime) returning id")
     int insert(@BindBean Task t);
 
     @SqlUpdate("delete from tasks")

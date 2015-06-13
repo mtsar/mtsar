@@ -24,7 +24,7 @@ public interface AnswerDAO {
     @SqlQuery("select * from answers where id = :id and process = :process limit 1")
     Answer find(@Bind("id") Integer id, @Bind("process") String process);
 
-    @SqlQuery("insert into answers (external_id, worker_id, task_id, answer, datetime) values (:externalId, :workerId, :answersId, :answer, :dateTime) returning id")
+    @SqlQuery("insert into answers (process, external_id, worker_id, task_id, answer, datetime) values (:process, :externalId, :workerId, :taskId, :answer, :dateTime) returning id")
     int insert(@BindBean Answer a);
 
     @SqlQuery("select count(*) from answers")

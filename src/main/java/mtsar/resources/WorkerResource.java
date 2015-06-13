@@ -27,8 +27,9 @@ public class WorkerResource {
     }
 
     @POST
-    public Worker postWorker() {
+    public Worker postWorker(@FormParam("external_id") String externalId) {
         Worker w = Worker.builder().
+                setExternalId(externalId).
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
                 build();

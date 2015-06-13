@@ -6,17 +6,17 @@ import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.Worker;
 
-import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
+@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
 public class TaskResource {
     final protected mtsar.api.Process process;
@@ -31,8 +31,12 @@ public class TaskResource {
     }
 
     @POST
-    public Task postTask() {
+    public Task postTask(@FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
         Task t = Task.builder().
+                setExternalId(externalId).
+                setType("single").
+                setDescription(description).
+                setAnswers(answers.toArray(new String[answers.size()])).
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
                 build();
@@ -49,22 +53,38 @@ public class TaskResource {
     @GET
     @Path("{task}/answers")
     public List<Answer> getTaskAnswers(@PathParam("task") Integer id) {
-        throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
+        return process.getAnswerDAO().listForTask(id, process.getId());
+    }
+
+    @GET
+    @Path("{task}/answer")
+    public Answer getTaskAnswer(@PathParam("task") Integer id) {
+        final Task task = fetchTask(id);
+        final Optional<Answer> answer = process.getAnswerAggregator().aggregate(task);
+        if (answer.isPresent()) {
+            return answer.get();
+        } else {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
     }
 
     @POST
     @Path("{task}/answer")
-    public Answer postTaskAnswer(@PathParam("task") Integer id, @FormParam("worker_id") Integer workerId, @FormParam("answer") String answer) {
-        final Worker w = fetchWorker(workerId);
-        final Task t = fetchTask(id);
-        final Answer a = Answer.builder().
+    public Answer postTaskAnswer(@PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answer") String answerParam, @FormParam("timestamp") String timestampParam) {
+        final Timestamp timestamp = (timestampParam == null) ?
+                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
+                Timestamp.valueOf(timestampParam);
+        final Worker worker = fetchWorker(workerId);
+        final Task task = fetchTask(id);
+        final Answer answer = Answer.builder().
                 setProcess(process.getId()).
-                setTaskId(t.getId()).
-                setWorkerId(w.getId()).
-                setAnswer(answer).
-                setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
+                setExternalId(externalId).
+                setTaskId(task.getId()).
+                setWorkerId(worker.getId()).
+                setAnswer(answerParam).
+                setDateTime(timestamp).
                 build();
-        int answerId = process.getAnswerDAO().insert(a);
+        int answerId = process.getAnswerDAO().insert(answer);
         return process.getAnswerDAO().find(answerId, process.getId());
     }
 

@@ -1,10 +1,13 @@
 package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mtsar.api.jdbi.PostgreSQLTextArray;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -128,6 +131,11 @@ public class Task {
     @JsonProperty
     public String[] getAnswers() {
         return answers;
+    }
+
+    @JsonIgnore
+    public String getAnswersTextArray() {
+        return new PostgreSQLTextArray(answers).toString();
     }
 
     @JsonProperty
