@@ -11,4 +11,4 @@ RUN mvn -B -Dmaven.test.skip=true verify; ln -sf target/mtsar-*.jar mtsar.jar
 
 EXPOSE 8080 8081
 
-CMD ["java", "-jar", "mtsar.jar", "server", "development.yml"]
+CMD ["java", "-jar", "mtsar.jar", "server", "environment.yml"]
