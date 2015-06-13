@@ -16,6 +16,10 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 [travis_ci_badge]: https://travis-ci.org/dustalov/mtsar.svg
 [travis_ci_link]: https://travis-ci.org/dustalov/mtsar
 
+## Dashboard
+
+![Dashboard](https://github.com/dustalov/mtsar/wiki/images/Dashboard.png)
+
 ## Documentation
 
 * [GitHub Wiki](https://github.com/dustalov/mtsar/wiki)
