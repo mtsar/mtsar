@@ -7,10 +7,8 @@ ADD pom.xml /usr/src/app/pom.xml
 RUN mvn verify clean -B -fn -Dmaven.test.skip=true
 
 ADD . /usr/src/app
-RUN mvn -B -Dmaven.test.skip=true verify
-RUN ln -sf target/mtsar-*.jar mtsar.jar
+RUN mvn -B -Dmaven.test.skip=true verify; ln -sf target/mtsar-*.jar mtsar.jar
 
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 8080 8081
 
 CMD ["java", "-jar", "mtsar.jar", "server", "development.yml"]
