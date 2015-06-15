@@ -5,6 +5,7 @@ import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -14,9 +15,11 @@ import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.guice.DBIModule;
 import mtsar.dropwizard.guice.Module;
-import mtsar.resources.*;
+import mtsar.resources.MetaResource;
+import mtsar.resources.ProcessResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
+import org.skife.jdbi.v2.DBI;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -25,12 +28,10 @@ import java.util.Map;
 
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
     private GuiceBundle<MechanicalTsarConfiguration> guiceBundle;
-    private Injector injector = null;
+    private DBI jdbi;
+    private Injector injector;
 
     public Injector getInjector() {
-        if (injector == null) {
-            injector = guiceBundle.getInjector().createChildInjector(new DBIModule());
-        }
         return injector;
     }
 
@@ -56,6 +57,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
                 return configuration.getDataSourceFactory();
             }
         });
+
         bootstrap.addBundle(guiceBundle);
         bootstrap.addBundle(new AssetsBundle("/mtsar/stylesheets", "/stylesheets", null, "stylesheets"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/javascripts", "/javascripts", null, "javascripts"));
@@ -69,6 +71,9 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
     @Override
     public void run(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
+        jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
+        injector = guiceBundle.getInjector().createChildInjector(new DBIModule(jdbi));
+
         FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
         filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,PATCH,DELETE,OPTIONS");
@@ -84,7 +89,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         environment.healthChecks().register("version", getInjector().getInstance(MechanicalTsarVersionHealthCheck.class));
 
-        for (Map.Entry<String, Process> entry: configuration.getProcesses().entrySet()) {
+        for (final Map.Entry<String, Process> entry : configuration.getProcesses().entrySet()) {
             final String id = entry.getKey();
             final Process process = entry.getValue();
             process.setId(id);
