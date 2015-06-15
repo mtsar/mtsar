@@ -9,10 +9,11 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import mtsar.api.*;
 import mtsar.api.Process;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
+import mtsar.dropwizard.guice.DBIModule;
+import mtsar.dropwizard.guice.Module;
 import mtsar.resources.*;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.server.ServerProperties;
@@ -24,9 +25,13 @@ import java.util.Map;
 
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
     private GuiceBundle<MechanicalTsarConfiguration> guiceBundle;
+    private Injector injector = null;
 
-    public final Injector getInjector() {
-        return guiceBundle.getInjector();
+    public Injector getInjector() {
+        if (injector == null) {
+            injector = guiceBundle.getInjector().createChildInjector(new DBIModule());
+        }
+        return injector;
     }
 
     public static void main(String[] args) throws Exception {
@@ -41,7 +46,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
         guiceBundle = GuiceBundle.<MechanicalTsarConfiguration>newBuilder()
-                .addModule(new MechanicalTsarModule())
+                .addModule(new Module())
                 .setConfigClass(MechanicalTsarConfiguration.class)
                 .build();
 
