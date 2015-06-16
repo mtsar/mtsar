@@ -7,9 +7,7 @@ import mtsar.api.jdbi.PostgreSQLTextArray;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.sql.Array;
 import java.sql.Timestamp;
-import java.util.List;
 
 @XmlRootElement
 public class Task {

@@ -15,22 +15,18 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RandomAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Process process = mock(Process.class);
     private static final Worker worker = mock(Worker.class);
     private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
-    private static final RandomAllocator randomAllocator = new RandomAllocator(taskDAO);
+    private static final RandomAllocator randomAllocator = new RandomAllocator(mtsar.api.Process.wrap(process), taskDAO);
 
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
-        randomAllocator.setProcess(process);
         Collections.shuffle(tasks);
     }
 

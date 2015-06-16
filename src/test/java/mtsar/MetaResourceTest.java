@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import mtsar.api.Process;
 import mtsar.resources.MetaResource;
-import mtsar.resources.ProcessResource;
 import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -22,7 +21,7 @@ public class MetaResourceTest {
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .addResource(new MetaResource(version, Maps.asMap(Sets.newSet("1"), (id) -> process)))
+            .addResource(new MetaResource(version, Maps.asMap(Sets.newSet("1"), (id) -> process), null, null, null))
             .build();
 
     @Before

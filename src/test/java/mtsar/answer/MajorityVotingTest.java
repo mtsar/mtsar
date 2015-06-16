@@ -21,13 +21,12 @@ public class MajorityVotingTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Process process = mock(Process.class);
     private static final Task task = mock(Task.class);
-    private static final MajorityVoting majorityVoting = new MajorityVoting(answerDAO);
+    private static final MajorityVoting majorityVoting = new MajorityVoting(Process.wrap(process), answerDAO);
 
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
         when(task.getId()).thenReturn(1);
-        majorityVoting.setProcess(process);
     }
 
     @Test

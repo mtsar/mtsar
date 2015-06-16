@@ -4,6 +4,9 @@ import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.Worker;
+import mtsar.api.jdbi.AnswerDAO;
+import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.jdbi.WorkerDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,15 +18,21 @@ import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
 public class WorkerResource {
-    final protected Process process;
+    protected final mtsar.api.Process process;
+    protected final TaskDAO taskDAO;
+    protected final WorkerDAO workerDAO;
+    protected final AnswerDAO answerDAO;
 
-    public WorkerResource(Process process) {
+    public WorkerResource(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.process = process;
+        this.taskDAO = taskDAO;
+        this.workerDAO = workerDAO;
+        this.answerDAO = answerDAO;
     }
 
     @GET
     public List<Worker> getWorkers() {
-        return process.getWorkerDAO().listForProcess(process.getId());
+        return workerDAO.listForProcess(process.getId());
     }
 
     @POST
@@ -33,8 +42,8 @@ public class WorkerResource {
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
                 build();
-        int workerId = process.getWorkerDAO().insert(w);
-        return process.getWorkerDAO().find(workerId, process.getId());
+        int workerId = workerDAO.insert(w);
+        return workerDAO.find(workerId, process.getId());
     }
 
     @GET
@@ -54,7 +63,7 @@ public class WorkerResource {
     @Path("{worker}/answers")
     public List<Answer> getWorkerAnswers(@PathParam("worker") Integer id) {
         final Worker w = fetchWorker(id);
-        return process.getAnswerDAO().listForWorker(w.getId(), process.getId());
+        return answerDAO.listForWorker(w.getId(), process.getId());
     }
 
     @DELETE
@@ -65,7 +74,7 @@ public class WorkerResource {
     }
 
     private Worker fetchWorker(Integer id) {
-        Worker w = process.getWorkerDAO().find(id, process.getId());
+        final Worker w = workerDAO.find(id, process.getId());
         if (w == null) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }

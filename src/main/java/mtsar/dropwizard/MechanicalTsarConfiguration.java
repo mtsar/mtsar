@@ -3,7 +3,7 @@ package mtsar.dropwizard;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import mtsar.api.Process;
+import mtsar.api.ProcessDefinition;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -12,10 +12,12 @@ import java.util.Map;
 public class MechanicalTsarConfiguration extends Configuration {
     @Valid
     @NotNull
-    @JsonProperty
-    private Map<String, Process> processes;
+    @JsonProperty("processes")
+    private Map<String, ProcessDefinition> definitions;
 
-    public Map<String, Process> getProcesses() { return processes; }
+    public Map<String, ProcessDefinition> getDefinitions() {
+        return definitions;
+    }
 
     @Valid
     @NotNull

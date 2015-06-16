@@ -2,6 +2,9 @@ package mtsar.views;
 
 import io.dropwizard.views.View;
 import mtsar.api.Process;
+import mtsar.api.jdbi.AnswerDAO;
+import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.jdbi.WorkerDAO;
 
 import javax.inject.Inject;
 import java.util.Collection;
@@ -9,11 +12,17 @@ import java.util.Map;
 
 public class ProcessView extends View {
     private final Process process;
+    private final TaskDAO taskDAO;
+    private final WorkerDAO workerDAO;
+    private final AnswerDAO answerDAO;
 
     @Inject
-    public ProcessView(Process process) {
+    public ProcessView(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("process.mustache");
         this.process = process;
+        this.taskDAO = taskDAO;
+        this.workerDAO = workerDAO;
+        this.answerDAO = answerDAO;
     }
 
     public String getTitle() {
@@ -30,19 +39,19 @@ public class ProcessView extends View {
      *
      * @return process options
      */
-    public Collection<Map.Entry<String, Object>> getOptions() {
+    public Collection<Map.Entry<String, String>> getOptions() {
         return process.getOptions().entrySet();
     }
 
     public int getWorkerCount() {
-        return process.getWorkerDAO().count(process.getId());
+        return workerDAO.count(process.getId());
     }
 
     public int getTaskCount() {
-        return process.getTaskDAO().count(process.getId());
+        return taskDAO.count(process.getId());
     }
 
     public int getAnswerCount() {
-        return process.getAnswerDAO().count(process.getId());
+        return answerDAO.count(process.getId());
     }
 }

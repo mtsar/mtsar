@@ -8,20 +8,16 @@ import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.task.InverseCountAllocator;
-import mtsar.processors.task.RandomAllocator;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class InverseCountAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
@@ -31,12 +27,11 @@ public class InverseCountAllocatorTest {
     private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
     private static final List<Answer> answers1 = Lists.newArrayList(mock(Answer.class));
     private static final List<Answer> answers2 = Lists.newArrayList(mock(Answer.class), mock(Answer.class));
-    private static final InverseCountAllocator inverseCountAllocator = new InverseCountAllocator(taskDAO, answerDAO);
+    private static final InverseCountAllocator inverseCountAllocator = new InverseCountAllocator(Process.wrap(process), taskDAO, answerDAO);
 
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
-        inverseCountAllocator.setProcess(process);
         when(tasks.get(0).getId()).thenReturn(1);
         when(tasks.get(1).getId()).thenReturn(2);
     }

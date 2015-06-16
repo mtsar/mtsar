@@ -1,31 +1,38 @@
 package mtsar.resources;
 
-import mtsar.api.*;
+import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.jdbi.AnswerDAO;
+import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.jdbi.WorkerDAO;
 
-import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.*;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 @Produces(MediaType.APPLICATION_JSON)
 public class AnswerResource {
-    final protected Process process;
+    protected final Process process;
+    protected final TaskDAO taskDAO;
+    protected final WorkerDAO workerDAO;
+    protected final AnswerDAO answerDAO;
 
-    public AnswerResource(Process process) {
+    public AnswerResource(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.process = process;
+        this.taskDAO = taskDAO;
+        this.workerDAO = workerDAO;
+        this.answerDAO = answerDAO;
     }
 
     @GET
     public List<Answer> getAnswers() {
-        return process.getAnswerDAO().listForProcess(process.getId());
+        return answerDAO.listForProcess(process.getId());
     }
 
     @POST
@@ -38,7 +45,7 @@ public class AnswerResource {
                 setAnswer(answerParam).
                 setDateTime(timestamp).
                 build();
-        int answerId = process.getAnswerDAO().insert(answer);
-        return process.getAnswerDAO().find(answerId, process.getId());
+        int answerId = answerDAO.insert(answer);
+        return answerDAO.find(answerId, process.getId());
     }
 }

@@ -1,6 +1,9 @@
 package mtsar.resources;
 
 import mtsar.api.Process;
+import mtsar.api.jdbi.AnswerDAO;
+import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.jdbi.WorkerDAO;
 import mtsar.views.ProcessView;
 import mtsar.views.ProcessesView;
 
@@ -15,11 +18,17 @@ import java.util.Map;
 @Path("/processes")
 @Produces(MediaType.APPLICATION_JSON)
 public class ProcessResource {
-    protected final Map<String, Process> processes;
+    protected final Map<String, mtsar.api.Process> processes;
+    protected final TaskDAO taskDAO;
+    protected final WorkerDAO workerDAO;
+    protected final AnswerDAO answerDAO;
 
     @Inject
-    public ProcessResource(Map<String, Process> processes) {
+    public ProcessResource(Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.processes = processes;
+        this.taskDAO = taskDAO;
+        this.workerDAO = workerDAO;
+        this.answerDAO = answerDAO;
     }
 
     @GET
@@ -43,22 +52,22 @@ public class ProcessResource {
     @Path("{process}")
     @Produces(MediaType.TEXT_HTML)
     public ProcessView getProcessView(@PathParam("process") String id) {
-        return new ProcessView(fetchProcess(id));
+        return new ProcessView(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
     @Path("{process}/workers")
     public WorkerResource getWorkers(@PathParam("process") String id) {
-        return new WorkerResource(fetchProcess(id));
+        return new WorkerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
     @Path("{process}/tasks")
     public TaskResource getTasks(@PathParam("process") String id) {
-        return new TaskResource(fetchProcess(id));
+        return new TaskResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
     @Path("{process}/answers")
     public AnswerResource getAnswers(@PathParam("process") String id) {
-        return new AnswerResource(fetchProcess(id));
+        return new AnswerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
     protected Process fetchProcess(String id) {

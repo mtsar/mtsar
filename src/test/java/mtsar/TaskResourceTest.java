@@ -26,7 +26,7 @@ public class TaskResourceTest {
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .addResource(new ProcessResource(Maps.asMap(Sets.newSet("1"), (id) -> process)))
+            .addResource(new ProcessResource(Maps.asMap(Sets.newSet("1"), (id) -> process), dao, null, null))
             .build();
 
     private final Task task = Task.builder().
@@ -38,7 +38,6 @@ public class TaskResourceTest {
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
-        when(process.getTaskDAO()).thenReturn(dao);
         when(dao.find(eq(1), eq("1"))).thenReturn(task);
     }
 

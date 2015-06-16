@@ -1,5 +1,6 @@
 package mtsar.dropwizard;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
@@ -11,10 +12,15 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import mtsar.api.Process;
+import mtsar.api.ProcessDefinition;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.guice.DBIModule;
 import mtsar.dropwizard.guice.Module;
+import mtsar.dropwizard.guice.ProcessModule;
+import mtsar.processors.AnswerAggregator;
+import mtsar.processors.TaskAllocator;
+import mtsar.processors.WorkerRanker;
 import mtsar.resources.MetaResource;
 import mtsar.resources.ProcessResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -27,13 +33,11 @@ import java.util.EnumSet;
 import java.util.Map;
 
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
+    private final Map<String, Process> processes = Maps.newHashMap();
+
     private GuiceBundle<MechanicalTsarConfiguration> guiceBundle;
     private DBI jdbi;
     private Injector injector;
-
-    public Injector getInjector() {
-        return injector;
-    }
 
     public static void main(String[] args) throws Exception {
         new MechanicalTsarApplication().run(args);
@@ -47,7 +51,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
         guiceBundle = GuiceBundle.<MechanicalTsarConfiguration>newBuilder()
-                .addModule(new Module())
+                .addModule(new Module(processes))
                 .setConfigClass(MechanicalTsarConfiguration.class)
                 .build();
 
@@ -69,10 +73,37 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new SimulateCommand(this));
     }
 
+    public synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
+        if (jdbi == null) {
+            jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
+        }
+
+        if (injector == null) {
+            injector = guiceBundle.getInjector().createChildInjector(new DBIModule(jdbi));
+        }
+
+        processes.clear();
+
+        for (final Map.Entry<String, ProcessDefinition> entry : configuration.getDefinitions().entrySet()) {
+            final String id = entry.getKey();
+            final ProcessDefinition definition = entry.getValue();
+
+            final Class<? extends WorkerRanker> workerRanker = Class.forName(definition.getWorkerRankerName()).asSubclass(WorkerRanker.class);
+            final Class<? extends TaskAllocator> taskAllocator = Class.forName(definition.getTaskAllocatorName()).asSubclass(TaskAllocator.class);
+            final Class<? extends AnswerAggregator> answerAggregator = Class.forName(definition.getAnswerAggregatorName()).asSubclass(AnswerAggregator.class);
+
+            final Injector processInjector = injector.createChildInjector(
+                    new ProcessModule(id, definition.getOptions(), workerRanker, taskAllocator, answerAggregator)
+            );
+
+            final Process process = processInjector.getInstance(mtsar.api.Process.class);
+            processes.put(id, process);
+        }
+    }
+
     @Override
     public void run(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
-        injector = guiceBundle.getInjector().createChildInjector(new DBIModule(jdbi));
+        bootstrap(configuration, environment);
 
         FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
@@ -84,16 +115,9 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
-        environment.jersey().register(getInjector().getInstance(MetaResource.class));
-        environment.jersey().register(getInjector().getInstance(ProcessResource.class));
+        environment.jersey().register(injector.getInstance(MetaResource.class));
+        environment.jersey().register(injector.getInstance(ProcessResource.class));
 
-        environment.healthChecks().register("version", getInjector().getInstance(MechanicalTsarVersionHealthCheck.class));
-
-        for (final Map.Entry<String, Process> entry : configuration.getProcesses().entrySet()) {
-            final String id = entry.getKey();
-            final Process process = entry.getValue();
-            process.setId(id);
-            process.bootstrap(getInjector());
-        }
+        environment.healthChecks().register("version", injector.getInstance(MechanicalTsarVersionHealthCheck.class));
     }
 }

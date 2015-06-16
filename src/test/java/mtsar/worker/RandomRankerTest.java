@@ -1,6 +1,6 @@
 package mtsar.worker;
 
-import mtsar.api.Process;
+import mtsar.api.ProcessDefinition;
 import mtsar.api.Task;
 import mtsar.api.Worker;
 import mtsar.processors.worker.RandomRanker;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RandomRankerTest {
-    private static final Process process = mock(Process.class);
+    private static final ProcessDefinition process = mock(ProcessDefinition.class);
     private static final Worker worker = mock(Worker.class);
     private static final Task task = mock(Task.class);
     private static final RandomRanker randomRanker = new RandomRanker();
@@ -20,7 +20,6 @@ public class RandomRankerTest {
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
-        randomRanker.setProcess(process);
     }
 
     @Test

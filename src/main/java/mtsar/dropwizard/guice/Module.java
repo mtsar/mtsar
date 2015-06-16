@@ -1,19 +1,23 @@
 package mtsar.dropwizard.guice;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 import mtsar.api.Process;
-import mtsar.dropwizard.MechanicalTsarConfiguration;
 
 import java.util.Map;
 
 public class Module extends AbstractModule {
-    @Override
-    protected void configure() {
+    public final static TypeLiteral<Map<String, mtsar.api.Process>> PROCESSES_TYPE_LITERAL = new TypeLiteral<Map<String, Process>>() {
+    };
+
+    private Map<String, Process> processes;
+
+    public Module(Map<String, Process> processes) {
+        this.processes = processes;
     }
 
-    @Provides
-    public Map<String, Process> getProcesses(MechanicalTsarConfiguration configuration) {
-        return configuration.getProcesses();
+    @Override
+    protected void configure() {
+        bind(PROCESSES_TYPE_LITERAL).toInstance(processes);
     }
 }

@@ -1,26 +1,30 @@
 package mtsar.processors.answer;
 
 import mtsar.api.Answer;
+import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.jdbi.AnswerDAO;
-import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.AnswerAggregator;
-import mtsar.processors.Processor;
 
 import javax.inject.Inject;
-import java.util.*;
+import javax.inject.Provider;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-public class RandomAggregator extends Processor implements AnswerAggregator {
+public class RandomAggregator implements AnswerAggregator {
+    protected final Provider<Process> process;
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public RandomAggregator(AnswerDAO answerDAO) {
+    public RandomAggregator(Provider<Process> processProvider, AnswerDAO answerDAO) {
+        this.process = processProvider;
         this.answerDAO = answerDAO;
     }
 
     @Override
     public Optional<Answer> aggregate(Task task) {
-        final List<Answer> answers = answerDAO.listForTask(task.getId(), process.getId());
+        final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
         if (answers.isEmpty()) return Optional.empty();
         Collections.shuffle(answers);
         return Optional.ofNullable(answers.get(0));

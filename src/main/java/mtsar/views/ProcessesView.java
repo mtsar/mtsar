@@ -16,7 +16,9 @@ public class ProcessesView extends View {
         this.processes = processes;
     }
 
-    public String getTitle() { return "Processes"; }
+    public String getTitle() {
+        return "Processes";
+    }
 
     public Collection<Process> getProcesses() {
         return processes.values();

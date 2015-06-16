@@ -1,24 +1,27 @@
 package mtsar.processors.task;
 
+import mtsar.api.Process;
 import mtsar.api.Task;
-import mtsar.api.jdbi.TaskDAO;
 import mtsar.api.Worker;
-import mtsar.processors.Processor;
+import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.TaskAllocator;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 import java.util.Optional;
 
-public class RandomAllocator extends Processor implements TaskAllocator {
-    private final TaskDAO taskDAO;
+public class RandomAllocator implements TaskAllocator {
+    protected final Provider<Process> process;
+    protected final TaskDAO taskDAO;
 
     @Inject
-    public RandomAllocator(TaskDAO taskDAO) {
+    public RandomAllocator(Provider<Process> processProvider, TaskDAO taskDAO) {
+        this.process = processProvider;
         this.taskDAO = taskDAO;
     }
 
     @Override
     public Optional<Task> allocate(Worker w) {
-        return Optional.ofNullable(taskDAO.random(getProcess().getId()));
+        return Optional.ofNullable(taskDAO.random(process.get().getId()));
     }
 }
