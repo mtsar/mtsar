@@ -16,7 +16,7 @@ import mtsar.api.ProcessDefinition;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.guice.DBIModule;
-import mtsar.dropwizard.guice.Module;
+import mtsar.dropwizard.guice.BundleModule;
 import mtsar.dropwizard.guice.ProcessModule;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
@@ -51,7 +51,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
         guiceBundle = GuiceBundle.<MechanicalTsarConfiguration>newBuilder()
-                .addModule(new Module(processes))
+                .addModule(new BundleModule(processes))
                 .setConfigClass(MechanicalTsarConfiguration.class)
                 .build();
 

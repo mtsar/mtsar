@@ -6,13 +6,13 @@ import mtsar.api.Process;
 
 import java.util.Map;
 
-public class Module extends AbstractModule {
+public class BundleModule extends AbstractModule {
     public final static TypeLiteral<Map<String, mtsar.api.Process>> PROCESSES_TYPE_LITERAL = new TypeLiteral<Map<String, Process>>() {
     };
 
     private Map<String, Process> processes;
 
-    public Module(Map<String, Process> processes) {
+    public BundleModule(Map<String, Process> processes) {
         this.processes = processes;
     }
 
