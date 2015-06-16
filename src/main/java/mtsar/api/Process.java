@@ -67,4 +67,19 @@ public class Process {
     public AnswerAggregator getAnswerAggregator() {
         return answerAggregator;
     }
+
+    @JsonProperty("workerRanker")
+    public String getWorkerRankerName() {
+        return workerRanker.getClass().getName();
+    }
+
+    @JsonProperty("taskAllocator")
+    public String getTaskAllocatorName() {
+        return taskAllocator.getClass().getName();
+    }
+
+    @JsonProperty("answerAggregator")
+    public String getAnswerAggregatorName() {
+        return answerAggregator.getClass().getName();
+    }
 }
