@@ -18,12 +18,7 @@ import java.util.logging.Logger;
 @XmlRootElement
 public class Process {
     public static Provider<Process> wrap(Process process) {
-        return new Provider<Process>() {
-            @Override
-            public Process get() {
-                return process;
-            }
-        };
+        return () -> process;
     }
 
     protected String id;
