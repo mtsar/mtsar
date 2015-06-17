@@ -11,6 +11,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Collections;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -22,7 +23,7 @@ public class Process {
     }
 
     protected String id;
-    protected Map<String, String> options;
+    protected Map<String, String> options = Collections.emptyMap();
 
     protected final WorkerRanker workerRanker;
     protected final TaskAllocator taskAllocator;
@@ -65,16 +66,16 @@ public class Process {
 
     @JsonProperty("workerRanker")
     public String getWorkerRankerName() {
-        return workerRanker.getClass().getName();
+        return workerRanker == null ? null : workerRanker.getClass().getName();
     }
 
     @JsonProperty("taskAllocator")
     public String getTaskAllocatorName() {
-        return taskAllocator.getClass().getName();
+        return taskAllocator == null ? null : taskAllocator.getClass().getName();
     }
 
     @JsonProperty("answerAggregator")
     public String getAnswerAggregatorName() {
-        return answerAggregator.getClass().getName();
+        return answerAggregator == null ? null : answerAggregator.getClass().getName();
     }
 }
