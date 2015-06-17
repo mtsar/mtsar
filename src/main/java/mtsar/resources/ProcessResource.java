@@ -8,6 +8,7 @@ import mtsar.views.ProcessView;
 import mtsar.views.ProcessesView;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -24,7 +25,7 @@ public class ProcessResource {
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public ProcessResource(Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public ProcessResource(@Named("processes") Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.processes = processes;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;

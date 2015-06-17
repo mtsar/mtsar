@@ -8,6 +8,7 @@ import mtsar.api.jdbi.WorkerDAO;
 import mtsar.views.DashboardView;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -26,7 +27,7 @@ public class MetaResource {
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public MetaResource(MechanicalTsarVersion version, Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public MetaResource(MechanicalTsarVersion version, @Named("processes") Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.version = version;
         this.processes = processes;
         this.taskDAO = taskDAO;
