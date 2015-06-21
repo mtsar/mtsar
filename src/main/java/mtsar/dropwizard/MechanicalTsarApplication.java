@@ -67,6 +67,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addBundle(new AssetsBundle("/mtsar/javascripts", "/javascripts", null, "javascripts"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/images", "/images", null, "images"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/favicon.ico", "/favicon.ico", null, "favicon"));
+        bootstrap.addBundle(new AssetsBundle("/META-INF/resources/webjars", "/assets", null, "assets"));
         bootstrap.addBundle(new ViewBundle<>());
 
         bootstrap.addCommand(new EvaluateCommand(this));
