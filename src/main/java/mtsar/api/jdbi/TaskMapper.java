@@ -4,10 +4,8 @@ import mtsar.api.Task;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-import java.sql.Array;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 
 public class TaskMapper implements ResultSetMapper<Task> {
     public Task map(int index, ResultSet r, StatementContext ctx) throws SQLException {

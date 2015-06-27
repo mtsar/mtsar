@@ -1,8 +1,8 @@
 package mtsar;
 
-import javax.inject.Singleton;
-
 import io.dropwizard.util.JarLocation;
+
+import javax.inject.Singleton;
 
 @Singleton
 public class MechanicalTsarVersion {
