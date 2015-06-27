@@ -1,7 +1,9 @@
 package mtsar.processors.task;
 
-import mtsar.api.*;
 import mtsar.api.Process;
+import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
+import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.TaskAllocator;
@@ -27,10 +29,12 @@ public class InverseCountAllocator implements TaskAllocator {
     }
 
     @Override
-    public Optional<Task> allocate(Worker w) {
+    public Optional<TaskAllocation> allocate(Worker worker) {
         final Comparator<Task> comparator = getComparator(answerDAO).thenComparing(RANDOM_COMPARATOR);
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
-        return tasks.stream().sorted(comparator).findFirst();
+        final Optional<Task> task = tasks.stream().sorted(comparator).findFirst();
+        if (!task.isPresent()) return Optional.empty();
+        return Optional.of(TaskAllocation.create(worker, task.get()));
     }
 
     private Comparator<Task> getComparator(AnswerDAO answerDAO) {

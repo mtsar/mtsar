@@ -2,6 +2,7 @@ package mtsar.answer;
 
 import com.google.common.collect.Lists;
 import mtsar.api.Answer;
+import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.jdbi.AnswerDAO;
@@ -37,9 +38,9 @@ public class RandomAggregatorTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("3").build()
         ));
-        final Optional<Answer> winner = randomAggregator.aggregate(task);
+        final Optional<AnswerAggregation> winner = randomAggregator.aggregate(task);
         assertThat(winner.isPresent());
-        final Answer answer = winner.get();
+        final Answer answer = winner.get().getAnswer();
         assertThat(answer.getAnswer()).isIn("1", "2", "3");
     }
 
@@ -47,7 +48,7 @@ public class RandomAggregatorTest {
     public void testEmptyCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        final Optional<Answer> winner = randomAggregator.aggregate(task);
+        final Optional<AnswerAggregation> winner = randomAggregator.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }
 }

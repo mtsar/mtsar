@@ -2,7 +2,7 @@ package mtsar.resources;
 
 import mtsar.api.Answer;
 import mtsar.api.Process;
-import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
@@ -54,7 +54,7 @@ public class WorkerResource {
 
     @GET
     @Path("{worker}/task")
-    public Task getWorkerTask(@PathParam("worker") Integer id) {
+    public TaskAllocation getWorkerTask(@PathParam("worker") Integer id) {
         final Worker w = fetchWorker(id);
         return process.getTaskAllocator().allocate(w).get();
     }

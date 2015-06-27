@@ -2,9 +2,12 @@ package mtsar.processors;
 
 import mtsar.api.Task;
 import mtsar.api.Worker;
+import mtsar.api.WorkerRanking;
+
+import java.util.Optional;
 
 public interface WorkerRanker {
-    double rank(Worker worker);
+    Optional<WorkerRanking> rank(Worker worker);
 
-    double rank(Worker worker, Task task);
+    Optional<WorkerRanking> rank(Worker worker, Task task);
 }

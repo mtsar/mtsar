@@ -1,10 +1,8 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.api.Answer;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.Task;
-import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.api.jdbi.WorkerDAO;
@@ -68,11 +66,11 @@ public class TaskResource {
     @Path("{task}/answer")
     public Answer getTaskAnswer(@PathParam("task") Integer id) {
         final Task task = fetchTask(id);
-        final Optional<Answer> answer = process.getAnswerAggregator().aggregate(task);
-        if (answer.isPresent()) {
-            return answer.get();
+        final Optional<AnswerAggregation> aggregation = process.getAnswerAggregator().aggregate(task);
+        if (aggregation.isPresent()) {
+            return aggregation.get().getAnswer();
         } else {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
+            throw new WebApplicationException(Response.Status.NO_CONTENT);
         }
     }
 

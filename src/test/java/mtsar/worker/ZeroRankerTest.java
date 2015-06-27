@@ -24,7 +24,10 @@ public class ZeroRankerTest {
 
     @Test
     public void testRanking() {
-        assertThat(zeroRanker.rank(worker)).isEqualTo(0);
-        assertThat(zeroRanker.rank(worker, task)).isEqualTo(0);
+        assertThat(zeroRanker.rank(worker).isPresent()).isTrue();
+        assertThat(zeroRanker.rank(worker).get().getReputation()).isEqualTo(0);
+
+        assertThat(zeroRanker.rank(worker, task).isPresent()).isTrue();
+        assertThat(zeroRanker.rank(worker, task).get().getReputation()).isEqualTo(0);
     }
 }

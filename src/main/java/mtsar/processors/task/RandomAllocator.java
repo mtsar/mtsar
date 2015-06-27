@@ -2,6 +2,7 @@ package mtsar.processors.task;
 
 import mtsar.api.Process;
 import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.TaskAllocator;
@@ -21,7 +22,9 @@ public class RandomAllocator implements TaskAllocator {
     }
 
     @Override
-    public Optional<Task> allocate(Worker w) {
-        return Optional.ofNullable(taskDAO.random(process.get().getId()));
+    public Optional<TaskAllocation> allocate(Worker worker) {
+        final Task task = taskDAO.random(process.get().getId());
+        if (task == null) return Optional.empty();
+        return Optional.ofNullable(TaskAllocation.create(worker, task));
     }
 }

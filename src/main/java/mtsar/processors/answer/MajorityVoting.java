@@ -1,6 +1,7 @@
 package mtsar.processors.answer;
 
 import mtsar.api.Answer;
+import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.jdbi.AnswerDAO;
@@ -28,13 +29,15 @@ public class MajorityVoting implements AnswerAggregator {
     }
 
     @Override
-    public Optional<Answer> aggregate(Task task) {
+    public Optional<AnswerAggregation> aggregate(Task task) {
         final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
         final Map<String, Long> votes = answers.stream().collect(
                 Collectors.groupingBy(Answer::getAnswer, Collectors.counting()));
         final Optional<Map.Entry<String, Long>> winner =
                 votes.entrySet().stream().sorted(voteComparator).findFirst();
         if (!winner.isPresent()) return Optional.empty();
-        return answers.stream().filter(answer -> answer.getAnswer() == winner.get().getKey()).findFirst();
+        final Optional<Answer> answer = answers.stream().filter(a -> a.getAnswer() == winner.get().getKey()).findFirst();
+        if (!answer.isPresent()) return Optional.empty();
+        return Optional.of(AnswerAggregation.create(task, Answer.builder().setAnswer(answer.get().getAnswer()).build()));
     }
 }

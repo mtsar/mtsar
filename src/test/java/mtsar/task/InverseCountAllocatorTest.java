@@ -1,10 +1,8 @@
 package mtsar.task;
 
 import com.google.common.collect.Lists;
-import mtsar.api.Answer;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.Task;
-import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.task.InverseCountAllocator;
@@ -43,9 +41,9 @@ public class InverseCountAllocatorTest {
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers2);
-        final Optional<Task> task = inverseCountAllocator.allocate(worker);
-        assertThat(task.isPresent()).isTrue();
-        assertThat(task.get()).isEqualTo(tasks.get(0));
+        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        assertThat(allocation.isPresent()).isTrue();
+        assertThat(allocation.get().getTask()).isEqualTo(tasks.get(0));
     }
 
     @Test
@@ -55,16 +53,16 @@ public class InverseCountAllocatorTest {
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers1);
-        final Optional<Task> task = inverseCountAllocator.allocate(worker);
-        assertThat(task.isPresent()).isTrue();
-        assertThat(task.get()).isIn(tasks);
+        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        assertThat(allocation.isPresent()).isTrue();
+        assertThat(allocation.get().getTask()).isIn(tasks);
     }
 
     @Test
     public void testEmpty() {
         reset(taskDAO);
         reset(answerDAO);
-        final Optional<Task> task = inverseCountAllocator.allocate(worker);
-        assertThat(task.isPresent()).isFalse();
+        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        assertThat(allocation.isPresent()).isFalse();
     }
 }

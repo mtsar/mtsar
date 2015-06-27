@@ -3,6 +3,7 @@ package mtsar.task;
 import com.google.common.collect.Lists;
 import mtsar.api.Process;
 import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.jdbi.TaskDAO;
 import mtsar.processors.task.RandomAllocator;
@@ -34,16 +35,16 @@ public class RandomAllocatorTest {
     public void testAllocation() {
         reset(taskDAO);
         when(taskDAO.random(anyString())).thenReturn(tasks.get(0));
-        final Optional<Task> task = randomAllocator.allocate(worker);
-        assertThat(task.isPresent()).isTrue();
-        assertThat(task.get()).isIn(tasks);
+        final Optional<TaskAllocation> allocation = randomAllocator.allocate(worker);
+        assertThat(allocation.isPresent()).isTrue();
+        assertThat(allocation.get().getTask()).isIn(tasks);
     }
 
     @Test
     public void testEmpty() {
         reset(taskDAO);
         when(taskDAO.random(anyString())).thenReturn(null);
-        final Optional<Task> task = randomAllocator.allocate(worker);
-        assertThat(task.isPresent()).isFalse();
+        final Optional<TaskAllocation> allocation = randomAllocator.allocate(worker);
+        assertThat(allocation.isPresent()).isFalse();
     }
 }

@@ -1,10 +1,10 @@
 package mtsar.processors;
 
-import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 
 import java.util.Optional;
 
 public interface TaskAllocator {
-    Optional<Task> allocate(Worker w);
+    Optional<TaskAllocation> allocate(Worker w);
 }

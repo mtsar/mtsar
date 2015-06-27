@@ -24,7 +24,10 @@ public class RandomRankerTest {
 
     @Test
     public void testRanking() {
-        assertThat(randomRanker.rank(worker)).isBetween(0.0, 1.0);
-        assertThat(randomRanker.rank(worker, task)).isBetween(0.0, 1.0);
+        assertThat(randomRanker.rank(worker).isPresent()).isTrue();
+        assertThat(randomRanker.rank(worker).get().getReputation()).isBetween(0.0, 1.0);
+
+        assertThat(randomRanker.rank(worker, task).isPresent()).isTrue();
+        assertThat(randomRanker.rank(worker, task).get().getReputation()).isBetween(0.0, 1.0);
     }
 }

@@ -1,7 +1,7 @@
 package mtsar.processors.task;
 
 import mtsar.api.Process;
-import mtsar.api.Task;
+import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.jdbi.AnswerDAO;
 import mtsar.api.jdbi.TaskDAO;
@@ -25,7 +25,7 @@ public class FixedNumberAllocator implements TaskAllocator {
     }
 
     @Override
-    public Optional<Task> allocate(Worker w) {
+    public Optional<TaskAllocation> allocate(Worker w) {
         ensureAnswersPerTask();
         throw new UnsupportedOperationException("Not Implemented Yet");
     }

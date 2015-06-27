@@ -1,6 +1,7 @@
 package mtsar.processors.answer;
 
 import mtsar.api.Answer;
+import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.jdbi.AnswerDAO;
@@ -23,10 +24,10 @@ public class RandomAggregator implements AnswerAggregator {
     }
 
     @Override
-    public Optional<Answer> aggregate(Task task) {
+    public Optional<AnswerAggregation> aggregate(Task task) {
         final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
         if (answers.isEmpty()) return Optional.empty();
         Collections.shuffle(answers);
-        return Optional.ofNullable(answers.get(0));
+        return Optional.of(AnswerAggregation.create(task, Answer.builder().setAnswer(answers.get(0).getAnswer()).build()));
     }
 }
