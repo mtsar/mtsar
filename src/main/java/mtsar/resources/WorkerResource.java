@@ -53,6 +53,14 @@ public class WorkerResource {
     }
 
     @GET
+    @Path("external")
+    public Worker getWorkerByExternalId(@QueryParam("externalId") String externalId) {
+        final Worker worker = workerDAO.findByExternalId(externalId, process.getId());
+        if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return worker;
+    }
+
+    @GET
     @Path("{worker}/task")
     public TaskAllocation getWorkerTask(@PathParam("worker") Integer id) {
         final Worker w = fetchWorker(id);
