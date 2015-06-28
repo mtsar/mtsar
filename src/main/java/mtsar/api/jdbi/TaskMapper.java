@@ -15,7 +15,7 @@ public class TaskMapper implements ResultSetMapper<Task> {
                 setExternalId(r.getString("external_id")).
                 setProcess(r.getString("process")).
                 setDescription(r.getString("description")).
-                setAnswers((String[])r.getArray("answers").getArray()).
+                setAnswers((String[]) r.getArray("answers").getArray()).
                 setDateTime(r.getTimestamp("datetime")).
                 build();
     }

@@ -10,7 +10,6 @@ import java.util.Map;
  * http://tech.valgog.com/2009/02/passing-arrays-to-postgresql-database.html
  *
  * @author Valentine Gogichashvili
- *
  */
 public class PostgreSQLTextArray implements java.sql.Array {
 
