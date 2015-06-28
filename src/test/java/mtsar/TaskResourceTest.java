@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import mtsar.api.Process;
 import mtsar.api.Task;
-import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.sql.TaskDAO;
 import mtsar.resources.ProcessResource;
 import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
 import org.junit.Before;

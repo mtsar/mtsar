@@ -3,9 +3,9 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.jdbi.AnswerDAO;
-import mtsar.api.jdbi.TaskDAO;
-import mtsar.api.jdbi.WorkerDAO;
+import mtsar.api.sql.AnswerDAO;
+import mtsar.api.sql.TaskDAO;
+import mtsar.api.sql.WorkerDAO;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

@@ -1,4 +1,4 @@
-package mtsar.api.jdbi;
+package mtsar.api.sql;
 
 import mtsar.api.Answer;
 import org.skife.jdbi.v2.sqlobject.Bind;

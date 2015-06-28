@@ -1,4 +1,4 @@
-package mtsar.api.jdbi;
+package mtsar.api.sql;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

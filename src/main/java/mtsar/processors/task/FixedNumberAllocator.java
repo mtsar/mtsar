@@ -3,8 +3,8 @@ package mtsar.processors.task;
 import mtsar.api.Process;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
-import mtsar.api.jdbi.AnswerDAO;
-import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.sql.AnswerDAO;
+import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
 
 import javax.inject.Inject;

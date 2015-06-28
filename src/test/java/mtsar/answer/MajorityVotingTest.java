@@ -5,7 +5,7 @@ import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
-import mtsar.api.jdbi.AnswerDAO;
+import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.answer.MajorityVoting;
 import org.junit.Before;
 import org.junit.Test;

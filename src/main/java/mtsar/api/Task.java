@@ -3,7 +3,7 @@ package mtsar.api;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import mtsar.api.jdbi.PostgreSQLTextArray;
+import mtsar.api.sql.PostgreSQLTextArray;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;

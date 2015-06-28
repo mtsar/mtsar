@@ -4,7 +4,7 @@ import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
-import mtsar.api.jdbi.TaskDAO;
+import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
 
 import javax.inject.Inject;

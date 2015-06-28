@@ -3,9 +3,9 @@ package mtsar.views;
 import io.dropwizard.views.View;
 import mtsar.MechanicalTsarVersion;
 import mtsar.api.Process;
-import mtsar.api.jdbi.AnswerDAO;
-import mtsar.api.jdbi.TaskDAO;
-import mtsar.api.jdbi.WorkerDAO;
+import mtsar.api.sql.AnswerDAO;
+import mtsar.api.sql.TaskDAO;
+import mtsar.api.sql.WorkerDAO;
 
 import javax.inject.Inject;
 import java.util.Map;

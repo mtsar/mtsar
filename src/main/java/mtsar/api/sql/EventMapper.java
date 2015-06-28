@@ -1,4 +1,4 @@
-package mtsar.api.jdbi;
+package mtsar.api.sql;
 
 import mtsar.api.Event;
 import org.skife.jdbi.v2.StatementContext;

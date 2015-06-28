@@ -2,10 +2,10 @@ package mtsar.dropwizard.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import mtsar.api.jdbi.AnswerDAO;
-import mtsar.api.jdbi.EventDAO;
-import mtsar.api.jdbi.TaskDAO;
-import mtsar.api.jdbi.WorkerDAO;
+import mtsar.api.sql.AnswerDAO;
+import mtsar.api.sql.EventDAO;
+import mtsar.api.sql.TaskDAO;
+import mtsar.api.sql.WorkerDAO;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Singleton;
