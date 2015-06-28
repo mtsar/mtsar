@@ -34,7 +34,7 @@ public class InverseCountAllocator implements TaskAllocator {
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
         final Optional<Task> task = tasks.stream().sorted(comparator).findFirst();
         if (!task.isPresent()) return Optional.empty();
-        return Optional.of(TaskAllocation.create(worker, task.get()));
+        return Optional.of(new TaskAllocation(worker, task.get()));
     }
 
     private Comparator<Task> getComparator(AnswerDAO answerDAO) {

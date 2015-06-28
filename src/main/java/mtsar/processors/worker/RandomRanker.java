@@ -10,11 +10,11 @@ import java.util.Optional;
 public class RandomRanker implements WorkerRanker {
     @Override
     public Optional<WorkerRanking> rank(Worker worker) {
-        return Optional.of(WorkerRanking.create(worker, Math.random()));
+        return Optional.of(new WorkerRanking(worker, Math.random()));
     }
 
     @Override
     public Optional<WorkerRanking> rank(Worker worker, Task task) {
-        return Optional.of(WorkerRanking.create(worker, Math.random()));
+        return Optional.of(new WorkerRanking(worker, Math.random()));
     }
 }

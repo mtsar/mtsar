@@ -1,25 +1,28 @@
 package mtsar.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface TaskAllocation {
-    static TaskAllocation create(Worker worker, Task task) {
-        return new TaskAllocation() {
-            @Override
-            public Worker getWorker() {
-                return worker;
-            }
+import javax.xml.bind.annotation.XmlRootElement;
 
-            @Override
-            public Task getTask() {
-                return task;
-            }
-        };
+@XmlRootElement
+public class TaskAllocation {
+    private final Worker worker;
+    private final Task task;
+
+    @JsonCreator
+    public TaskAllocation(@JsonProperty("worker") Worker worker, @JsonProperty("task") Task task) {
+        this.worker = worker;
+        this.task = task;
     }
 
     @JsonProperty
-    Worker getWorker();
+    public Worker getWorker() {
+        return worker;
+    }
 
     @JsonProperty
-    Task getTask();
+    public Task getTask() {
+        return task;
+    }
 }

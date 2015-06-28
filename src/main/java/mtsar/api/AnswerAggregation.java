@@ -1,25 +1,28 @@
 package mtsar.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface AnswerAggregation {
-    static AnswerAggregation create(Task task, Answer answer) {
-        return new AnswerAggregation() {
-            @Override
-            public Task getTask() {
-                return task;
-            }
+import javax.xml.bind.annotation.XmlRootElement;
 
-            @Override
-            public Answer getAnswer() {
-                return answer;
-            }
-        };
+@XmlRootElement
+public class AnswerAggregation {
+    private final Task task;
+    private final Answer answer;
+
+    @JsonCreator
+    public AnswerAggregation(@JsonProperty("task") Task task, @JsonProperty("answer") Answer answer) {
+        this.task = task;
+        this.answer = answer;
     }
 
     @JsonProperty
-    Task getTask();
+    public Task getTask() {
+        return task;
+    }
 
     @JsonProperty
-    Answer getAnswer();
+    public Answer getAnswer() {
+        return answer;
+    }
 }

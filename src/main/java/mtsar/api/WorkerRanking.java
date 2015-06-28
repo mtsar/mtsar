@@ -1,25 +1,28 @@
 package mtsar.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface WorkerRanking {
-    static WorkerRanking create(Worker worker, double reputation) {
-        return new WorkerRanking() {
-            @Override
-            public Worker getWorker() {
-                return worker;
-            }
+import javax.xml.bind.annotation.XmlRootElement;
 
-            @Override
-            public double getReputation() {
-                return reputation;
-            }
-        };
+@XmlRootElement
+public class WorkerRanking {
+    private final Worker worker;
+    private final double reputation;
+
+    @JsonCreator
+    public WorkerRanking(@JsonProperty("worker") Worker worker, @JsonProperty("reputation") double reputation) {
+        this.worker = worker;
+        this.reputation = reputation;
     }
 
     @JsonProperty
-    Worker getWorker();
+    public Worker getWorker() {
+        return worker;
+    }
 
     @JsonProperty
-    double getReputation();
+    public double getReputation() {
+        return reputation;
+    }
 }

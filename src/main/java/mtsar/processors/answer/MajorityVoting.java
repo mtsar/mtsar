@@ -38,6 +38,6 @@ public class MajorityVoting implements AnswerAggregator {
         if (!winner.isPresent()) return Optional.empty();
         final Optional<Answer> answer = answers.stream().filter(a -> a.getAnswer() == winner.get().getKey()).findFirst();
         if (!answer.isPresent()) return Optional.empty();
-        return Optional.of(AnswerAggregation.create(task, Answer.builder().setProcess(answer.get().getProcess()).setTaskId(answer.get().getTaskId()).setAnswer(answer.get().getAnswer()).build()));
+        return Optional.of(new AnswerAggregation(task, Answer.builder().setProcess(answer.get().getProcess()).setTaskId(answer.get().getTaskId()).setAnswer(answer.get().getAnswer()).build()));
     }
 }
