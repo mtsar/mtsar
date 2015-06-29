@@ -1,5 +1,6 @@
 package mtsar.resources;
 
+import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
@@ -34,6 +35,21 @@ public class AnswerResource {
     @Path("{answer}")
     public Answer getAnswer(@PathParam("answer") Integer id) {
         return fetchAnswer(id);
+    }
+
+    @PATCH
+    @Path("{answer}")
+    public Answer patchAnswer(@PathParam("answer") Integer id) {
+        final Answer answer = fetchAnswer(id);
+        throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
+    }
+
+    @DELETE
+    @Path("{answer}")
+    public Answer deleteAnswer(@PathParam("answer") Integer id) {
+        final Answer answer = fetchAnswer(id);
+        answerDAO.delete(id, process.getId());
+        return answer;
     }
 
     @DELETE

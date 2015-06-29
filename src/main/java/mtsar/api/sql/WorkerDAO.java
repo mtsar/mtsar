@@ -29,6 +29,9 @@ public interface WorkerDAO {
     @SqlQuery("select count(*) from workers where process = :process")
     int count(@Bind("process") String process);
 
+    @SqlUpdate("delete from workers where where id = :id and process = :process")
+    void delete(@Bind("id") Integer id, @Bind("process") String process);
+
     @SqlUpdate("delete from workers where process = :process")
     void deleteAll(@Bind("process") String process);
 

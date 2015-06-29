@@ -118,14 +118,17 @@ public class TaskResource {
 
     @PATCH
     @Path("{task}")
-    public Task patchTask(@PathParam("task") String task) {
+    public Task patchTask(@PathParam("task") Integer id) {
+        final Task task = fetchTask(id);
         throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
     }
 
     @DELETE
     @Path("{task}")
-    public Task deleteTask(@PathParam("task") String task) {
-        throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
+    public Task deleteTask(@PathParam("task") Integer id) {
+        final Task task = fetchTask(id);
+        taskDAO.delete(id, process.getId());
+        return task;
     }
 
     @DELETE

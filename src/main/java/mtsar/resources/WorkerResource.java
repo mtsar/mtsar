@@ -1,5 +1,6 @@
 package mtsar.resources;
 
+import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.TaskAllocation;
@@ -67,23 +68,31 @@ public class WorkerResource {
     @GET
     @Path("{worker}/task")
     public TaskAllocation getWorkerTask(@PathParam("worker") Integer id) {
-        final Worker w = fetchWorker(id);
-        final Optional<TaskAllocation> allocation = process.getTaskAllocator().allocate(w);
+        final Worker worker = fetchWorker(id);
+        final Optional<TaskAllocation> allocation = process.getTaskAllocator().allocate(worker);
         return allocation.isPresent() ? allocation.get() : null;
     }
 
     @GET
     @Path("{worker}/answers")
     public List<Answer> getWorkerAnswers(@PathParam("worker") Integer id) {
-        final Worker w = fetchWorker(id);
-        return answerDAO.listForWorker(w.getId(), process.getId());
+        final Worker worker = fetchWorker(id);
+        return answerDAO.listForWorker(worker.getId(), process.getId());
+    }
+
+    @PATCH
+    @Path("{worker}")
+    public Worker patchWorker(@PathParam("worker") Integer id) {
+        final Worker worker = fetchWorker(id);
+        throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
     }
 
     @DELETE
     @Path("{worker}")
     public Worker deleteWorker(@PathParam("worker") Integer id) {
-        final Worker w = fetchWorker(id);
-        throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
+        final Worker worker = fetchWorker(id);
+        workerDAO.delete(id, process.getId());
+        return worker;
     }
 
     @DELETE

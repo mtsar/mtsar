@@ -32,6 +32,9 @@ public interface AnswerDAO {
     @SqlQuery("select count(*) from answers where process = :process")
     int count(@Bind("process") String process);
 
+    @SqlUpdate("delete from answers where id = :id and process = :process")
+    void delete(@Bind("id") Integer id, @Bind("process") String process);
+
     @SqlUpdate("delete from answers where process = :process")
     void deleteAll(@Bind("process") String process);
 
