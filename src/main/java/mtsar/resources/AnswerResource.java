@@ -6,14 +6,9 @@ import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,17 +30,20 @@ public class AnswerResource {
         return answerDAO.listForProcess(process.getId());
     }
 
-    @POST
-    public Answer postAnswer(@FormParam("worker") String worker, @FormParam("task") String task, @FormParam("processors") String answerParam, @FormParam("timestamp") String timestampParam) {
-        final Timestamp timestamp = (timestampParam == null) ?
-                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
-                Timestamp.valueOf(timestampParam);
-        final Answer answer = Answer.builder().
-                setProcess(process.getId()).
-                setAnswer(answerParam).
-                setDateTime(timestamp).
-                build();
-        int answerId = answerDAO.insert(answer);
-        return answerDAO.find(answerId, process.getId());
+    @GET
+    @Path("{answer}")
+    public Answer getAnswer(@PathParam("answer") Integer id) {
+        return fetchAnswer(id);
+    }
+
+    @DELETE
+    public void deleteAnswers() {
+        answerDAO.deleteAll(process.getId());
+    }
+
+    private Answer fetchAnswer(Integer id) {
+        final Answer answer = answerDAO.find(id, process.getId());
+        if (answer == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return answer;
     }
 }
