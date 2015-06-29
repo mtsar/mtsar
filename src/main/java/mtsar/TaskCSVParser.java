@@ -6,6 +6,7 @@ import mtsar.api.sql.TaskDAO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,19 +36,19 @@ public class TaskCSVParser {
         @Override
         public Task next() {
             final CSVRecord row = records.next();
+            final String externalId = row.isSet("external_id") ? row.get("external_id") : null;
             final String type = row.get("type");
-            final String description = row.get("description");
+            final String description = row.isSet("description") ? row.get("description") : null;
             final String[] answers = row.get("answers").split("\\|");
-            final String externalId = row.get("external_id");
-            final String datetime = row.get("datetime");
-            System.out.println(row.toString());
+            final String datetime = row.isSet("datetime") ? row.get("datetime") : null;
+
             return Task.builder().
                     setProcess(process.getId()).
-                    setType(type.isEmpty() ? null : type).
-                    setDescription(description.isEmpty() ? null : description).
+                    setType(StringUtils.defaultIfEmpty(type, null)).
+                    setDescription(StringUtils.defaultIfEmpty(description, null)).
                     setAnswers(answers).
-                    setExternalId(externalId.isEmpty() ? null : externalId).
-                    setDateTime(new Timestamp(datetime.isEmpty() ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
+                    setExternalId(StringUtils.defaultIfEmpty(externalId, null)).
+                    setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
                     build();
         }
     }
