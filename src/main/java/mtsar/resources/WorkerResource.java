@@ -1,9 +1,7 @@
 package mtsar.resources;
 
-import mtsar.api.Answer;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.TaskAllocation;
-import mtsar.api.Worker;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -15,6 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Produces(MediaType.APPLICATION_JSON)
 public class WorkerResource {
@@ -64,7 +63,8 @@ public class WorkerResource {
     @Path("{worker}/task")
     public TaskAllocation getWorkerTask(@PathParam("worker") Integer id) {
         final Worker w = fetchWorker(id);
-        return process.getTaskAllocator().allocate(w).get();
+        final Optional<TaskAllocation> allocation = process.getTaskAllocator().allocate(w);
+        return allocation.isPresent() ? allocation.get() : null;
     }
 
     @GET
