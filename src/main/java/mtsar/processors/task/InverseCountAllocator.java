@@ -37,14 +37,7 @@ public class InverseCountAllocator implements TaskAllocator {
                 Collectors.toMap(Function.identity(), t -> answerDAO.listForTask(t.getId(), process.get().getId()).size())
         );
 
-        tasks.sort((t1, t2) -> {
-            final int countsComparison = counts.get(t1).compareTo(counts.get(t2));
-            if (countsComparison == 0) {
-                return Math.random() > 0.5 ? 1 : -1;
-            } else {
-                return countsComparison;
-            }
-        });
+        tasks.sort((t1, t2) -> counts.get(t1).compareTo(counts.get(t2)));
 
         return Optional.of(new TaskAllocation(worker, tasks.get(0)));
     }
