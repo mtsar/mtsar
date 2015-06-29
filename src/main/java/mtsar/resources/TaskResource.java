@@ -7,13 +7,20 @@ import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -56,8 +63,13 @@ public class TaskResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public void postTasks(@FormDataParam("file") File file) throws IOException {
-        TaskCSVParser.insert(file, process, taskDAO);
+    public Response postTasks(@FormDataParam("file") InputStream stream) throws IOException {
+        try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            try (final CSVParser csv = new CSVParser(reader, TaskCSVParser.FORMAT)) {
+                taskDAO.insert(new TaskCSVParser.TaskIterator(process, csv.iterator()));
+            }
+        }
+        return Response.ok().build();
     }
 
     @GET
@@ -72,6 +84,26 @@ public class TaskResource {
         return answerDAO.listForTask(id, process.getId());
     }
 
+    @POST
+    @Path("{task}/answers")
+    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answers") List<String> answers, @FormParam("timestamp") String timestampParam) {
+        final Timestamp timestamp = (timestampParam == null) ?
+                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
+                Timestamp.valueOf(timestampParam);
+        final Worker worker = fetchWorker(workerId);
+        final Task task = fetchTask(id);
+        int answerId = answerDAO.insert(Answer.builder().
+                setProcess(process.getId()).
+                setExternalId(externalId).
+                setTaskId(task.getId()).
+                setWorkerId(worker.getId()).
+                setAnswers(answers.toArray(new String[answers.size()])).
+                setDateTime(timestamp).
+                build());
+        final Answer answer = answerDAO.find(answerId, process.getId());
+        return Response.created(getAnswerURI(uriInfo, answer)).entity(answer).build();
+    }
+
     @GET
     @Path("{task}/answer")
     public Answer getTaskAnswer(@PathParam("task") Integer id) {
@@ -82,26 +114,6 @@ public class TaskResource {
         } else {
             throw new WebApplicationException(Response.Status.NO_CONTENT);
         }
-    }
-
-    @POST
-    @Path("{task}/answer")
-    public Answer postTaskAnswer(@PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answers") List<String> answers, @FormParam("timestamp") String timestampParam) {
-        final Timestamp timestamp = (timestampParam == null) ?
-                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
-                Timestamp.valueOf(timestampParam);
-        final Worker worker = fetchWorker(workerId);
-        final Task task = fetchTask(id);
-        final Answer answer = Answer.builder().
-                setProcess(process.getId()).
-                setExternalId(externalId).
-                setTaskId(task.getId()).
-                setWorkerId(worker.getId()).
-                setAnswers(answers.toArray(new String[answers.size()])).
-                setDateTime(timestamp).
-                build();
-        int answerId = answerDAO.insert(answer);
-        return answerDAO.find(answerId, process.getId());
     }
 
     @PATCH
@@ -131,5 +143,12 @@ public class TaskResource {
         final Task task = taskDAO.find(id, process.getId());
         if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return task;
+    }
+
+    private URI getAnswerURI(UriInfo uriInfo, Answer answer) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("answers").path(answer.getId().toString()).
+                build();
     }
 }

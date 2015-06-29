@@ -2,15 +2,10 @@ package mtsar;
 
 import mtsar.api.Process;
 import mtsar.api.Task;
-import mtsar.api.sql.TaskDAO;
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Iterator;
 
@@ -50,12 +45,6 @@ public class TaskCSVParser {
                     setExternalId(StringUtils.defaultIfEmpty(externalId, null)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
                     build();
-        }
-    }
-
-    public static void insert(File file, Process process, TaskDAO dao) throws IOException {
-        try (final CSVParser csv = CSVParser.parse(file, StandardCharsets.UTF_8, FORMAT)) {
-            dao.insert(new TaskIterator(process, csv.iterator()));
         }
     }
 }
