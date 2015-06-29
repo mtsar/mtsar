@@ -32,6 +32,9 @@ public interface TaskDAO {
     @BatchChunkSize(1000)
     void insert(@BindBean Iterator<Task> tasks);
 
+    @SqlUpdate("delete from tasks where process = :process")
+    void deleteAll(@Bind("process") String process);
+
     @SqlUpdate("delete from tasks")
     void deleteAll();
 
