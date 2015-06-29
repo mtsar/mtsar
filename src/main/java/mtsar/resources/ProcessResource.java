@@ -14,6 +14,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.Set;
 
 @Singleton
 @Path("/processes")
@@ -33,8 +34,8 @@ public class ProcessResource {
     }
 
     @GET
-    public Map<String, Process> getProcesses() {
-        return processes;
+    public Set<String> getProcesses() {
+        return processes.keySet();
     }
 
     @GET
