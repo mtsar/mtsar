@@ -63,7 +63,7 @@ public class TaskResource {
     @GET
     @Path("{task}")
     public Task getTask(@PathParam("task") Integer id) {
-        return taskDAO.find(id, process.getId());
+        return fetchTask(id);
     }
 
     @GET
