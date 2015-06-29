@@ -81,6 +81,11 @@ public class WorkerResource {
         throw new WebApplicationException(Response.Status.NOT_IMPLEMENTED);
     }
 
+    @DELETE
+    public void deleteTasks() {
+        workerDAO.deleteAll(process.getId());
+    }
+
     private Worker fetchWorker(Integer id) {
         final Worker w = workerDAO.find(id, process.getId());
         if (w == null) {
