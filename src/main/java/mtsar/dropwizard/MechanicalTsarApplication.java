@@ -97,7 +97,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             final Class<? extends AnswerAggregator> answerAggregator = Class.forName(definition.getAnswerAggregatorName()).asSubclass(AnswerAggregator.class);
 
             final Injector processInjector = injector.createChildInjector(
-                    new ProcessModule(id, definition.getOptions(), workerRanker, taskAllocator, answerAggregator)
+                    new ProcessModule(id, definition, workerRanker, taskAllocator, answerAggregator)
             );
 
             final Process process = processInjector.getInstance(mtsar.api.Process.class);

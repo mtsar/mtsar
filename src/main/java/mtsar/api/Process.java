@@ -22,7 +22,7 @@ public class Process {
         return () -> process;
     }
 
-    protected String id;
+    protected String id, description;
     protected Map<String, String> options = Collections.emptyMap();
 
     protected final WorkerRanker workerRanker;
@@ -30,18 +30,24 @@ public class Process {
     protected final AnswerAggregator answerAggregator;
 
     @Inject
-    public Process(@Named("id") String id, @Named("options") Map<String, String> options, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator, Logger logger) {
+    public Process(@Named("id") String id, @Named("description") String description, @Named("options") Map<String, String> options, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator, Logger logger) {
         this.id = id;
+        this.description = description;
+        this.options = options;
         this.workerRanker = workerRanker;
         this.taskAllocator = taskAllocator;
         this.answerAggregator = answerAggregator;
-        this.options = options;
         logger.info(String.format("Allocated a Process called \"%s\" with %d option(s)", id, options.size()));
     }
 
     @JsonProperty
     public String getId() {
         return id;
+    }
+
+    @JsonProperty
+    public String getDescription() {
+        return description;
     }
 
     @JsonProperty

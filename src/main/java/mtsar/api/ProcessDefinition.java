@@ -11,10 +11,12 @@ import java.util.Map;
 @XmlRootElement
 public class ProcessDefinition {
     protected String id;
-    protected Map<String, String> options = Collections.emptyMap();
+
     @Valid
     @NotNull
-    protected String workerRankerName, taskAllocatorName, answerAggregatorName;
+    protected String description, workerRankerName, taskAllocatorName, answerAggregatorName;
+
+    protected Map<String, String> options = Collections.emptyMap();
 
     @JsonProperty
     public String getId() {
@@ -24,6 +26,16 @@ public class ProcessDefinition {
     @JsonProperty
     public void setId(String id) {
         this.id = id;
+    }
+
+    @JsonProperty
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @JsonProperty
