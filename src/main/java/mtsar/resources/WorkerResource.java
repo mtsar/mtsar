@@ -87,10 +87,8 @@ public class WorkerResource {
     }
 
     private Worker fetchWorker(Integer id) {
-        final Worker w = workerDAO.find(id, process.getId());
-        if (w == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        return w;
+        final Worker worker = workerDAO.find(id, process.getId());
+        if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return worker;
     }
 }

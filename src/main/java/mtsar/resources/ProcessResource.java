@@ -73,9 +73,7 @@ public class ProcessResource {
     }
 
     protected Process fetchProcess(String id) {
-        if (!processes.containsKey(id)) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
+        if (!processes.containsKey(id)) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return processes.get(id);
     }
 }

@@ -122,18 +122,14 @@ public class TaskResource {
     }
 
     private Worker fetchWorker(Integer id) {
-        final Worker w = workerDAO.find(id, process.getId());
-        if (w == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        return w;
+        final Worker worker = workerDAO.find(id, process.getId());
+        if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return worker;
     }
 
     private Task fetchTask(Integer id) {
-        final Task t = taskDAO.find(id, process.getId());
-        if (t == null) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-        return t;
+        final Task task = taskDAO.find(id, process.getId());
+        if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return task;
     }
 }
