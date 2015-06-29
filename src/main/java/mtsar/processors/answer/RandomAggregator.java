@@ -29,6 +29,7 @@ public class RandomAggregator implements AnswerAggregator {
         if (answers.isEmpty()) return Optional.empty();
         Collections.shuffle(answers);
         final Answer answer = answers.get(0);
-        return Optional.of(new AnswerAggregation(task, Answer.builder().setProcess(answer.getProcess()).setTaskId(answer.getTaskId()).setAnswer(answer.getAnswer()).build()));
+        /* TODO: handle the "multiple" task type */
+        return Optional.of(new AnswerAggregation(task, Answer.builder().setProcess(answer.getProcess()).setTaskId(answer.getTaskId()).setAnswer(answer.getAnswer().get()).build()));
     }
 }

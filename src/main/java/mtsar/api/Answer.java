@@ -1,10 +1,14 @@
 package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mtsar.api.sql.PostgreSQLTextArray;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @XmlRootElement
 public class Answer {
@@ -39,7 +43,12 @@ public class Answer {
         }
 
         public Builder setAnswer(String answer) {
-            this.answer = answer;
+            this.answers = ArrayUtils.toArray(answer);
+            return this;
+        }
+
+        public Builder setAnswers(String[] answers) {
+            this.answers = answers;
             return this;
         }
 
@@ -53,7 +62,7 @@ public class Answer {
         private String process;
         private Integer workerId;
         private Integer taskId;
-        private String answer;
+        private String[] answers;
         private Timestamp dateTime;
     }
 
@@ -68,7 +77,7 @@ public class Answer {
                 builder.process,
                 builder.workerId,
                 builder.taskId,
-                builder.answer,
+                builder.answers,
                 builder.dateTime
         );
     }
@@ -78,7 +87,7 @@ public class Answer {
     protected final String process;
     protected final Integer workerId;
     protected final Integer taskId;
-    protected final String answer;
+    protected final String[] answers;
     protected final Timestamp dateTime;
 
     @JsonCreator
@@ -87,14 +96,14 @@ public class Answer {
                   @JsonProperty("process") String process,
                   @JsonProperty("workerId") Integer workerId,
                   @JsonProperty("taskId") Integer taskId,
-                  @JsonProperty("answer") String answer,
+                  @JsonProperty("answer") String[] answers,
                   @JsonProperty("dateTime") Timestamp dateTime) {
         this.id = id;
         this.externalId = externalId;
         this.process = process;
         this.workerId = workerId;
         this.taskId = taskId;
-        this.answer = answer;
+        this.answers = answers;
         this.dateTime = dateTime;
     }
 
@@ -123,9 +132,20 @@ public class Answer {
         return taskId;
     }
 
+    @JsonIgnore
+    public Optional<String> getAnswer() {
+        if (ArrayUtils.isEmpty(answers)) return Optional.empty();
+        return Optional.of(answers[0]);
+    }
+
     @JsonProperty
-    public String getAnswer() {
-        return answer;
+    public String[] getAnswers() {
+        return answers;
+    }
+
+    @JsonIgnore
+    public String getAnswersTextArray() {
+        return new PostgreSQLTextArray(answers).toString();
     }
 
     @JsonProperty

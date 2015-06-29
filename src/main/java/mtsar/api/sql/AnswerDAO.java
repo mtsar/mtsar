@@ -23,7 +23,7 @@ public interface AnswerDAO {
     @SqlQuery("select * from answers where id = :id and process = :process limit 1")
     Answer find(@Bind("id") Integer id, @Bind("process") String process);
 
-    @SqlQuery("insert into answers (process, external_id, worker_id, task_id, answer, datetime) values (:process, :externalId, :workerId, :taskId, :answer, :dateTime) returning id")
+    @SqlQuery("insert into answers (process, external_id, worker_id, task_id, answers, datetime) values (:process, :externalId, :workerId, :taskId, cast(:answersTextArray as text[]), :dateTime) returning id")
     int insert(@BindBean Answer a);
 
     @SqlQuery("select count(*) from answers")
@@ -31,6 +31,9 @@ public interface AnswerDAO {
 
     @SqlQuery("select count(*) from answers where process = :process")
     int count(@Bind("process") String process);
+
+    @SqlUpdate("delete from answers where process = :process")
+    void deleteAll(@Bind("process") String process);
 
     @SqlUpdate("delete from answers")
     void deleteAll();

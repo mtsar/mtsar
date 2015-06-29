@@ -41,10 +41,10 @@ public class TaskResource {
     }
 
     @POST
-    public Task postTask(@FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
+    public Task postTask(@FormParam("type") @DefaultValue("single") String type, @FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
         Task t = Task.builder().
                 setExternalId(externalId).
-                setType("single").
+                setType(type).
                 setDescription(description).
                 setAnswers(answers.toArray(new String[answers.size()])).
                 setProcess(process.getId()).
@@ -86,7 +86,7 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answer")
-    public Answer postTaskAnswer(@PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answer") String answerParam, @FormParam("timestamp") String timestampParam) {
+    public Answer postTaskAnswer(@PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answers") List<String> answers, @FormParam("timestamp") String timestampParam) {
         final Timestamp timestamp = (timestampParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
                 Timestamp.valueOf(timestampParam);
@@ -97,7 +97,7 @@ public class TaskResource {
                 setExternalId(externalId).
                 setTaskId(task.getId()).
                 setWorkerId(worker.getId()).
-                setAnswer(answerParam).
+                setAnswers(answers.toArray(new String[answers.size()])).
                 setDateTime(timestamp).
                 build();
         int answerId = answerDAO.insert(answer);

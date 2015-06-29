@@ -15,7 +15,7 @@ public class AnswerMapper implements ResultSetMapper<Answer> {
                 setProcess(r.getString("process")).
                 setWorkerId(r.getInt("worker_id")).
                 setTaskId(r.getInt("task_id")).
-                setAnswer(r.getString("answer")).
+                setAnswers((String[]) r.getArray("answers").getArray()).
                 setDateTime(r.getTimestamp("datetime")).
                 build();
     }

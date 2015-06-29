@@ -30,14 +30,6 @@ public class MajorityVoting implements AnswerAggregator {
 
     @Override
     public Optional<AnswerAggregation> aggregate(Task task) {
-        final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
-        final Map<String, Long> votes = answers.stream().collect(
-                Collectors.groupingBy(Answer::getAnswer, Collectors.counting()));
-        final Optional<Map.Entry<String, Long>> winner =
-                votes.entrySet().stream().sorted(voteComparator).findFirst();
-        if (!winner.isPresent()) return Optional.empty();
-        final Optional<Answer> answer = answers.stream().filter(a -> a.getAnswer() == winner.get().getKey()).findFirst();
-        if (!answer.isPresent()) return Optional.empty();
-        return Optional.of(new AnswerAggregation(task, Answer.builder().setProcess(answer.get().getProcess()).setTaskId(answer.get().getTaskId()).setAnswer(answer.get().getAnswer()).build()));
+        throw new UnsupportedOperationException("Not Implemented Yet");
     }
 }
