@@ -48,17 +48,17 @@ public class TaskResource {
     }
 
     @POST
-    public Task postTask(@FormParam("type") @DefaultValue("single") String type, @FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
-        Task t = Task.builder().
+    public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
+        int taskId = taskDAO.insert(Task.builder().
                 setExternalId(externalId).
                 setType(type).
                 setDescription(description).
                 setAnswers(answers.toArray(new String[answers.size()])).
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
-                build();
-        int taskId = taskDAO.insert(t);
-        return taskDAO.find(taskId, process.getId());
+                build());
+        final Task task = taskDAO.find(taskId, process.getId());
+        return Response.created(getTaskURI(uriInfo, task)).entity(task).build();
     }
 
     @POST
@@ -143,6 +143,13 @@ public class TaskResource {
         final Task task = taskDAO.find(id, process.getId());
         if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return task;
+    }
+
+    private URI getTaskURI(UriInfo uriInfo, Task task) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("tasks").path(task.getId().toString()).
+                build();
     }
 
     private URI getAnswerURI(UriInfo uriInfo, Answer answer) {

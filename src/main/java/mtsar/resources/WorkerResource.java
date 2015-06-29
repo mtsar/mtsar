@@ -1,14 +1,19 @@
 package mtsar.resources;
 
-import mtsar.api.*;
+import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.TaskAllocation;
+import mtsar.api.Worker;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -35,14 +40,14 @@ public class WorkerResource {
     }
 
     @POST
-    public Worker postWorker(@FormParam("external_id") String externalId) {
-        Worker w = Worker.builder().
+    public Response postWorker(@Context UriInfo uriInfo, @FormParam("external_id") String externalId) {
+        int workerId = workerDAO.insert(Worker.builder().
                 setExternalId(externalId).
                 setProcess(process.getId()).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
-                build();
-        int workerId = workerDAO.insert(w);
-        return workerDAO.find(workerId, process.getId());
+                build());
+        final Worker worker = workerDAO.find(workerId, process.getId());
+        return Response.created(getWorkerURI(uriInfo, worker)).entity(worker).build();
     }
 
     @GET
@@ -90,5 +95,12 @@ public class WorkerResource {
         final Worker worker = workerDAO.find(id, process.getId());
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
+    }
+
+    private URI getWorkerURI(UriInfo uriInfo, Worker worker) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("workers").path(worker.getId().toString()).
+                build();
     }
 }
