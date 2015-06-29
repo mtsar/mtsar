@@ -6,6 +6,7 @@ import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
@@ -63,6 +64,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         });
 
         bootstrap.addBundle(guiceBundle);
+        bootstrap.addBundle(new MultiPartBundle());
         bootstrap.addBundle(new AssetsBundle("/mtsar/stylesheets", "/stylesheets", null, "stylesheets"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/javascripts", "/javascripts", null, "javascripts"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/images", "/images", null, "images"));

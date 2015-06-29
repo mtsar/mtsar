@@ -1,15 +1,19 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
+import mtsar.TaskCSVParser;
 import mtsar.api.*;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,6 +52,12 @@ public class TaskResource {
                 build();
         int taskId = taskDAO.insert(t);
         return taskDAO.find(taskId, process.getId());
+    }
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void postTasks(@FormDataParam("file") File file) throws IOException {
+        TaskCSVParser.insert(file, process, taskDAO);
     }
 
     @GET

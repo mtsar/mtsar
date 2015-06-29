@@ -1,12 +1,11 @@
 package mtsar.api.sql;
 
 import mtsar.api.Task;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.*;
+import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import java.util.Iterator;
 import java.util.List;
 
 @RegisterMapper(TaskMapper.class)
@@ -28,6 +27,10 @@ public interface TaskDAO {
 
     @SqlQuery("insert into tasks (type, process, external_id, description, answers, datetime) values (:type, :process, :externalId, :description, cast(:answersTextArray as text[]), :dateTime) returning id")
     int insert(@BindBean Task t);
+
+    @SqlBatch("insert into tasks (type, process, external_id, description, answers, datetime) values (:type, :process, :externalId, :description, cast(:answersTextArray as text[]), :dateTime)")
+    @BatchChunkSize(1000)
+    void insert(@BindBean Iterator<Task> tasks);
 
     @SqlUpdate("delete from tasks")
     void deleteAll();
