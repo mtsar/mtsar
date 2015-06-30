@@ -7,14 +7,12 @@ import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,8 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(MediaType.APPLICATION_JSON)
@@ -86,12 +83,20 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answers")
-    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("answers") List<String> answers, @FormParam("timestamp") String timestampParam) {
+    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("timestamp") String timestampParam, MultivaluedMap<String, String> params) {
         final Timestamp timestamp = (timestampParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
                 Timestamp.valueOf(timestampParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
+
+        final Set<String> answers = new HashSet<>();
+        for (final Map.Entry<String, List<String>> entries : params.entrySet()) {
+            if (!entries.getKey().matches("^answers(\\[\\d+\\]|)$")) continue;
+            if (CollectionUtils.isEmpty(entries.getValue())) continue;
+            for (final String answer : entries.getValue()) answers.add(answer);
+        }
+
         int answerId = answerDAO.insert(Answer.builder().
                 setProcess(process.getId()).
                 setExternalId(externalId).
