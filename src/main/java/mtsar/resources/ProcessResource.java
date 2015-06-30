@@ -41,7 +41,7 @@ public class ProcessResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public ProcessesView getProcessView() {
-        return new ProcessesView(processes);
+        return new ProcessesView(processes, taskDAO, workerDAO, answerDAO);
     }
 
     @GET
