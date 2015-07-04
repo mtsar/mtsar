@@ -1,6 +1,5 @@
 package mtsar.api.csv;
 
-import com.google.common.base.Charsets;
 import mtsar.api.Worker;
 import org.apache.commons.csv.CSVFormat;
 
@@ -8,10 +7,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
-public class WorkerCSVWriter {
+public final class WorkerCSVWriter {
     public static class WorkerIterator implements Iterator {
         private final Iterator<Worker> workers;
 
@@ -38,7 +38,7 @@ public class WorkerCSVWriter {
     public static final String[] HEADER = {"id", "external_id", "process", "datetime"};
 
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
-        try (final Writer writer = new OutputStreamWriter(output, Charsets.UTF_8)) {
+        try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(() -> new WorkerIterator(workers));
         }
     }

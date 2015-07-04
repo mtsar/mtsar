@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Timestamp;
 import java.util.Iterator;
 
-public class TaskCSVParser {
+public final class TaskCSVParser {
     public static final CSVFormat FORMAT = CSVFormat.DEFAULT.
             withHeader("external_id", "type", "description", "answers", "datetime").
             withSkipHeaderRecord();
