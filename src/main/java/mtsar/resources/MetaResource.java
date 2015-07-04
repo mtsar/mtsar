@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Singleton
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(mtsar.MediaType.APPLICATION_JSON)
 public class MetaResource {
     protected final MechanicalTsarVersion version;
     protected final Map<String, Process> processes;

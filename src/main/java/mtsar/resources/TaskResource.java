@@ -27,7 +27,7 @@ import java.time.ZoneId;
 import java.util.*;
 
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(mtsar.MediaType.APPLICATION_JSON)
 public class TaskResource {
     protected final Process process;
     protected final TaskDAO taskDAO;

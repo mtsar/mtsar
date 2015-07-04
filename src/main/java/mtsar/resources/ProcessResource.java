@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Singleton
 @Path("/processes")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(mtsar.MediaType.APPLICATION_JSON)
 public class ProcessResource {
     protected final Map<String, mtsar.api.Process> processes;
     protected final TaskDAO taskDAO;

@@ -11,7 +11,10 @@ import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -19,7 +22,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(mtsar.MediaType.APPLICATION_JSON)
 public class WorkerResource {
     protected final mtsar.api.Process process;
     protected final TaskDAO taskDAO;

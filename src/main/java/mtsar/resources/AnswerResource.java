@@ -9,12 +9,11 @@ import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
 
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(mtsar.MediaType.APPLICATION_JSON)
 public class AnswerResource {
     protected final Process process;
     protected final TaskDAO taskDAO;
