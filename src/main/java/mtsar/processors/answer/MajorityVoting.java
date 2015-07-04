@@ -1,6 +1,5 @@
 package mtsar.processors.answer;
 
-import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
@@ -10,10 +9,8 @@ import mtsar.processors.AnswerAggregator;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class MajorityVoting implements AnswerAggregator {
     public static final Comparator<Map.Entry<String, Long>> voteComparator =

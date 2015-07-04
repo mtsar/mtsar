@@ -1,9 +1,10 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.TaskCSVParser;
 import mtsar.api.*;
 import mtsar.api.Process;
+import mtsar.api.csv.TaskCSVParser;
+import mtsar.api.csv.TaskCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -42,6 +43,13 @@ public class TaskResource {
     @GET
     public List<Task> getTasks(@QueryParam("page") @DefaultValue("0") int page) {
         return taskDAO.listForProcess(process.getId());
+    }
+
+    @GET
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getTasksCSV() {
+        final List<Task> tasks = taskDAO.listForProcess(process.getId());
+        return output -> TaskCSVWriter.write(tasks, output);
     }
 
     @POST

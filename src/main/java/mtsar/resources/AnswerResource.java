@@ -3,6 +3,7 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.csv.AnswerCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -10,6 +11,7 @@ import mtsar.api.sql.WorkerDAO;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,6 +31,13 @@ public class AnswerResource {
     @GET
     public List<Answer> getAnswers() {
         return answerDAO.listForProcess(process.getId());
+    }
+
+    @GET
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getAnswersCSV() {
+        final List<Answer> answers = answerDAO.listForProcess(process.getId());
+        return output -> AnswerCSVWriter.write(answers, output);
     }
 
     @GET

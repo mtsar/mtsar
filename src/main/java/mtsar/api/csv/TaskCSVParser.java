@@ -1,4 +1,4 @@
-package mtsar;
+package mtsar.api.csv;
 
 import mtsar.api.Process;
 import mtsar.api.Task;

@@ -5,15 +5,13 @@ import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
+import mtsar.api.csv.WorkerCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -38,6 +36,13 @@ public class WorkerResource {
     @GET
     public List<Worker> getWorkers() {
         return workerDAO.listForProcess(process.getId());
+    }
+
+    @GET
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getWorkersCSV() {
+        final List<Worker> workers = workerDAO.listForProcess(process.getId());
+        return output -> WorkerCSVWriter.write(workers, output);
     }
 
     @POST
