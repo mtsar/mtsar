@@ -8,6 +8,7 @@ import mtsar.api.csv.TaskCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.views.TasksView;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -38,6 +39,12 @@ public class TaskResource {
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public TasksView getTasksView(@Context UriInfo uriInfo) {
+        return new TasksView(uriInfo, process);
     }
 
     @GET
