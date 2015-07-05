@@ -28,6 +28,7 @@ public class RandomAllocatorTest {
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
+        when(worker.getId()).thenReturn(1);
         Collections.shuffle(tasks);
     }
 

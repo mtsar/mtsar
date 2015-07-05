@@ -30,6 +30,7 @@ public class InverseCountAllocatorTest {
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
+        when(worker.getId()).thenReturn(1);
         when(tasks.get(0).getId()).thenReturn(1);
         when(tasks.get(1).getId()).thenReturn(2);
     }
