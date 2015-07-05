@@ -23,7 +23,7 @@ public class RandomAllocatorTest {
     private static final Process process = mock(Process.class);
     private static final Worker worker = mock(Worker.class);
     private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
-    private static final RandomAllocator randomAllocator = new RandomAllocator(mtsar.api.Process.wrap(process), taskDAO);
+    private static final RandomAllocator allocator = new RandomAllocator(mtsar.api.Process.wrap(process), taskDAO);
 
     @Before
     public void setup() {
@@ -36,7 +36,7 @@ public class RandomAllocatorTest {
     public void testAllocation() {
         reset(taskDAO);
         when(taskDAO.random(anyString())).thenReturn(tasks.get(0));
-        final Optional<TaskAllocation> allocation = randomAllocator.allocate(worker);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
         assertThat(allocation.get().getTask()).isIn(tasks);
     }
@@ -45,7 +45,7 @@ public class RandomAllocatorTest {
     public void testEmpty() {
         reset(taskDAO);
         when(taskDAO.random(anyString())).thenReturn(null);
-        final Optional<TaskAllocation> allocation = randomAllocator.allocate(worker);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isFalse();
     }
 }

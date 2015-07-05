@@ -12,11 +12,11 @@ import static org.mockito.Mockito.mock;
 
 public class EmptyAggregatorTest {
     private static final Task task = mock(Task.class);
-    private static final EmptyAggregator emptyAggregator = new EmptyAggregator();
+    private static final EmptyAggregator aggregator = new EmptyAggregator();
 
     @Test
     public void testEmptyCase() {
-        final Optional<AnswerAggregation> winner = emptyAggregator.aggregate(task);
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }
 }

@@ -22,7 +22,7 @@ public class MajorityVotingTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Process process = mock(Process.class);
     private static final Task task = mock(Task.class);
-    private static final MajorityVoting majorityVoting = new MajorityVoting(Process.wrap(process), answerDAO);
+    private static final MajorityVoting aggregator = new MajorityVoting(Process.wrap(process), answerDAO);
 
     @Before
     public void setup() {
@@ -39,7 +39,7 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("3").build()
         ));
-        final Optional<AnswerAggregation> winner = majorityVoting.aggregate(task);
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
         final Answer answer = winner.get().getAnswer();
         assertThat(answer.getAnswer()).isEqualTo("1");
@@ -52,7 +52,7 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("1").build()
         ));
-        final Optional<AnswerAggregation> winner = majorityVoting.aggregate(task);
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
         final Answer answer = winner.get().getAnswer();
         assertThat(answer.getAnswer()).isEqualTo("1");
@@ -62,7 +62,7 @@ public class MajorityVotingTest {
     public void testEmptyCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        final Optional<AnswerAggregation> winner = majorityVoting.aggregate(task);
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }
 }

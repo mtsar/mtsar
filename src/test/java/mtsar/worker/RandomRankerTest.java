@@ -15,7 +15,7 @@ public class RandomRankerTest {
     private static final ProcessDefinition process = mock(ProcessDefinition.class);
     private static final Worker worker = mock(Worker.class);
     private static final Task task = mock(Task.class);
-    private static final RandomRanker randomRanker = new RandomRanker();
+    private static final RandomRanker ranker = new RandomRanker();
 
     @Before
     public void setup() {
@@ -24,10 +24,10 @@ public class RandomRankerTest {
 
     @Test
     public void testRanking() {
-        assertThat(randomRanker.rank(worker).isPresent()).isTrue();
-        assertThat(randomRanker.rank(worker).get().getReputation()).isBetween(0.0, 1.0);
+        assertThat(ranker.rank(worker).isPresent()).isTrue();
+        assertThat(ranker.rank(worker).get().getReputation()).isBetween(0.0, 1.0);
 
-        assertThat(randomRanker.rank(worker, task).isPresent()).isTrue();
-        assertThat(randomRanker.rank(worker, task).get().getReputation()).isBetween(0.0, 1.0);
+        assertThat(ranker.rank(worker, task).isPresent()).isTrue();
+        assertThat(ranker.rank(worker, task).get().getReputation()).isBetween(0.0, 1.0);
     }
 }

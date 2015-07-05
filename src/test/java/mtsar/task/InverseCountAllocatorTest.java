@@ -25,7 +25,7 @@ public class InverseCountAllocatorTest {
     private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
     private static final List<Answer> answers1 = Lists.newArrayList(mock(Answer.class));
     private static final List<Answer> answers2 = Lists.newArrayList(mock(Answer.class), mock(Answer.class));
-    private static final InverseCountAllocator inverseCountAllocator = new InverseCountAllocator(Process.wrap(process), taskDAO, answerDAO);
+    private static final InverseCountAllocator allocator = new InverseCountAllocator(Process.wrap(process), taskDAO, answerDAO);
 
     @Before
     public void setup() {
@@ -42,7 +42,7 @@ public class InverseCountAllocatorTest {
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers2);
-        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
         assertThat(allocation.get().getTask()).isEqualTo(tasks.get(0));
     }
@@ -54,7 +54,7 @@ public class InverseCountAllocatorTest {
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers1);
-        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
         assertThat(allocation.get().getTask()).isIn(tasks);
     }
@@ -63,7 +63,7 @@ public class InverseCountAllocatorTest {
     public void testEmpty() {
         reset(taskDAO);
         reset(answerDAO);
-        final Optional<TaskAllocation> allocation = inverseCountAllocator.allocate(worker);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isFalse();
     }
 }

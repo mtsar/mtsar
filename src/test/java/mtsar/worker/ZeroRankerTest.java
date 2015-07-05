@@ -15,7 +15,7 @@ public class ZeroRankerTest {
     private static final ProcessDefinition process = mock(ProcessDefinition.class);
     private static final Worker worker = mock(Worker.class);
     private static final Task task = mock(Task.class);
-    private static final ZeroRanker zeroRanker = new ZeroRanker();
+    private static final ZeroRanker ranker = new ZeroRanker();
 
     @Before
     public void setup() {
@@ -24,10 +24,10 @@ public class ZeroRankerTest {
 
     @Test
     public void testRanking() {
-        assertThat(zeroRanker.rank(worker).isPresent()).isTrue();
-        assertThat(zeroRanker.rank(worker).get().getReputation()).isEqualTo(0);
+        assertThat(ranker.rank(worker).isPresent()).isTrue();
+        assertThat(ranker.rank(worker).get().getReputation()).isEqualTo(0);
 
-        assertThat(zeroRanker.rank(worker, task).isPresent()).isTrue();
-        assertThat(zeroRanker.rank(worker, task).get().getReputation()).isEqualTo(0);
+        assertThat(ranker.rank(worker, task).isPresent()).isTrue();
+        assertThat(ranker.rank(worker, task).get().getReputation()).isEqualTo(0);
     }
 }
