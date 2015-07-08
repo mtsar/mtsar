@@ -9,7 +9,7 @@ COPY LICENSE pom.xml /mtsar/
 RUN mvn -T 4 verify clean -B -fn -Dmaven.test.skip=true
 
 COPY src /mtsar/src
-RUN mvn -T 4 -B -Dmaven.test.skip=true verify && ln -sf target/mtsar-*.jar mtsar.jar
+RUN mvn -T 4 -B -Dmaven.test.skip=true verify && mv -fv target/mtsar-*.jar mtsar.jar && rm -rf target
 
 COPY README.md mtsar.sh /mtsar/
 
