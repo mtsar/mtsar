@@ -1,4 +1,8 @@
 .git
 .idea
+.dockerignore
+Dockerfile
 target
 log
+*.yml
+*.csv
