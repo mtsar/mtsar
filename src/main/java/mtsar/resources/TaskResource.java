@@ -98,10 +98,10 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answers")
-    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("timestamp") String timestampParam, MultivaluedMap<String, String> params) {
-        final Timestamp timestamp = (timestampParam == null) ?
+    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+        final Timestamp datetime = (datetimeParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
-                Timestamp.valueOf(timestampParam);
+                Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
 
@@ -118,7 +118,7 @@ public class TaskResource {
                 setTaskId(task.getId()).
                 setWorkerId(worker.getId()).
                 setAnswers(answers.toArray(new String[answers.size()])).
-                setDateTime(timestamp).
+                setDateTime(datetime).
                 build());
         final Answer answer = answerDAO.find(answerId, process.getId());
         return Response.created(getAnswerURI(uriInfo, answer)).entity(answer).build();
