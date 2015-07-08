@@ -11,7 +11,7 @@ import java.util.List;
 
 @RegisterMapper(ProcessDefinitionMapper.class)
 public interface ProcessDAO {
-    @SqlQuery("select * from processes")
+    @SqlQuery("select * from processes order by datetime")
     List<ProcessDefinition> select();
 
     @SqlQuery("select * from processes where name = :name limit 1")
@@ -22,6 +22,9 @@ public interface ProcessDAO {
 
     @SqlQuery("insert into processes (id, description, worker_ranker, task_allocator, answer_aggregator, options, datetime) values (:id, :description, :workerRanker, :taskAllocator, :answerAggregator, cast(:optionsJSON as jsonb), coalesce(:dateTime, localtimestamp)) returning id")
     String insert(@BindBean ProcessDefinition t);
+
+    @SqlUpdate("delete from processes where id = :id")
+    void delete(@Bind("id") String id);
 
     @SqlUpdate("delete from processes")
     void deleteAll();
