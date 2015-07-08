@@ -1,5 +1,6 @@
 package mtsar.dropwizard.guice;
 
+import com.google.common.base.Strings;
 import com.google.inject.AbstractModule;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
@@ -20,8 +21,8 @@ public class ProcessModule extends AbstractModule {
     private final Class<? extends TaskAllocator> taskAllocator;
     private final Class<? extends AnswerAggregator> answerAggregator;
 
-    public ProcessModule(String id, ProcessDefinition definition, Class<? extends WorkerRanker> workerRanker, Class<? extends TaskAllocator> taskAllocator, Class<? extends AnswerAggregator> answerAggregator) {
-        this.id = id;
+    public ProcessModule(ProcessDefinition definition, Class<? extends WorkerRanker> workerRanker, Class<? extends TaskAllocator> taskAllocator, Class<? extends AnswerAggregator> answerAggregator) {
+        this.id = definition.getId();
         this.description = definition.getDescription();
         this.options = definition.getOptions();
         this.workerRanker = workerRanker;
@@ -32,7 +33,7 @@ public class ProcessModule extends AbstractModule {
     @Override
     protected void configure() {
         bindConstant().annotatedWith(Names.named("id")).to(id);
-        bindConstant().annotatedWith(Names.named("description")).to(description);
+        bindConstant().annotatedWith(Names.named("description")).to(Strings.nullToEmpty(description));
         bind(OPTIONS_TYPE_LITERAL).annotatedWith(Names.named("options")).toInstance(options);
         bind(WorkerRanker.class).to(workerRanker);
         bind(TaskAllocator.class).to(taskAllocator);

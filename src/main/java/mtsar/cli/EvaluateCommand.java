@@ -15,7 +15,6 @@ public class EvaluateCommand extends EnvironmentCommand<MechanicalTsarConfigurat
         this.application = (MechanicalTsarApplication) application;
     }
 
-    protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) throws ClassNotFoundException {
-        application.bootstrap(configuration, environment);
+    protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) {
     }
 }

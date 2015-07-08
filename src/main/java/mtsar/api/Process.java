@@ -37,7 +37,7 @@ public class Process {
         this.workerRanker = workerRanker;
         this.taskAllocator = taskAllocator;
         this.answerAggregator = answerAggregator;
-        logger.info(String.format("Allocated a Process called \"%s\" with %d option(s)", id, options.size()));
+        logger.info(String.format("Allocated a process called \"%s\" with %d option(s)", id, options.size()));
     }
 
     @JsonProperty

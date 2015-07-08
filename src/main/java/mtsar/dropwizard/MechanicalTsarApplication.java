@@ -1,6 +1,5 @@
 package mtsar.dropwizard;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
@@ -14,6 +13,8 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import mtsar.api.Process;
 import mtsar.api.ProcessDefinition;
+import mtsar.api.sql.ProcessDAO;
+import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.guice.BundleModule;
@@ -31,10 +32,12 @@ import org.skife.jdbi.v2.DBI;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
-    private final Map<String, Process> processes = Maps.newHashMap();
+    private final Map<String, Process> processes = new HashMap<>();
 
     private GuiceBundle<MechanicalTsarConfiguration> guiceBundle;
     private DBI jdbi;
@@ -47,6 +50,14 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     @Override
     public String getName() {
         return "Mechanical Tsar";
+    }
+
+    public Injector getInjector() {
+        return injector;
+    }
+
+    public Map<String, Process> getProcesses() {
+        return processes;
     }
 
     @Override
@@ -75,6 +86,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         bootstrap.addCommand(new EvaluateCommand(this));
         bootstrap.addCommand(new SimulateCommand(this));
+        bootstrap.addCommand(new ConsoleCommand(this));
     }
 
     public synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
@@ -86,22 +98,21 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             injector = guiceBundle.getInjector().createChildInjector(new DBIModule(jdbi));
         }
 
+        final ProcessDAO processDAO = injector.getInstance(ProcessDAO.class);
+        final List<ProcessDefinition> definitions = processDAO.select();
         processes.clear();
 
-        for (final Map.Entry<String, ProcessDefinition> entry : configuration.getDefinitions().entrySet()) {
-            final String id = entry.getKey();
-            final ProcessDefinition definition = entry.getValue();
-
-            final Class<? extends WorkerRanker> workerRanker = Class.forName(definition.getWorkerRankerName()).asSubclass(WorkerRanker.class);
-            final Class<? extends TaskAllocator> taskAllocator = Class.forName(definition.getTaskAllocatorName()).asSubclass(TaskAllocator.class);
-            final Class<? extends AnswerAggregator> answerAggregator = Class.forName(definition.getAnswerAggregatorName()).asSubclass(AnswerAggregator.class);
+        for (final ProcessDefinition definition : definitions) {
+            final Class<? extends WorkerRanker> workerRanker = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
+            final Class<? extends TaskAllocator> taskAllocator = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
+            final Class<? extends AnswerAggregator> answerAggregator = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
 
             final Injector processInjector = injector.createChildInjector(
-                    new ProcessModule(id, definition, workerRanker, taskAllocator, answerAggregator)
+                    new ProcessModule(definition, workerRanker, taskAllocator, answerAggregator)
             );
 
             final Process process = processInjector.getInstance(mtsar.api.Process.class);
-            processes.put(id, process);
+            processes.put(definition.getId(), process);
         }
     }
 

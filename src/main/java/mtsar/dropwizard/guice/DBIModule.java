@@ -2,10 +2,7 @@ package mtsar.dropwizard.guice;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import mtsar.api.sql.AnswerDAO;
-import mtsar.api.sql.EventDAO;
-import mtsar.api.sql.TaskDAO;
-import mtsar.api.sql.WorkerDAO;
+import mtsar.api.sql.*;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Singleton;
@@ -21,6 +18,13 @@ public class DBIModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(DBI.class).toInstance(jdbi);
+    }
+
+    @Provides
+    @Singleton
+    public ProcessDAO provideProcessDAO(DBI jdbi, Logger logger) {
+        logger.info(String.format("Providing a ProcessDAO"));
+        return jdbi.onDemand(ProcessDAO.class);
     }
 
     @Provides

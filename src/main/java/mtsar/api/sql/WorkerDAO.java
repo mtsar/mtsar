@@ -20,7 +20,7 @@ public interface WorkerDAO {
     @SqlQuery("select * from workers where external_id = :externalId and process = :process limit 1")
     Worker findByExternalId(@Bind("externalId") String externalId, @Bind("process") String process);
 
-    @SqlQuery("insert into workers (process, external_id, datetime) values (:process, :externalId, :dateTime) returning id")
+    @SqlQuery("insert into workers (process, external_id, datetime) values (:process, :externalId, coalesce(:dateTime, localtimestamp)) returning id")
     int insert(@BindBean Worker t);
 
     @SqlQuery("select count(*) from workers")
