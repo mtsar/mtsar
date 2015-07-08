@@ -5,10 +5,12 @@ EXPOSE 8080 8081
 RUN mkdir -p /mtsar /var/log/mtsar
 WORKDIR /mtsar
 
-ADD pom.xml /mtsar/pom.xml
+COPY LICENSE pom.xml /mtsar/
 RUN mvn -T 4 verify clean -B -fn -Dmaven.test.skip=true
 
-ADD LICENSE README.md src mtsar.sh /mtsar/
+COPY src /mtsar/src
 RUN mvn -T 4 -B -Dmaven.test.skip=true verify && ln -sf target/mtsar-*.jar mtsar.jar
+
+COPY README.md mtsar.sh /mtsar/
 
 CMD ["/mtsar/mtsar.sh"]
