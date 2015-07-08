@@ -22,7 +22,7 @@ else
     export COMMAND=server
 fi
 
-java \
+exec java \
     -Ddw.database.url="jdbc:postgresql://$POSTGRES_PORT_5432_TCP_ADDR/$POSTGRES_DATABASE" \
     -Ddw.database.user="$POSTGRES_USER" \
     -Ddw.database.password="$POSTGRES_PASSWORD" \
