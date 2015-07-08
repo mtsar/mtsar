@@ -8,7 +8,7 @@ WORKDIR /mtsar
 ADD pom.xml /mtsar/pom.xml
 RUN mvn -T 4 verify clean -B -fn -Dmaven.test.skip=true
 
-ADD LICENSE README.md src /mtsar/
+ADD LICENSE README.md src mtsar.sh /mtsar/
 RUN mvn -T 4 -B -Dmaven.test.skip=true verify && ln -sf target/mtsar-*.jar mtsar.jar
 
 CMD ["/mtsar/mtsar.sh"]
