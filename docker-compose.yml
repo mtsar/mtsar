@@ -10,7 +10,7 @@ postgres:
     POSTGRES_PASSWORD: mtsar
   volumes_from:
     - postgresdata
-  ports:
+  expose:
     - "5432"
 app:
   build: .
