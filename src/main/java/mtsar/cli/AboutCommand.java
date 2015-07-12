@@ -30,4 +30,3 @@ public class AboutCommand extends EnvironmentCommand<MechanicalTsarConfiguration
         System.out.flush();
     }
 }
-gi
