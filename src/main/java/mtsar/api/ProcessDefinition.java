@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @XmlRootElement
@@ -39,7 +40,9 @@ public class ProcessDefinition {
 
         public Builder setOptions(String optionsJSON) {
             try {
-                this.options = new ObjectMapper().readValue(optionsJSON, Map.class);
+                final Map options = new ObjectMapper().readValue(optionsJSON, Map.class);
+                this.options = new HashMap<>();
+                options.forEach((k, v) -> this.options.put(k.toString(), v.toString()));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

@@ -14,6 +14,7 @@ import io.dropwizard.views.ViewBundle;
 import mtsar.api.Process;
 import mtsar.api.ProcessDefinition;
 import mtsar.api.sql.ProcessDAO;
+import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
@@ -87,6 +88,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new EvaluateCommand(this));
         bootstrap.addCommand(new SimulateCommand(this));
         bootstrap.addCommand(new ConsoleCommand(this));
+        bootstrap.addCommand(new AboutCommand(this));
     }
 
     public synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
