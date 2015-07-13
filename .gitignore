@@ -21,3 +21,4 @@ hs_err_pid*
 /heroku.yml
 /environment.yml
 /development.yml
+/docker-compose.yml
