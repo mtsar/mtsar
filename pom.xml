@@ -6,6 +6,16 @@
     <groupId>mtsar</groupId>
     <artifactId>mtsar</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Mechanical Tsar</name>
+    <description>Mechanical Tsar is an engine for mechanized labor workflows.</description>
+    <url>https://github.com/dustalov/mtsar</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/dustalov/mtsar</connection>
+        <developerConnection>scm:git:ssh://git@github.com:dustalov/mtsar.git</developerConnection>
+        <url>https://github.com/dustalov/mtsar</url>
+    </scm>
 
     <prerequisites>
         <maven>3.0</maven>
