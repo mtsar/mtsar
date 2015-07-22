@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -39,10 +40,12 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("3").build()
         ));
-        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-        assertThat(winner.isPresent()).isTrue();
-        final Answer answer = winner.get().getAnswer();
-        assertThat(answer.getAnswer()).isEqualTo("1");
+        assertThatThrownBy(() -> {
+            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+            assertThat(winner.isPresent()).isTrue();
+            final Answer answer = winner.get().getAnswer();
+            assertThat(answer.getAnswer()).isEqualTo("1");
+        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
     }
 
     @Test
@@ -52,17 +55,21 @@ public class MajorityVotingTest {
                 Answer.builder().setAnswer("2").build(),
                 Answer.builder().setAnswer("1").build()
         ));
-        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-        assertThat(winner.isPresent()).isTrue();
-        final Answer answer = winner.get().getAnswer();
-        assertThat(answer.getAnswer()).isEqualTo("1");
+        assertThatThrownBy(() -> {
+            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+            assertThat(winner.isPresent()).isTrue();
+            final Answer answer = winner.get().getAnswer();
+            assertThat(answer.getAnswer()).isEqualTo("1");
+        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
     }
 
     @Test
     public void testEmptyCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-        assertThat(winner.isPresent()).isFalse();
+        assertThatThrownBy(() -> {
+            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+            assertThat(winner.isPresent()).isFalse();
+        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
     }
 }
