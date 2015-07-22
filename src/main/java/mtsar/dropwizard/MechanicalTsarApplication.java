@@ -37,6 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Mechanical Tsar is an engine for mechanized labor workflows.
+ */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
     private final Map<String, Process> processes = new HashMap<>();
 
