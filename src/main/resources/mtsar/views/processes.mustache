@@ -1,0 +1,35 @@
+{{<layout}}
+{{$content}}
+<div class="pure-g">
+    <div class="pure-u-1">
+        <table class="pure-table pure-table-striped width-max">
+            <thead>
+            <tr>
+                <th style="width: 16%">ID</th>
+                <th style="width: 48%">Description</th>
+                <th style="width: 12%" class="align-center">Workers</th>
+                <th style="width: 12%" class="align-center">Tasks</th>
+                <th style="width: 12%" class="align-center">Answers</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#processes}}
+                <tr>
+                    <td><a href="/processes/{{id}}">{{id}}</a></td>
+                    <td>{{description}}</td>
+                    <td class="align-center">{{#workerCount}}{{id}}{{/workerCount}}</td>
+                    <td class="align-center">{{#taskCount}}{{id}}{{/taskCount}}</td>
+                    <td class="align-center">{{#answerCount}}{{id}}{{/answerCount}}</td>
+                </tr>
+            {{/processes}}
+            {{^processes}}
+                <tr>
+                    <td colspan="5"><i class="fa fa-info"></i>&nbsp; No processes for you.</td>
+                </tr>
+            {{/processes}}
+            </tbody>
+        </table>
+    </div>
+</div>
+{{/content}}
+{{/layout}}
