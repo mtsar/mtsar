@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
+@Path("/tasks")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class TaskResource {

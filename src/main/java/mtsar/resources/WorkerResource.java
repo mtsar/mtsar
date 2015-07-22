@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
+@Path("/workers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class WorkerResource {
     protected final mtsar.api.Process process;

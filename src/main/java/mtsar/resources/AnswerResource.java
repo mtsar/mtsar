@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.util.List;
 
+@Path("/answers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class AnswerResource {
     protected final Process process;
