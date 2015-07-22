@@ -42,7 +42,7 @@ public final class AnswerCSVWriter {
 
     public static void write(List<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(() -> new AnswerIterator(answers));
+            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new AnswerIterator(answers));
         }
     }
 }

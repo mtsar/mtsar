@@ -39,7 +39,7 @@ public final class WorkerCSVWriter {
 
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(() -> new WorkerIterator(workers));
+            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new WorkerIterator(workers));
         }
     }
 }

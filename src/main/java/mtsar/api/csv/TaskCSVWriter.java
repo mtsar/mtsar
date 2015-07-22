@@ -42,7 +42,7 @@ public final class TaskCSVWriter {
 
     public static void write(List<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(() -> new TaskIterator(tasks));
+            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new TaskIterator(tasks));
         }
     }
 }

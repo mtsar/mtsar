@@ -7,7 +7,7 @@ import mtsar.api.Worker;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
-import org.apache.commons.collections.comparators.ComparatorChain;
+import org.apache.commons.collections4.comparators.ComparatorChain;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -63,8 +63,8 @@ public class InverseCountAllocator implements TaskAllocator {
         );
     }
 
-    private Comparator getComparator(Map<Task, Integer> counts, Worker worker) {
-        final ComparatorChain comparator = new ComparatorChain();
+    private Comparator<Task> getComparator(Map<Task, Integer> counts, Worker worker) {
+        final ComparatorChain<Task> comparator = new ComparatorChain<>();
         comparator.addComparator(new AnswerCountComparator(counts));
         comparator.addComparator(Comparator.comparing(o -> o.hashCode() % worker.getId()));
         return comparator;

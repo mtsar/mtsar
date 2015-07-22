@@ -3,6 +3,7 @@ package mtsar.api;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -40,9 +41,9 @@ public class ProcessDefinition {
 
         public Builder setOptions(String optionsJSON) {
             try {
-                final Map options = new ObjectMapper().readValue(optionsJSON, Map.class);
                 this.options = new HashMap<>();
-                options.forEach((k, v) -> this.options.put(k.toString(), v.toString()));
+                this.options.putAll(new ObjectMapper().readValue(optionsJSON, new TypeReference<Map<String, String>>() {
+                }));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
