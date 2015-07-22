@@ -7,3 +7,6 @@ addons:
 before_script:
   - mvn versions:display-dependency-updates
   - mvn versions:display-plugin-updates
+cache:
+  directories:
+    - $HOME/.m2
