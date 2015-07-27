@@ -19,7 +19,7 @@ import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.guice.BundleModule;
-import mtsar.dropwizard.guice.DBIModule;
+import mtsar.dropwizard.guice.DatabaseModule;
 import mtsar.dropwizard.guice.ProcessModule;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
@@ -95,13 +95,11 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     }
 
     public synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        if (jdbi == null) {
+        if (jdbi == null)
             jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
-        }
 
-        if (injector == null) {
-            injector = guiceBundle.getInjector().createChildInjector(new DBIModule(jdbi));
-        }
+        if (injector == null)
+            injector = guiceBundle.getInjector().createChildInjector(new DatabaseModule(jdbi));
 
         final ProcessDAO processDAO = injector.getInstance(ProcessDAO.class);
         final List<ProcessDefinition> definitions = processDAO.select();

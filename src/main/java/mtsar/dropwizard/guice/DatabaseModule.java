@@ -8,10 +8,10 @@ import org.skife.jdbi.v2.DBI;
 import javax.inject.Singleton;
 import java.util.logging.Logger;
 
-public class DBIModule extends AbstractModule {
+public class DatabaseModule extends AbstractModule {
     private final DBI jdbi;
 
-    public DBIModule(DBI jdbi) {
+    public DatabaseModule(DBI jdbi) {
         this.jdbi = jdbi;
     }
 
