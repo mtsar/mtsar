@@ -41,6 +41,7 @@ If you publish work that uses Mechanical Tsar, please cite it as follows.
   number    = {3},
   year      = {2015},
   address   = {Moscow},
+  publisher = {ISP RAS},
   url       = {http://www.ispras.ru/proceedings/docs/2015/27/3/isp\_27\_2015\_3\_351.pdf},
   issn      = {2220-6426},
   doi       = {10.15514/ISPRAS-2015-27(3)-25},
