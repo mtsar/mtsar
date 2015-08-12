@@ -77,10 +77,10 @@
             <column name="tags" type="text[]" defaultValueComputed="'{}'">
                 <constraints nullable="false"/>
             </column>
-            <column name="type" type="text">
+            <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
                 <constraints nullable="false"/>
             </column>
-            <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
+            <column name="type" type="text">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="text"/>
