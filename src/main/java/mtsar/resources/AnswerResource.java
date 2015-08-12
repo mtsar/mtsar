@@ -3,14 +3,23 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.csv.AnswerCSVParser;
 import mtsar.api.csv.AnswerCSVWriter;
+import mtsar.api.csv.TaskCSVParser;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.views.AnswersView;
+import org.apache.commons.csv.CSVParser;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Path("/answers")
@@ -44,6 +53,17 @@ public class AnswerResource {
     public StreamingOutput getCSV() {
         final List<Answer> answers = answerDAO.listForProcess(process.getId());
         return output -> AnswerCSVWriter.write(answers, output);
+    }
+
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response postAnswers(@FormDataParam("file") InputStream stream) throws IOException {
+        try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            try (final CSVParser csv = new CSVParser(reader, AnswerCSVParser.FORMAT)) {
+                answerDAO.insert(AnswerCSVParser.parse(process, csv.iterator()));
+            }
+        }
+        return Response.ok().build();
     }
 
     @GET

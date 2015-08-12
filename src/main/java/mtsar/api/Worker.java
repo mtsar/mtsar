@@ -1,10 +1,14 @@
 package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import mtsar.api.sql.PostgreSQLTextArray;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
+import java.util.Optional;
 
 @XmlRootElement
 public class Worker {
@@ -18,8 +22,8 @@ public class Worker {
             return this;
         }
 
-        public Builder setExternalId(String externalId) {
-            this.externalId = externalId;
+        public Builder setTags(String[] tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -34,7 +38,7 @@ public class Worker {
         }
 
         private Integer id;
-        private String externalId;
+        private String[] tags;
         private String process;
         private Timestamp dateTime;
     }
@@ -44,21 +48,21 @@ public class Worker {
     }
 
     private Worker(Builder builder) {
-        this(builder.id, builder.externalId, builder.process, builder.dateTime);
+        this(builder.id, builder.tags, builder.process, builder.dateTime);
     }
 
     protected final Integer id;
-    protected final String externalId;
+    protected final String[] tags;
     protected final String process;
     protected final Timestamp dateTime;
 
     @JsonCreator
     public Worker(@JsonProperty("id") Integer id,
-                  @JsonProperty("externalId") String externalId,
+                  @JsonProperty("tags") String[] tags,
                   @JsonProperty("process") String process,
                   @JsonProperty("dateTime") Timestamp dateTime) {
         this.id = id;
-        this.externalId = externalId;
+        this.tags = tags;
         this.process = process;
         this.dateTime = dateTime;
     }
@@ -68,9 +72,20 @@ public class Worker {
         return id;
     }
 
+    @JsonIgnore
+    public Optional<String> getTag() {
+        if (ArrayUtils.isEmpty(tags)) return Optional.empty();
+        return Optional.of(tags[0]);
+    }
+
     @JsonProperty
-    public String getExternalId() {
-        return externalId;
+    public String[] getTags() {
+        return tags;
+    }
+
+    @JsonIgnore
+    public String getTagsTextArray() {
+        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(tags)).toString();
     }
 
     @JsonProperty

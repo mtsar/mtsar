@@ -11,12 +11,12 @@ public class TaskMapper implements ResultSetMapper<Task> {
     public Task map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         return Task.builder().
                 setId(r.getInt("id")).
-                setType(r.getString("type")).
-                setExternalId(r.getString("external_id")).
                 setProcess(r.getString("process")).
+                setDateTime(r.getTimestamp("datetime")).
+                setTags((String[]) r.getArray("tags").getArray()).
+                setType(r.getString("type")).
                 setDescription(r.getString("description")).
                 setAnswers((String[]) r.getArray("answers").getArray()).
-                setDateTime(r.getTimestamp("datetime")).
                 build();
     }
 }

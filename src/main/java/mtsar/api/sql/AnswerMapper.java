@@ -11,12 +11,12 @@ public class AnswerMapper implements ResultSetMapper<Answer> {
     public Answer map(int index, ResultSet r, StatementContext ctx) throws SQLException {
         return Answer.builder().
                 setId(r.getInt("id")).
-                setExternalId(r.getString("external_id")).
                 setProcess(r.getString("process")).
+                setDateTime(r.getTimestamp("datetime")).
+                setTags((String[]) r.getArray("tags").getArray()).
                 setWorkerId(r.getInt("worker_id")).
                 setTaskId(r.getInt("task_id")).
                 setAnswers((String[]) r.getArray("answers").getArray()).
-                setDateTime(r.getTimestamp("datetime")).
                 build();
     }
 }

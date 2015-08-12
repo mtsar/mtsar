@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import mtsar.api.sql.PostgreSQLTextArray;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
+import java.util.Objects;
+import java.util.Optional;
 
 @XmlRootElement
 public class Task {
@@ -26,8 +29,8 @@ public class Task {
             return this;
         }
 
-        public Builder setExternalId(String externalId) {
-            this.externalId = externalId;
+        public Builder setTags(String[] tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -53,7 +56,7 @@ public class Task {
 
         private Integer id;
         private String type;
-        private String externalId;
+        private String[] tags;
         private String process;
         private String description;
         private String[] answers;
@@ -68,7 +71,7 @@ public class Task {
         this(
                 builder.id,
                 builder.type,
-                builder.externalId,
+                builder.tags,
                 builder.process,
                 builder.description,
                 builder.answers,
@@ -78,7 +81,7 @@ public class Task {
 
     protected final Integer id;
     protected final String type;
-    protected final String externalId;
+    protected final String[] tags;
     protected final String process;
     protected final String description;
     protected final String[] answers;
@@ -87,14 +90,14 @@ public class Task {
     @JsonCreator
     public Task(@JsonProperty("id") Integer id,
                 @JsonProperty("type") String type,
-                @JsonProperty("externalId") String externalId,
+                @JsonProperty("tags") String[] tags,
                 @JsonProperty("process") String process,
                 @JsonProperty("description") String description,
                 @JsonProperty("answers") String[] answers,
                 @JsonProperty("dateTime") Timestamp dateTime) {
         this.id = id;
         this.type = type;
-        this.externalId = externalId;
+        this.tags = tags;
         this.process = process;
         this.description = description;
         this.answers = answers;
@@ -111,9 +114,20 @@ public class Task {
         return type;
     }
 
+    @JsonIgnore
+    public Optional<String> getTag() {
+        if (ArrayUtils.isEmpty(tags)) return Optional.empty();
+        return Optional.of(tags[0]);
+    }
+
     @JsonProperty
-    public String getExternalId() {
-        return externalId;
+    public String[] getTags() {
+        return tags;
+    }
+
+    @JsonIgnore
+    public String getTagsTextArray() {
+        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(tags)).toString();
     }
 
     @JsonProperty
@@ -133,7 +147,7 @@ public class Task {
 
     @JsonIgnore
     public String getAnswersTextArray() {
-        return new PostgreSQLTextArray(answers).toString();
+        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(answers)).toString();
     }
 
     @JsonProperty
@@ -154,7 +168,7 @@ public class Task {
         final Task t = (Task) obj;
 
         return id.equals(t.id) &&
-                StringUtils.equals(externalId, t.externalId) &&
+                Objects.deepEquals(tags, t.tags) &&
                 StringUtils.equals(process, t.process) &&
                 dateTime.equals(t.dateTime);
     }

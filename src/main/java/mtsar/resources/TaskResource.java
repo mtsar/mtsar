@@ -62,9 +62,12 @@ public class TaskResource {
     }
 
     @POST
-    public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("external_id") String externalId, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
+    public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("description") String description, MultivaluedMap<String, String> params) {
+        final Set<String> tags = ParamsUtils.extract(params, "tag");
+        final Set<String> answers = ParamsUtils.extract(params, "answer");
+
         int taskId = taskDAO.insert(Task.builder().
-                setExternalId(externalId).
+                setTags(tags.toArray(new String[tags.size()])).
                 setType(type).
                 setDescription(description).
                 setAnswers(answers.toArray(new String[answers.size()])).
@@ -100,23 +103,19 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answers")
-    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("external_id") String externalId, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
         final Timestamp datetime = (datetimeParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
                 Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
 
-        final Set<String> answers = new HashSet<>();
-        for (final Map.Entry<String, List<String>> entries : params.entrySet()) {
-            if (!entries.getKey().matches("^answers(\\[\\d+\\]|)$")) continue;
-            if (CollectionUtils.isEmpty(entries.getValue())) continue;
-            for (final String answer : entries.getValue()) answers.add(answer);
-        }
+        final Set<String> tags = ParamsUtils.extract(params, "tag");
+        final Set<String> answers = ParamsUtils.extract(params, "answer");
 
         int answerId = answerDAO.insert(Answer.builder().
                 setProcess(process.getId()).
-                setExternalId(externalId).
+                setTags(tags.toArray(new String[tags.size()])).
                 setTaskId(task.getId()).
                 setWorkerId(worker.getId()).
                 setAnswers(answers.toArray(new String[answers.size()])).

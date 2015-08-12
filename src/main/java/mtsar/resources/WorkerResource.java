@@ -1,24 +1,35 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
+import mtsar.ParamsUtils;
 import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
+import mtsar.api.csv.TaskCSVParser;
+import mtsar.api.csv.WorkerCSVParser;
 import mtsar.api.csv.WorkerCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.views.WorkersView;
+import org.apache.commons.csv.CSVParser;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Path("/workers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
@@ -54,10 +65,23 @@ public class WorkerResource {
     }
 
     @POST
-    public Response postWorker(@Context UriInfo uriInfo, @FormParam("external_id") String externalId) {
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response postWorkers(@FormDataParam("file") InputStream stream) throws IOException {
+        try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
+            try (final CSVParser csv = new CSVParser(reader, WorkerCSVParser.FORMAT)) {
+                workerDAO.insert(WorkerCSVParser.parse(process, csv.iterator()));
+            }
+        }
+        return Response.ok().build();
+    }
+
+    @POST
+    public Response postWorker(@Context UriInfo uriInfo, MultivaluedMap<String, String> params) {
+        final Set<String> tags = ParamsUtils.extract(params, "tag");
+
         int workerId = workerDAO.insert(Worker.builder().
-                setExternalId(externalId).
                 setProcess(process.getId()).
+                setTags(tags.toArray(new String[tags.size()])).
                 setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
                 build());
         final Worker worker = workerDAO.find(workerId, process.getId());
@@ -72,8 +96,8 @@ public class WorkerResource {
 
     @GET
     @Path("external")
-    public Worker getWorkerByExternalId(@QueryParam("externalId") String externalId) {
-        final Worker worker = workerDAO.findByExternalId(externalId, process.getId());
+    public Worker getWorkerByTag(@QueryParam("tag") String tag) {
+        final Worker worker = workerDAO.findByTag(process.getId(), tag);
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }

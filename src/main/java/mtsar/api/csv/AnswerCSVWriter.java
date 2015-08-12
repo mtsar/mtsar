@@ -12,14 +12,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public final class AnswerCSVWriter {
-    public static final String[] HEADER = {"id", "external_id", "process", "worker_id", "task_id", "answers", "datetime"};
+    public static final String[] HEADER = {"id", "tags", "process", "task_id", "worker_id", "answers", "datetime"};
 
     public static void write(List<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     answers.stream().map(answer -> new String[]{
                             Integer.toString(answer.getId()),
-                            answer.getExternalId(),
+                            String.join("|", answer.getTags()),
                             answer.getProcess(),
                             Integer.toString(answer.getTaskId()),
                             Integer.toString(answer.getWorkerId()),

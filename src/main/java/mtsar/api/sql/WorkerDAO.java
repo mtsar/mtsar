@@ -1,12 +1,11 @@
 package mtsar.api.sql;
 
 import mtsar.api.Worker;
-import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.SqlQuery;
-import org.skife.jdbi.v2.sqlobject.SqlUpdate;
+import org.skife.jdbi.v2.sqlobject.*;
+import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import java.util.Iterator;
 import java.util.List;
 
 @RegisterMapper(WorkerMapper.class)
@@ -17,11 +16,15 @@ public interface WorkerDAO {
     @SqlQuery("select * from workers where id = :id and process = :process limit 1")
     Worker find(@Bind("id") Integer id, @Bind("process") String process);
 
-    @SqlQuery("select * from workers where external_id = :externalId and process = :process limit 1")
-    Worker findByExternalId(@Bind("externalId") String externalId, @Bind("process") String process);
+    @SqlQuery("select * from workers where process = :process and tags @> cast(ARRAY[:tag] as text[]) limit 1")
+    Worker findByTag(@Bind("process") String process, @Bind("tag") String tag);
 
-    @SqlQuery("insert into workers (process, external_id, datetime) values (:process, :externalId, coalesce(:dateTime, localtimestamp)) returning id")
+    @SqlQuery("insert into workers (process, datetime, tags) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[])) returning id")
     int insert(@BindBean Worker t);
+
+    @SqlBatch("insert into workers (id, process, datetime, tags) values (:id, :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]))")
+    @BatchChunkSize(1000)
+    void insert(@BindBean Iterator<Worker> tasks);
 
     @SqlQuery("select count(*) from workers")
     int count();

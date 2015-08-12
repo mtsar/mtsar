@@ -22,8 +22,8 @@ public class Answer {
             return this;
         }
 
-        public Builder setExternalId(String externalId) {
-            this.externalId = externalId;
+        public Builder setTags(String[] tags) {
+            this.tags = tags;
             return this;
         }
 
@@ -58,7 +58,7 @@ public class Answer {
         }
 
         private Integer id;
-        private String externalId;
+        private String[] tags;
         private String process;
         private Integer workerId;
         private Integer taskId;
@@ -73,7 +73,7 @@ public class Answer {
     private Answer(Builder builder) {
         this(
                 builder.id,
-                builder.externalId,
+                builder.tags,
                 builder.process,
                 builder.workerId,
                 builder.taskId,
@@ -83,7 +83,7 @@ public class Answer {
     }
 
     protected final Integer id;
-    protected final String externalId;
+    protected final String[] tags;
     protected final String process;
     protected final Integer workerId;
     protected final Integer taskId;
@@ -92,14 +92,14 @@ public class Answer {
 
     @JsonCreator
     public Answer(@JsonProperty("id") Integer id,
-                  @JsonProperty("externalId") String externalId,
+                  @JsonProperty("tags") String[] tags,
                   @JsonProperty("process") String process,
                   @JsonProperty("workerId") Integer workerId,
                   @JsonProperty("taskId") Integer taskId,
                   @JsonProperty("answer") String[] answers,
                   @JsonProperty("dateTime") Timestamp dateTime) {
         this.id = id;
-        this.externalId = externalId;
+        this.tags = tags;
         this.process = process;
         this.workerId = workerId;
         this.taskId = taskId;
@@ -112,9 +112,20 @@ public class Answer {
         return id;
     }
 
+    @JsonIgnore
+    public Optional<String> getTag() {
+        if (ArrayUtils.isEmpty(tags)) return Optional.empty();
+        return Optional.of(tags[0]);
+    }
+
     @JsonProperty
-    public String getExternalId() {
-        return externalId;
+    public String[] getTags() {
+        return tags;
+    }
+
+    @JsonIgnore
+    public String getTagsTextArray() {
+        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(tags)).toString();
     }
 
     @JsonProperty
@@ -145,7 +156,7 @@ public class Answer {
 
     @JsonIgnore
     public String getAnswersTextArray() {
-        return new PostgreSQLTextArray(answers).toString();
+        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(answers)).toString();
     }
 
     @JsonProperty
