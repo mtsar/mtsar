@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet id="1" author="dustalov">
+        <createTable tableName="processes">
+            <column name="id" type="text">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="datetime" type="timestamp without time zone" defaultValueComputed="localtimestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="worker_ranker" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_allocator" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answer_aggregator" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="options" type="jsonb" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="dustalov">
+        <createTable tableName="workers">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="process" type="text">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="datetime" type="timestamp without time zone" defaultValueComputed="localtimestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tags" type="text[]" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE INDEX index_workers_on_tags ON workers USING gin(tags);
+            ]]>
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="workers"
+                                 baseColumnNames="process"
+                                 constraintName="fk_workers_process"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+
+        <createView viewName="workers_tags">select id as worker_id, process, unnest(tags) as tag from workers</createView>
+    </changeSet>
+
+    <changeSet id="3" author="dustalov">
+        <createTable tableName="tasks">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="process" type="text">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="datetime" type="timestamp without time zone" defaultValueComputed="localtimestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tags" type="text[]" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="text"/>
+            <column name="answers" type="text[]" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE INDEX index_tasks_on_tags ON tasks USING gin(tags);
+            ]]>
+        </sql>
+
+        <createIndex tableName="tasks" indexName="index_tasks_on_type">
+            <column name="type"/>
+        </createIndex>
+
+        <sql>
+            <![CDATA[
+                CREATE INDEX index_tasks_on_answers ON tasks USING gin(answers);
+            ]]>
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="process"
+                                 constraintName="fk_tasks_process"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+
+        <createView viewName="tasks_tags">select id as task_id, process, unnest(tags) as tag from tasks</createView>
+        <createView viewName="tasks_answers">select id as task_id, process, unnest(answers) as answer from tasks</createView>
+    </changeSet>
+
+    <changeSet id="4" author="dustalov">
+        <createTable tableName="answers">
+            <column name="id" type="serial" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="process" type="text">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="datetime" type="timestamp without time zone" defaultValueComputed="localtimestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tags" type="text[]" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+            <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+            <column name="worker_id" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_id" type="integer">
+                <constraints nullable="false"/>
+            </column>
+            <column name="answers" type="text[]" defaultValueComputed="'{}'">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE INDEX index_answers_on_tags ON answers USING gin(tags);
+            ]]>
+        </sql>
+
+        <createIndex tableName="answers" indexName="index_answers_on_worker_id">
+            <column name="worker_id"/>
+        </createIndex>
+
+        <createIndex tableName="answers" indexName="index_answers_on_task_id">
+            <column name="task_id"/>
+        </createIndex>
+
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE INDEX index_answers_on_answers ON answers USING gin(answers);
+            ]]>
+        </sql>
+
+        <addForeignKeyConstraint baseTableName="answers"
+                                 baseColumnNames="process"
+                                 constraintName="fk_answers_process"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="answers"
+                                 baseColumnNames="worker_id, process"
+                                 constraintName="fk_answers_worker_id"
+                                 referencedTableName="workers"
+                                 referencedColumnNames="id, process"/>
+
+        <addForeignKeyConstraint baseTableName="answers"
+                                 baseColumnNames="task_id, process"
+                                 constraintName="fk_answers_task_id"
+                                 referencedTableName="tasks"
+                                 referencedColumnNames="id, process"/>
+
+        <createView viewName="answers_tags">select id as answer_id, process, unnest(tags) as tag from answers</createView>
+        <createView viewName="answers_answers">select id as answer_id, process, unnest(answers) as answer from answers
+        </createView>
+    </changeSet>
+</databaseChangeLog>
