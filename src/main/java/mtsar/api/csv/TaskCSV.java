@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 public final class TaskCSV {
-    public static final String[] HEADER = {"id", "tags", "type", "process", "description", "answers", "datetime"};
-
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Task> parse(Process process, Iterator<CSVRecord> records) {
@@ -44,17 +42,19 @@ public final class TaskCSV {
         }).iterator();
     }
 
+    public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "description", "answers"};
+
     public static void write(List<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     tasks.stream().map(task -> new String[]{
-                            Integer.toString(task.getId()),
-                            String.join("|", task.getTags()),
-                            task.getType(),
-                            task.getProcess(),
-                            task.getDescription(),
-                            String.join("|", task.getAnswers()),
-                            Long.toString(task.getDateTime().toInstant().getEpochSecond())
+                            Integer.toString(task.getId()),                                 // id
+                            task.getProcess(),                                              // process
+                            Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
+                            String.join("|", task.getTags()),                               // tags
+                            task.getType(),                                                 // type
+                            task.getDescription(),                                          // description
+                            String.join("|", task.getAnswers()),                            // answers
                     }).iterator()
             ));
         }

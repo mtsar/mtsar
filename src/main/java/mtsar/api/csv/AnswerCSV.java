@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 public final class AnswerCSV {
-    public static final String[] HEADER = {"id", "tags", "process", "task_id", "worker_id", "answers", "datetime"};
-
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Answer> parse(Process process, Iterator<CSVRecord> records) {
@@ -44,17 +42,19 @@ public final class AnswerCSV {
         }).iterator();
     }
 
+    public static final String[] HEADER = {"id", "process", "datetime", "tags", "task_id", "worker_id", "answers"};
+
     public static void write(List<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     answers.stream().map(answer -> new String[]{
-                            Integer.toString(answer.getId()),
-                            String.join("|", answer.getTags()),
-                            answer.getProcess(),
-                            Integer.toString(answer.getTaskId()),
-                            Integer.toString(answer.getWorkerId()),
-                            String.join("|", answer.getAnswers()),
-                            Long.toString(answer.getDateTime().toInstant().getEpochSecond())
+                            Integer.toString(answer.getId()),                                   // id
+                            answer.getProcess(),                                                // process
+                            Long.toString(answer.getDateTime().toInstant().getEpochSecond()),   // datetime
+                            String.join("|", answer.getTags()),                                 // tags
+                            Integer.toString(answer.getTaskId()),                               // task_id
+                            Integer.toString(answer.getWorkerId()),                             // worker_id
+                            String.join("|", answer.getAnswers())                               // answers
                     }).iterator()
             ));
         }

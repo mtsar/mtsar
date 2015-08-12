@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 public final class WorkerCSV {
-    public static final String[] HEADER = {"id", "tags", "process", "datetime"};
-
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Worker> parse(Process process, Iterator<CSVRecord> records) {
@@ -38,14 +36,16 @@ public final class WorkerCSV {
         }).iterator();
     }
 
+    public static final String[] HEADER = {"id", "process", "datetime", "tags"};
+
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     workers.stream().map(worker -> new String[]{
-                            Integer.toString(worker.getId()),
-                            String.join("|", worker.getTags()),
-                            worker.getProcess(),
-                            Long.toString(worker.getDateTime().toInstant().getEpochSecond())
+                            Integer.toString(worker.getId()),                                   // id
+                            worker.getProcess(),                                                // process
+                            Long.toString(worker.getDateTime().toInstant().getEpochSecond()),   // datetime
+                            String.join("|", worker.getTags()),                                 // tags
                     }).iterator()
             ));
         }
