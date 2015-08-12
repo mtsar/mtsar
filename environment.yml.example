@@ -1,8 +1,3 @@
-processes:
-  demo:
-    workerRanker: mtsar.processors.worker.ZeroRanker
-    taskAllocator: mtsar.processors.task.InverseCountAllocator
-    answerAggregator: mtsar.processors.answer.MajorityVoting
 database:
   driverClass: org.postgresql.Driver
   user: mtsar
