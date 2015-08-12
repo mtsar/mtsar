@@ -5,6 +5,8 @@ dependency-reduced-pom.xml
 # vim
 *.swp
 
+*.csv
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
