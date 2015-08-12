@@ -2,9 +2,9 @@ FROM maven:3-jdk-8
 
 EXPOSE 8080 8081
 
-COPY LICENSE pom.xml /mtsar/
-
 WORKDIR /mtsar
+
+COPY LICENSE pom.xml /mtsar/
 
 RUN mvn -T 4 -B -fn -Dmaven.test.skip=true -Dmaven.javadoc.skip=true verify clean
 
