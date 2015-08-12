@@ -7,10 +7,10 @@ import mtsar.api.csv.AnswerCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.views.AnswersView;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.util.List;
 
 @Path("/answers")
@@ -26,6 +26,12 @@ public class AnswerResource {
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public AnswersView getAnswersView(@Context UriInfo uriInfo) {
+        return new AnswersView(uriInfo, process);
     }
 
     @GET

@@ -9,12 +9,10 @@ import mtsar.api.csv.WorkerCSVWriter;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.views.WorkersView;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -35,6 +33,12 @@ public class WorkerResource {
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public WorkersView getWorkersView(@Context UriInfo uriInfo) {
+        return new WorkersView(uriInfo, process);
     }
 
     @GET

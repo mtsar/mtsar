@@ -1,0 +1,31 @@
+{{<layout}}
+{{$content}}
+<h2>Upload</h2>
+
+<p>Submit the present form to upload workers in the CSV format or use the cURL command displayed below.</p>
+
+<form class="pure-form pure-form-aligned" action="{{path}}" method="POST">
+    <fieldset>
+        <div class="pure-control-group">
+            <label for="file">File</label>
+            <input id="file" type="file" required>
+        </div>
+        <div class="pure-controls">
+            <button type="submit" class="pure-button"><i class="fa fa-upload"></i> Upload</button>
+        </div>
+    </fieldset>
+</form>
+
+<ul class="fa-ul">
+    <li><i class="fa-li fa fa-keyboard-o"></i><code>curl -F 'file=@workers.csv' '{{path}}'</code></li>
+</ul>
+
+<h2>Download</h2>
+
+<p>Press this <a class="pure-button float-right" href="{{path}}.csv"><i class="fa fa-download"></i> Download</a> button to download the workers in the CSV format or use the cURL command displayed below.</p>
+
+<ul class="fa-ul">
+    <li><i class="fa-li fa fa-keyboard-o"></i><code>curl '{{path}}.csv'</code></li>
+</ul>
+{{/content}}
+{{/layout}}
