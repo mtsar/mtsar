@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 public final class WorkerCSV {
     public static final String[] HEADER = {"id", "tags", "process", "datetime"};
 
-    public static final CSVFormat FORMAT = CSVFormat.DEFAULT.withHeader(HEADER).withSkipHeaderRecord();
+    public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Worker> parse(Process process, Iterator<CSVRecord> records) {
         final Iterable<CSVRecord> iterable = () -> records;
@@ -30,7 +30,7 @@ public final class WorkerCSV {
             final String datetime = row.isSet("datetime") ? row.get("datetime") : null;
 
             return Worker.builder().
-                    setId(Integer.valueOf(id)).
+                    setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
                     setProcess(process.getId()).
                     setTags(tags).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).

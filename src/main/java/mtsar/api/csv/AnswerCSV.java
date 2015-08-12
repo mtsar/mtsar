@@ -20,7 +20,7 @@ import java.util.stream.StreamSupport;
 public final class AnswerCSV {
     public static final String[] HEADER = {"id", "tags", "process", "task_id", "worker_id", "answers", "datetime"};
 
-    public static final CSVFormat FORMAT = CSVFormat.DEFAULT.withHeader(HEADER).withSkipHeaderRecord();
+    public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Answer> parse(Process process, Iterator<CSVRecord> records) {
         final Iterable<CSVRecord> iterable = () -> records;
@@ -33,7 +33,7 @@ public final class AnswerCSV {
             final String datetime = row.isSet("datetime") ? row.get("datetime") : null;
 
             return Answer.builder().
-                    setId(Integer.valueOf(id)).
+                    setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
                     setProcess(process.getId()).
                     setTags(tags).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
