@@ -4,13 +4,11 @@ import io.dropwizard.jersey.PATCH;
 import mtsar.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.csv.TaskCSVParser;
-import mtsar.api.csv.TaskCSVWriter;
+import mtsar.api.csv.TaskCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.views.TasksView;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -25,7 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Path("/tasks")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -58,7 +58,7 @@ public class TaskResource {
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getCSV() {
         final List<Task> tasks = taskDAO.listForProcess(process.getId());
-        return output -> TaskCSVWriter.write(tasks, output);
+        return output -> TaskCSV.write(tasks, output);
     }
 
     @POST
@@ -82,8 +82,8 @@ public class TaskResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response postTasks(@FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            try (final CSVParser csv = new CSVParser(reader, TaskCSVParser.FORMAT)) {
-                taskDAO.insert(TaskCSVParser.parse(process, csv.iterator()));
+            try (final CSVParser csv = new CSVParser(reader, TaskCSV.FORMAT)) {
+                taskDAO.insert(TaskCSV.parse(process, csv.iterator()));
             }
         }
         return Response.ok().build();

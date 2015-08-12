@@ -6,9 +6,7 @@ import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
-import mtsar.api.csv.TaskCSVParser;
-import mtsar.api.csv.WorkerCSVParser;
-import mtsar.api.csv.WorkerCSVWriter;
+import mtsar.api.csv.WorkerCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -61,15 +59,15 @@ public class WorkerResource {
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getCSV() {
         final List<Worker> workers = workerDAO.listForProcess(process.getId());
-        return output -> WorkerCSVWriter.write(workers, output);
+        return output -> WorkerCSV.write(workers, output);
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response postWorkers(@FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            try (final CSVParser csv = new CSVParser(reader, WorkerCSVParser.FORMAT)) {
-                workerDAO.insert(WorkerCSVParser.parse(process, csv.iterator()));
+            try (final CSVParser csv = new CSVParser(reader, WorkerCSV.FORMAT)) {
+                workerDAO.insert(WorkerCSV.parse(process, csv.iterator()));
             }
         }
         return Response.ok().build();

@@ -3,9 +3,7 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
 import mtsar.api.Process;
-import mtsar.api.csv.AnswerCSVParser;
-import mtsar.api.csv.AnswerCSVWriter;
-import mtsar.api.csv.TaskCSVParser;
+import mtsar.api.csv.AnswerCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -52,15 +50,15 @@ public class AnswerResource {
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getCSV() {
         final List<Answer> answers = answerDAO.listForProcess(process.getId());
-        return output -> AnswerCSVWriter.write(answers, output);
+        return output -> AnswerCSV.write(answers, output);
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response postAnswers(@FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-            try (final CSVParser csv = new CSVParser(reader, AnswerCSVParser.FORMAT)) {
-                answerDAO.insert(AnswerCSVParser.parse(process, csv.iterator()));
+            try (final CSVParser csv = new CSVParser(reader, AnswerCSV.FORMAT)) {
+                answerDAO.insert(AnswerCSV.parse(process, csv.iterator()));
             }
         }
         return Response.ok().build();
