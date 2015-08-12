@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.util.Collection;
 import java.util.Map;
 
@@ -62,14 +63,44 @@ public class ProcessResource {
         return new WorkerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
+    /**
+     * TODO: how to implement this route correctly?
+     */
+    @GET
+    @Path("{process}/workers.csv")
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getWorkersCSV(@PathParam("process") String id) {
+        return getWorkers(id).getCSV();
+    }
+
     @Path("{process}/tasks")
     public TaskResource getTasks(@PathParam("process") String id) {
         return new TaskResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
+    /**
+     * TODO: how to implement this route correctly?
+     */
+    @GET
+    @Path("{process}/tasks.csv")
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getTasksCSV(@PathParam("process") String id) {
+        return getTasks(id).getCSV();
+    }
+
     @Path("{process}/answers")
     public AnswerResource getAnswers(@PathParam("process") String id) {
         return new AnswerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
+    }
+
+    /**
+     * TODO: how to implement this route correctly?
+     */
+    @GET
+    @Path("{process}/answers.csv")
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getAnswersCSV(@PathParam("process") String id) {
+        return getAnswers(id).getCSV();
     }
 
     protected Process fetchProcess(String id) {

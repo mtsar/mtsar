@@ -35,7 +35,7 @@ public class AnswerResource {
 
     @GET
     @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getAnswersCSV() {
+    public StreamingOutput getCSV() {
         final List<Answer> answers = answerDAO.listForProcess(process.getId());
         return output -> AnswerCSVWriter.write(answers, output);
     }

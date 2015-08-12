@@ -55,7 +55,7 @@ public class TaskResource {
 
     @GET
     @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getTasksCSV() {
+    public StreamingOutput getCSV() {
         final List<Task> tasks = taskDAO.listForProcess(process.getId());
         return output -> TaskCSVWriter.write(tasks, output);
     }

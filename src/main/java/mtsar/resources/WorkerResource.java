@@ -44,7 +44,7 @@ public class WorkerResource {
 
     @GET
     @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getWorkersCSV() {
+    public StreamingOutput getCSV() {
         final List<Worker> workers = workerDAO.listForProcess(process.getId());
         return output -> WorkerCSVWriter.write(workers, output);
     }
