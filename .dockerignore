@@ -6,3 +6,4 @@ target
 log
 *.yml
 *.csv
+*.example
