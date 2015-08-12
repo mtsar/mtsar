@@ -46,7 +46,7 @@ public final class TaskCSV {
 
     public static void write(List<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
+            FORMAT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     tasks.stream().map(task -> new String[]{
                             Integer.toString(task.getId()),                                 // id
                             task.getProcess(),                                              // process

@@ -40,7 +40,7 @@ public final class WorkerCSV {
 
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
+            FORMAT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     workers.stream().map(worker -> new String[]{
                             Integer.toString(worker.getId()),                                   // id
                             worker.getProcess(),                                                // process
