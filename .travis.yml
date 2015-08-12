@@ -7,6 +7,8 @@ addons:
 before_script:
   - mvn versions:display-dependency-updates
   - mvn versions:display-plugin-updates
+  - psql -c 'create database mtsar;' -U postgres
+  - java -jar target/mtsar-*.jar db migrate environment.travis.yml
 cache:
   directories:
     - $HOME/.m2
