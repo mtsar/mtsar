@@ -17,6 +17,9 @@ public class TaskAllocation {
     }
 
     @JsonProperty
+    public String getType() { return getClass().getSimpleName(); }
+
+    @JsonProperty
     public Worker getWorker() {
         return worker;
     }

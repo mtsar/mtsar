@@ -17,6 +17,9 @@ public class AnswerAggregation {
     }
 
     @JsonProperty
+    public String getType() { return getClass().getSimpleName(); }
+
+    @JsonProperty
     public Task getTask() {
         return task;
     }
