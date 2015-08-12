@@ -26,7 +26,7 @@ public final class TaskCSV {
     public static Iterator<Task> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
         if (Sets.intersection(header, Sets.newHashSet(HEADER)).size() == 0) {
-            throw new IllegalArgumentException("Unknown CSV header: " + String.join(", ", header));
+            throw new IllegalArgumentException("Unknown CSV header: " + String.join(",", header));
         }
 
         final Iterable<CSVRecord> iterable = () -> csv.iterator();
