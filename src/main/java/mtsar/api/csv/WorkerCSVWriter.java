@@ -1,6 +1,7 @@
 package mtsar.api.csv;
 
 import mtsar.api.Worker;
+import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.csv.CSVFormat;
 
 import java.io.IOException;
@@ -15,14 +16,14 @@ public final class WorkerCSVWriter {
 
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(
+            CSVFormat.DEFAULT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
                     workers.stream().map(worker -> new String[]{
                             Integer.toString(worker.getId()),
                             worker.getExternalId(),
                             worker.getProcess(),
                             Long.toString(worker.getDateTime().toInstant().getEpochSecond())
                     }).iterator()
-            );
+            ));
         }
     }
 }
