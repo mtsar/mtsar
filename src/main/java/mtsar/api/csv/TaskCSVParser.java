@@ -8,29 +8,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.Iterator;
+import java.util.stream.StreamSupport;
 
 public final class TaskCSVParser {
     public static final CSVFormat FORMAT = CSVFormat.DEFAULT.
             withHeader("external_id", "type", "description", "answers", "datetime").
             withSkipHeaderRecord();
 
-    public static class TaskIterator implements Iterator<Task> {
-        private final Process process;
-        private final Iterator<CSVRecord> records;
-
-        public TaskIterator(Process process, Iterator<CSVRecord> records) {
-            this.process = process;
-            this.records = records;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return records.hasNext();
-        }
-
-        @Override
-        public Task next() {
-            final CSVRecord row = records.next();
+    public static Iterator<Task> parse(Process process, Iterator<CSVRecord> records) {
+        final Iterable<CSVRecord> iterable = () -> records;
+        return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
             final String externalId = row.isSet("external_id") ? row.get("external_id") : null;
             final String type = row.get("type");
             final String description = row.isSet("description") ? row.get("description") : null;
@@ -45,6 +32,6 @@ public final class TaskCSVParser {
                     setExternalId(StringUtils.defaultIfEmpty(externalId, null)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
                     build();
-        }
+        }).iterator();
     }
 }
