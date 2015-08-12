@@ -86,6 +86,7 @@ public class TaskResource {
                 taskDAO.insert(TaskCSV.parse(process, csv.iterator()));
             }
         }
+        taskDAO.resetSequence();
         return Response.seeOther(getTasksURI(uriInfo)).build();
     }
 

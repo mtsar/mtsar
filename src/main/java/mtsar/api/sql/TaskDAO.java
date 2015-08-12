@@ -28,7 +28,7 @@ public interface TaskDAO {
     @SqlQuery("insert into tasks (process, datetime, tags, type, description, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), :type, :description, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Task t);
 
-    @SqlBatch("insert into tasks (id, process, datetime, tags, type, description, answers) values (:id, :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), :type, :description, cast(:answersTextArray as text[]))")
+    @SqlBatch("insert into tasks (id, process, datetime, tags, type, description, answers) values (coalesce(:id, nextval('tasks_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), :type, :description, cast(:answersTextArray as text[]))")
     @BatchChunkSize(1000)
     void insert(@BindBean Iterator<Task> tasks);
 
@@ -41,8 +41,8 @@ public interface TaskDAO {
     @SqlUpdate("delete from tasks")
     void deleteAll();
 
-    @SqlUpdate("select setval('tasks_id_seq', (select max(id) from tasks))")
-    void reset();
+    @SqlUpdate("select setval('tasks_id_seq', coalesce((select max(id) + 1 from tasks), 1), false)")
+    void resetSequence();
 
     void close();
 }

@@ -70,6 +70,7 @@ public class WorkerResource {
                 workerDAO.insert(WorkerCSV.parse(process, csv.iterator()));
             }
         }
+        workerDAO.resetSequence();
         return Response.seeOther(getWorkersURI(uriInfo)).build();
     }
 

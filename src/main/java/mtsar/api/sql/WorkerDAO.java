@@ -22,7 +22,7 @@ public interface WorkerDAO {
     @SqlQuery("insert into workers (process, datetime, tags) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[])) returning id")
     int insert(@BindBean Worker t);
 
-    @SqlBatch("insert into workers (id, process, datetime, tags) values (:id, :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]))")
+    @SqlBatch("insert into workers (id, process, datetime, tags) values (coalesce(:id, nextval('workers_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]))")
     @BatchChunkSize(1000)
     void insert(@BindBean Iterator<Worker> tasks);
 
@@ -40,6 +40,9 @@ public interface WorkerDAO {
 
     @SqlUpdate("delete from workers")
     void deleteAll();
+
+    @SqlUpdate("select setval('workers_id_seq', coalesce((select max(id) + 1 from workers), 1), false)")
+    void resetSequence();
 
     void close();
 }

@@ -62,6 +62,7 @@ public class AnswerResource {
                 answerDAO.insert(AnswerCSV.parse(process, csv.iterator()));
             }
         }
+        answerDAO.resetSequence();
         return Response.seeOther(getAnswersURI(uriInfo)).build();
     }
 
