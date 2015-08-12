@@ -47,7 +47,7 @@ public class WorkerResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public WorkersView getWorkersView(@Context UriInfo uriInfo) {
-        return new WorkersView(uriInfo, process);
+        return new WorkersView(uriInfo, process, workerDAO);
     }
 
     @GET
@@ -64,13 +64,13 @@ public class WorkerResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response postWorkers(@FormDataParam("file") InputStream stream) throws IOException {
+    public Response postWorkers(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, WorkerCSV.FORMAT)) {
                 workerDAO.insert(WorkerCSV.parse(process, csv.iterator()));
             }
         }
-        return Response.ok().build();
+        return Response.seeOther(getWorkersURI(uriInfo)).build();
     }
 
     @POST
@@ -139,6 +139,13 @@ public class WorkerResource {
         final Worker worker = workerDAO.find(id, process.getId());
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
+    }
+
+    private URI getWorkersURI(UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("workers").
+                build();
     }
 
     private URI getWorkerURI(UriInfo uriInfo, Worker worker) {

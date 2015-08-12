@@ -1,31 +1,60 @@
 {{<layout}}
 {{$content}}
-<h2>Upload</h2>
+<div class="pure-g">
+    <div class="pure-u-1">
+        <table class="pure-table pure-table-striped width-max">
+            <thead>
+                <tr>
+                    <th style="width: 30%">Key</th>
+                    <th style="width: 70%">Value</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#process}}
+                <tr>
+                    <td>process</td>
+                    <td><a href="{{processPath}}">{{id}}</a></td>
+                </tr>
+                <tr>
+                    <td>workerCount</td>
+                    <td>{{workerCount}}</td>
+                </tr>
+                <tr>
+                    <td>workerRanker</td>
+                    <td><code>{{workerRankerName}}</code></td>
+                </tr>
+            {{/process}}
+            </tbody>
+        </table>
 
-<p>Submit the present form to upload workers in the CSV format or use the cURL command displayed below.</p>
+        <h2>Upload</h2>
 
-<form class="pure-form pure-form-aligned" action="{{path}}" method="POST">
-    <fieldset>
-        <div class="pure-control-group">
-            <label for="file">File</label>
-            <input id="file" type="file" accept=".csv" required>
-        </div>
-        <div class="pure-controls">
-            <button type="submit" class="pure-button"><i class="fa fa-upload"></i> Upload</button>
-        </div>
-    </fieldset>
-</form>
+        <p>Submit the present form to upload workers in the CSV format or use the cURL command displayed below.</p>
 
-<ul class="fa-ul">
-    <li><i class="fa-li fa fa-keyboard-o"></i><code>curl -F 'file=@workers.csv' '{{path}}'</code></li>
-</ul>
+        <form class="pure-form pure-form-aligned" action="{{path}}" method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <div class="pure-control-group">
+                    <label for="file">File</label>
+                    <input id="file" type="file" name="file" accept=".csv" required>
+                </div>
+                <div class="pure-controls">
+                    <button type="submit" class="pure-button"><i class="fa fa-upload"></i> Upload</button>
+                </div>
+            </fieldset>
+        </form>
 
-<h2>Download</h2>
+        <ul class="fa-ul">
+            <li><i class="fa-li fa fa-keyboard-o"></i><code>curl -F 'file=@workers.csv' '{{path}}'</code></li>
+        </ul>
 
-<p>Press this <a class="pure-button float-right" href="{{path}}.csv"><i class="fa fa-download"></i> Download</a> button to download the workers in the CSV format or use the cURL command displayed below.</p>
+        <h2>Download</h2>
 
-<ul class="fa-ul">
-    <li><i class="fa-li fa fa-keyboard-o"></i><code>curl '{{path}}.csv'</code></li>
-</ul>
+        <p>Press this <a class="pure-button float-right" href="{{path}}.csv"><i class="fa fa-download"></i> Download</a> button to download the workers in the CSV format or use the cURL command displayed below.</p>
+
+        <ul class="fa-ul">
+            <li><i class="fa-li fa fa-keyboard-o"></i><code>curl '{{path}}.csv'</code></li>
+        </ul>
+    </div>
+</div>
 {{/content}}
 {{/layout}}

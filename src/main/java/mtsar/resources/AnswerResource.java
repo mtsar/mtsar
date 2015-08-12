@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class AnswerResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public AnswersView getAnswersView(@Context UriInfo uriInfo) {
-        return new AnswersView(uriInfo, process);
+        return new AnswersView(uriInfo, process, answerDAO);
     }
 
     @GET
@@ -55,13 +56,13 @@ public class AnswerResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response postAnswers(@FormDataParam("file") InputStream stream) throws IOException {
+    public Response postAnswers(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, AnswerCSV.FORMAT)) {
                 answerDAO.insert(AnswerCSV.parse(process, csv.iterator()));
             }
         }
-        return Response.ok().build();
+        return Response.seeOther(getAnswersURI(uriInfo)).build();
     }
 
     @GET
@@ -94,5 +95,12 @@ public class AnswerResource {
         final Answer answer = answerDAO.find(id, process.getId());
         if (answer == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return answer;
+    }
+
+    private URI getAnswersURI(UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("answers").
+                build();
     }
 }

@@ -46,7 +46,7 @@ public class TaskResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TasksView getTasksView(@Context UriInfo uriInfo) {
-        return new TasksView(uriInfo, process);
+        return new TasksView(uriInfo, process, taskDAO);
     }
 
     @GET
@@ -80,13 +80,13 @@ public class TaskResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response postTasks(@FormDataParam("file") InputStream stream) throws IOException {
+    public Response postTasks(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, TaskCSV.FORMAT)) {
                 taskDAO.insert(TaskCSV.parse(process, csv.iterator()));
             }
         }
-        return Response.ok().build();
+        return Response.seeOther(getTasksURI(uriInfo)).build();
     }
 
     @GET
@@ -167,6 +167,13 @@ public class TaskResource {
         final Task task = taskDAO.find(id, process.getId());
         if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return task;
+    }
+
+    private URI getTasksURI(UriInfo uriInfo) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("tasks").
+                build();
     }
 
     private URI getTaskURI(UriInfo uriInfo, Task task) {
