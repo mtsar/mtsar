@@ -67,7 +67,7 @@ public class WorkerResource {
     public Response postWorkers(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, WorkerCSV.FORMAT)) {
-                workerDAO.insert(WorkerCSV.parse(process, csv.iterator()));
+                workerDAO.insert(WorkerCSV.parse(process, csv));
             }
         }
         workerDAO.resetSequence();

@@ -59,7 +59,7 @@ public class AnswerResource {
     public Response postAnswers(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, AnswerCSV.FORMAT)) {
-                answerDAO.insert(AnswerCSV.parse(process, csv.iterator()));
+                answerDAO.insert(AnswerCSV.parse(process, csv));
             }
         }
         answerDAO.resetSequence();

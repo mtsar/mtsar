@@ -83,7 +83,7 @@ public class TaskResource {
     public Response postTasks(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, TaskCSV.FORMAT)) {
-                taskDAO.insert(TaskCSV.parse(process, csv.iterator()));
+                taskDAO.insert(TaskCSV.parse(process, csv));
             }
         }
         taskDAO.resetSequence();
