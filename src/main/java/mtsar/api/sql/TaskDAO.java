@@ -25,10 +25,10 @@ public interface TaskDAO {
     @SqlQuery("select count(*) from tasks where process = :process")
     int count(@Bind("process") String process);
 
-    @SqlQuery("insert into tasks (process, datetime, tags, type, description, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), :type, :description, cast(:answersTextArray as text[])) returning id")
+    @SqlQuery("insert into tasks (process, datetime, tags, type, description, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as task_type), :description, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Task t);
 
-    @SqlBatch("insert into tasks (id, process, datetime, tags, type, description, answers) values (coalesce(:id, nextval('tasks_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), :type, :description, cast(:answersTextArray as text[]))")
+    @SqlBatch("insert into tasks (id, process, datetime, tags, type, description, answers) values (coalesce(:id, nextval('tasks_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as task_type), :description, cast(:answersTextArray as text[]))")
     @BatchChunkSize(1000)
     void insert(@BindBean Iterator<Task> tasks);
 

@@ -34,6 +34,7 @@ public final class AnswerCSV {
         return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
             final String id = row.isSet("id") ? row.get("id") : null;
             final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : null;
+            final String type = row.isSet("type") ? row.get("type") : null;
             final String workerId = row.get("worker_id");
             final String taskId = row.get("task_id");
             final String[] answers = row.isSet("answers") && !StringUtils.isEmpty(row.get("answers")) ? row.get("answers").split("\\|") : null;
@@ -44,6 +45,7 @@ public final class AnswerCSV {
                     setProcess(process.getId()).
                     setTags(tags).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
+                    setType(StringUtils.defaultIfEmpty(type, null)).
                     setWorkerId(Integer.valueOf(workerId)).
                     setTaskId(Integer.valueOf(taskId)).
                     setAnswers(answers).
@@ -51,7 +53,7 @@ public final class AnswerCSV {
         }).iterator();
     }
 
-    public static final String[] HEADER = {"id", "process", "datetime", "tags", "task_id", "worker_id", "answers"};
+    public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "task_id", "worker_id", "answers"};
 
     public static void write(List<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
@@ -61,6 +63,7 @@ public final class AnswerCSV {
                             answer.getProcess(),                                                // process
                             Long.toString(answer.getDateTime().toInstant().getEpochSecond()),   // datetime
                             String.join("|", answer.getTags()),                                 // tags
+                            answer.getType(),                                                   // type
                             Integer.toString(answer.getTaskId()),                               // task_id
                             Integer.toString(answer.getWorkerId()),                             // worker_id
                             String.join("|", answer.getAnswers())                               // answers

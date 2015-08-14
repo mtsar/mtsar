@@ -64,6 +64,12 @@
     </changeSet>
 
     <changeSet id="3" author="dustalov">
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE TYPE task_type AS ENUM ('single', 'multiple');
+            ]]>
+        </sql>
+
         <createTable tableName="tasks">
             <column name="id" type="serial" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -80,7 +86,7 @@
             <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
                 <constraints nullable="false"/>
             </column>
-            <column name="type" type="text">
+            <column name="type" type="task_type">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="text"/>
@@ -116,6 +122,12 @@
     </changeSet>
 
     <changeSet id="4" author="dustalov">
+        <sql splitStatements="false">
+            <![CDATA[
+                CREATE TYPE answer_type AS ENUM ('answer', 'skip');
+            ]]>
+        </sql>
+
         <createTable tableName="answers">
             <column name="id" type="serial" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -132,6 +144,7 @@
             <column name="metadata" type="jsonb" defaultValueComputed="'{}'">
                 <constraints nullable="false"/>
             </column>
+            <column name="type" type="answer_type" defaultValueComputed="'answer'"/>
             <column name="worker_id" type="integer">
                 <constraints nullable="false"/>
             </column>
@@ -148,6 +161,10 @@
                 CREATE INDEX index_answers_on_tags ON answers USING gin(tags);
             ]]>
         </sql>
+
+        <createIndex tableName="answers" indexName="index_answers_on_type">
+            <column name="type"/>
+        </createIndex>
 
         <createIndex tableName="answers" indexName="index_answers_on_worker_id">
             <column name="worker_id"/>

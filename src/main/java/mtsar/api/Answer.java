@@ -32,6 +32,11 @@ public class Answer {
             return this;
         }
 
+        public Builder setType(String type) {
+            this.type = type;
+            return this;
+        }
+
         public Builder setWorkerId(Integer workerId) {
             this.workerId = workerId;
             return this;
@@ -60,6 +65,7 @@ public class Answer {
         private Integer id;
         private String[] tags;
         private String process;
+        private String type;
         private Integer workerId;
         private Integer taskId;
         private String[] answers;
@@ -75,6 +81,7 @@ public class Answer {
                 builder.id,
                 builder.tags,
                 builder.process,
+                builder.type,
                 builder.workerId,
                 builder.taskId,
                 builder.answers,
@@ -85,6 +92,7 @@ public class Answer {
     protected final Integer id;
     protected final String[] tags;
     protected final String process;
+    protected final String type;
     protected final Integer workerId;
     protected final Integer taskId;
     protected final String[] answers;
@@ -94,6 +102,7 @@ public class Answer {
     public Answer(@JsonProperty("id") Integer id,
                   @JsonProperty("tags") String[] tags,
                   @JsonProperty("process") String process,
+                  @JsonProperty("type") String type,
                   @JsonProperty("workerId") Integer workerId,
                   @JsonProperty("taskId") Integer taskId,
                   @JsonProperty("answer") String[] answers,
@@ -101,6 +110,7 @@ public class Answer {
         this.id = id;
         this.tags = tags;
         this.process = process;
+        this.type = type;
         this.workerId = workerId;
         this.taskId = taskId;
         this.answers = answers;
@@ -131,6 +141,11 @@ public class Answer {
     @JsonProperty
     public String getProcess() {
         return process;
+    }
+
+    @JsonProperty
+    public String getType() {
+        return type;
     }
 
     @JsonProperty
