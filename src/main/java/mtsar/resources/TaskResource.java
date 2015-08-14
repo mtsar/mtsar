@@ -104,7 +104,7 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answers")
-    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
         final Timestamp datetime = (datetimeParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
                 Timestamp.valueOf(datetimeParam);
@@ -117,6 +117,7 @@ public class TaskResource {
         int answerId = answerDAO.insert(Answer.builder().
                 setProcess(process.getId()).
                 setTags(tags.toArray(new String[tags.size()])).
+                setType(type).
                 setTaskId(task.getId()).
                 setWorkerId(worker.getId()).
                 setAnswers(answers.toArray(new String[answers.size()])).
