@@ -3,6 +3,7 @@ package mtsar.api.csv;
 import com.google.common.collect.Sets;
 import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.sql.AnswerDAO;
 import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -45,7 +46,7 @@ public final class AnswerCSV {
                     setProcess(process.getId()).
                     setTags(tags).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
-                    setType(StringUtils.defaultIfEmpty(type, null)).
+                    setType(StringUtils.defaultIfEmpty(type, AnswerDAO.DEFAULT_ANSWER_TYPE)).
                     setWorkerId(Integer.valueOf(workerId)).
                     setTaskId(Integer.valueOf(taskId)).
                     setAnswers(answers).
