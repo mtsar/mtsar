@@ -54,7 +54,8 @@ public class InverseCountAllocator implements TaskAllocator {
         if (tasks.isEmpty()) return Optional.empty();
         tasks.sort(getComparator(counts, worker));
 
-        return Optional.of(new TaskAllocation(worker, tasks.get(0)));
+        final String processId = process.get().getId();
+        return Optional.of(new TaskAllocation(worker, tasks.get(0), taskDAO.remaining(processId, worker.getId()), taskDAO.count(processId)));
     }
 
     protected Map<Task, Integer> getCounts(List<Task> tasks, Worker worker) {

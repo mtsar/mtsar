@@ -25,6 +25,7 @@ public class RandomAllocator implements TaskAllocator {
     public Optional<TaskAllocation> allocate(Worker worker) {
         final Task task = taskDAO.random(process.get().getId());
         if (task == null) return Optional.empty();
-        return Optional.ofNullable(new TaskAllocation(worker, task));
+        final int count = taskDAO.count(process.get().getId());
+        return Optional.ofNullable(new TaskAllocation(worker, task, count, count));
     }
 }

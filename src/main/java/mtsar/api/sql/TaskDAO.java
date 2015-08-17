@@ -25,6 +25,16 @@ public interface TaskDAO {
     @SqlQuery("select count(*) from tasks where process = :process")
     int count(@Bind("process") String process);
 
+    /**
+     * Provides the upper bound of unanswered tasks of the given process by the given worker.
+     *
+     * @param process  the process name.
+     * @param workerId the worker identifier.
+     * @return the number of unanswered tasks.
+     */
+    @SqlQuery("select count(distinct tasks.id) from tasks left join answers on answers.task_id = tasks.id and answers.process = tasks.process and answers.worker_id = :worker_id where tasks.process = :process and answers.id is null")
+    int remaining(@Bind("process") String process, @Bind("worker_id") Integer workerId);
+
     @SqlQuery("insert into tasks (process, datetime, tags, type, description, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as task_type), :description, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Task t);
 
