@@ -63,8 +63,8 @@ public class TaskResource {
 
     @POST
     public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("description") String description, MultivaluedMap<String, String> params) {
-        final Set<String> tags = ParamsUtils.extract(params, "tag");
-        final Set<String> answers = ParamsUtils.extract(params, "answer");
+        final Set<String> tags = ParamsUtils.extract(params, "tags");
+        final Set<String> answers = ParamsUtils.extract(params, "answers");
 
         int taskId = taskDAO.insert(Task.builder().
                 setTags(tags.toArray(new String[tags.size()])).
@@ -111,8 +111,8 @@ public class TaskResource {
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
 
-        final Set<String> tags = ParamsUtils.extract(params, "tag");
-        final Set<String> answers = ParamsUtils.extract(params, "answer");
+        final Set<String> tags = ParamsUtils.extract(params, "tags");
+        final Set<String> answers = ParamsUtils.extract(params, "answers");
 
         int answerId = answerDAO.insert(Answer.builder().
                 setProcess(process.getId()).

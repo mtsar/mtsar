@@ -76,7 +76,7 @@ public class WorkerResource {
 
     @POST
     public Response postWorker(@Context UriInfo uriInfo, MultivaluedMap<String, String> params) {
-        final Set<String> tags = ParamsUtils.extract(params, "tag");
+        final Set<String> tags = ParamsUtils.extract(params, "tags");
 
         int workerId = workerDAO.insert(Worker.builder().
                 setProcess(process.getId()).
@@ -94,8 +94,8 @@ public class WorkerResource {
     }
 
     @GET
-    @Path("external")
-    public Worker getWorkerByTag(@QueryParam("tag") String tag) {
+    @Path("tagged/{tag}")
+    public Worker getWorkerByTag(@PathParam("tag") String tag) {
         final Worker worker = workerDAO.findByTag(process.getId(), tag);
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
