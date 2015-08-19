@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# This script is intended to be runned in the Docker environment.
+# Otherwise, you do not really have to care about it.
+
 if [ -z "$POSTGRES_PORT_5432_TCP_ADDR" ]; then
     POSTGRES_PORT_5432_TCP_ADDR=192.168.1.2
 fi
