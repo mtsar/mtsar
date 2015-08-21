@@ -1,6 +1,7 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
+import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.Process;
@@ -23,8 +24,6 @@ import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -74,7 +73,7 @@ public class TaskResource {
                 setDescription(description).
                 setAnswers(answers.toArray(new String[answers.size()])).
                 setProcess(process.getId()).
-                setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
+                setDateTime(DefaultDateTime.get()).
                 build());
         final Task task = taskDAO.find(taskId, process.getId());
         return Response.created(getTaskURI(uriInfo, task)).entity(task).build();
@@ -107,9 +106,7 @@ public class TaskResource {
     @POST
     @Path("{task}/answers")
     public Response postTaskAnswer(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
-        final Timestamp datetime = (datetimeParam == null) ?
-                Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
-                Timestamp.valueOf(datetimeParam);
+        final Timestamp datetime = (datetimeParam == null) ? DefaultDateTime.get() : Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
         final Set<String> tags = ParamsUtils.extract(params, "tags");

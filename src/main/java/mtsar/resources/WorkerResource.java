@@ -1,6 +1,7 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
+import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
 import mtsar.api.Answer;
 import mtsar.api.Process;
@@ -22,9 +23,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -81,7 +79,7 @@ public class WorkerResource {
         int workerId = workerDAO.insert(Worker.builder().
                 setProcess(process.getId()).
                 setTags(tags.toArray(new String[tags.size()])).
-                setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
+                setDateTime(DefaultDateTime.get()).
                 build());
         final Worker worker = workerDAO.find(workerId, process.getId());
         return Response.created(getWorkerURI(uriInfo, worker)).entity(worker).build();
