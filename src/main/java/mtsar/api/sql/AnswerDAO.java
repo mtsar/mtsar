@@ -24,7 +24,7 @@ public interface AnswerDAO {
     @SqlQuery("select * from answers where id = :id and process = :process limit 1")
     Answer find(@Bind("id") Integer id, @Bind("process") String process);
 
-    @SqlQuery("insert into answers (process, datetime, tags, type, worker_id, task_id, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(coalesce(:type, 'answer') as answer_type), :workerId, :taskId, cast(:answersTextArray as text[])) returning id")
+    @SqlQuery("insert into answers (process, datetime, tags, type, worker_id, task_id, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Answer a);
 
     @SqlBatch("insert into answers (id, process, datetime, tags, type, worker_id, task_id, answers) values (coalesce(:id, nextval('answers_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[]))")
