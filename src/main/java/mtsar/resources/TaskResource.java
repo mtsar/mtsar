@@ -8,10 +8,12 @@ import mtsar.api.csv.TaskCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.api.validation.TaskAnswerValidation;
 import mtsar.views.TasksView;
 import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -104,17 +106,16 @@ public class TaskResource {
 
     @POST
     @Path("{task}/answers")
-    public Response postTaskAnswer(@Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+    public Response postTaskAnswer(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("task") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("worker_id") Integer workerId, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
         final Timestamp datetime = (datetimeParam == null) ?
                 Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()) :
                 Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
-
         final Set<String> tags = ParamsUtils.extract(params, "tags");
         final Set<String> answers = ParamsUtils.extract(params, "answers");
 
-        int answerId = answerDAO.insert(Answer.builder().
+        final Answer record = Answer.builder().
                 setProcess(process.getId()).
                 setTags(tags.toArray(new String[tags.size()])).
                 setType(type).
@@ -122,7 +123,11 @@ public class TaskResource {
                 setWorkerId(worker.getId()).
                 setAnswers(answers.toArray(new String[answers.size()])).
                 setDateTime(datetime).
-                build());
+                build();
+
+        ParamsUtils.validate(validator, new TaskAnswerValidation(task, record));
+
+        int answerId = answerDAO.insert(record);
         final Answer answer = answerDAO.find(answerId, process.getId());
         return Response.created(getAnswerURI(uriInfo, answer)).entity(answer).build();
     }

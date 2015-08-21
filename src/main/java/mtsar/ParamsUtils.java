@@ -2,6 +2,9 @@ package mtsar;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.HashSet;
 import java.util.List;
@@ -19,5 +22,11 @@ public final class ParamsUtils {
             for (final String answer : entries.getValue()) values.add(answer);
         }
         return values;
+    }
+
+    public final static void validate(Validator validator, Object... objects) {
+        final Set<ConstraintViolation<Object>> violations = new HashSet<>();
+        for (Object object : objects) violations.addAll(validator.validate(object));
+        if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }
 }
