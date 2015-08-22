@@ -14,8 +14,9 @@ public class TaskAnswerValidation {
         this.answer = answer;
     }
 
-    @ValidationMethod(message="task type 'single' requires one answer")
+    @ValidationMethod(message = "#task-single-no-answer: task type 'single' requires one answer")
     public boolean isAnswerPresentForTypeSingle() {
         return !task.getType().equalsIgnoreCase("single") || ArrayUtils.getLength(answer.getAnswers()) == 1;
     }
+
 }
