@@ -24,6 +24,9 @@ public interface AnswerDAO {
     @SqlQuery("select * from answers where id = :id and process = :process limit 1")
     Answer find(@Bind("id") Integer id, @Bind("process") String process);
 
+    @SqlQuery("select * from answers where process = :process and worker_id = :worker_id and task_id = :task_id limit 1")
+    Answer findByWorkerAndTask(@Bind("process") String process, @Bind("worker_id") Integer workerId, @Bind("task_id") Integer taskId);
+
     @SqlQuery("insert into answers (process, datetime, tags, type, worker_id, task_id, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Answer a);
 

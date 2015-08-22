@@ -9,6 +9,7 @@ import mtsar.api.csv.TaskCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.api.validation.AnswerValidation;
 import mtsar.api.validation.TaskAnswerValidation;
 import mtsar.views.TasksView;
 import org.apache.commons.csv.CSVParser;
@@ -122,7 +123,9 @@ public class TaskResource {
                 setDateTime(datetime).
                 build();
 
-        ParamsUtils.validate(validator, new TaskAnswerValidation(task, record));
+        ParamsUtils.validate(validator,
+                new TaskAnswerValidation(task, record),
+                new AnswerValidation(record, answerDAO));
 
         int answerId = answerDAO.insert(record);
         final Answer answer = answerDAO.find(answerId, process.getId());
