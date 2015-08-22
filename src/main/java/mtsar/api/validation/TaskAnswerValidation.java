@@ -18,5 +18,4 @@ public class TaskAnswerValidation {
     public boolean isAnswerPresentForTypeSingle() {
         return !task.getType().equalsIgnoreCase("single") || ArrayUtils.getLength(answer.getAnswers()) == 1;
     }
-
 }
