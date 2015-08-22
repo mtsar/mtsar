@@ -39,6 +39,7 @@ public class InverseCountAllocatorTest {
     public void testUnequalAllocation() {
         reset(taskDAO);
         reset(answerDAO);
+        when(taskDAO.remaining(anyString(), eq(1))).thenReturn(1);
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers2);
@@ -51,6 +52,7 @@ public class InverseCountAllocatorTest {
     public void testEqualAllocation() {
         reset(taskDAO);
         reset(answerDAO);
+        when(taskDAO.remaining(anyString(), eq(1))).thenReturn(1);
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(answers1);
         when(answerDAO.listForTask(eq(2), anyString())).thenReturn(answers1);
@@ -60,9 +62,18 @@ public class InverseCountAllocatorTest {
     }
 
     @Test
+    public void testNothingLeft() {
+        reset(taskDAO);
+        reset(answerDAO);
+        final Optional<TaskAllocation> allocation = allocator.allocate(worker);
+        assertThat(allocation.isPresent()).isFalse();
+    }
+
+    @Test
     public void testEmpty() {
         reset(taskDAO);
         reset(answerDAO);
+        when(taskDAO.remaining(anyString(), eq(1))).thenReturn(1);
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isFalse();
     }
