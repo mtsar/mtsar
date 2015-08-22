@@ -24,7 +24,7 @@ public final class ParamsUtils {
         return values;
     }
 
-    public final static void validate(Validator validator, Object... objects) {
+    public final static void validate(Validator validator, Object... objects) throws ConstraintViolationException {
         final Set<ConstraintViolation<Object>> violations = new HashSet<>();
         for (Object object : objects) violations.addAll(validator.validate(object));
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
