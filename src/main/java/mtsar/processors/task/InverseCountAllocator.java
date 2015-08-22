@@ -42,6 +42,10 @@ public class InverseCountAllocator implements TaskAllocator {
 
     @Override
     public Optional<TaskAllocation> allocate(Worker worker) {
+        final String processId = process.get().getId();
+        final int taskRemaining = taskDAO.remaining(processId, worker.getId());
+        if (taskRemaining == 0) return Optional.empty();
+
         List<Task> tasks = taskDAO.listForProcess(process.get().getId());
         final Map<Task, Integer> counts = getCounts(tasks, worker);
 
@@ -54,7 +58,6 @@ public class InverseCountAllocator implements TaskAllocator {
         if (tasks.isEmpty()) return Optional.empty();
         tasks.sort(getComparator(counts, worker));
 
-        final String processId = process.get().getId();
         return Optional.of(new TaskAllocation(worker, tasks.get(0), taskDAO.remaining(processId, worker.getId()), taskDAO.count(processId)));
     }
 
