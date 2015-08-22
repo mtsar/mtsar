@@ -3,10 +3,8 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
-import mtsar.api.Answer;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.TaskAllocation;
-import mtsar.api.Worker;
 import mtsar.api.csv.WorkerCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -108,6 +106,20 @@ public class WorkerResource {
     }
 
     @GET
+    @Path("{worker}/task/{task}")
+    public TaskAllocation getWorkerTaskAgain(@PathParam("worker") Integer id, @PathParam("task") Integer taskId) {
+        final Worker worker = fetchWorker(id);
+        final Task task = fetchTask(taskId);
+        final Optional<TaskAllocation> optional = process.getTaskAllocator().allocate(worker);
+        if (optional.isPresent()) {
+            final TaskAllocation allocation = optional.get();
+            return new TaskAllocation(allocation.getWorker(), task, allocation.getTaskRemaining(), allocation.getTaskCount());
+        } else {
+            return new TaskAllocation(worker, task, 1, taskDAO.count(process.getId()));
+        }
+    }
+
+    @GET
     @Path("{worker}/answers")
     public List<Answer> getWorkerAnswers(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);
@@ -138,6 +150,12 @@ public class WorkerResource {
         final Worker worker = workerDAO.find(id, process.getId());
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
+    }
+
+    private Task fetchTask(Integer id) {
+        final Task task = taskDAO.find(id, process.getId());
+        if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        return task;
     }
 
     private URI getWorkersURI(UriInfo uriInfo) {

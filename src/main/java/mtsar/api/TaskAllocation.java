@@ -12,11 +12,11 @@ public class TaskAllocation {
     private final Integer taskRemaining, taskCount;
 
     @JsonCreator
-    public TaskAllocation(@JsonProperty("worker") Worker worker, @JsonProperty("task") Task task, @JsonProperty("taskRemaining") Integer remaining, @JsonProperty("taskCount") Integer tasks) {
+    public TaskAllocation(@JsonProperty("worker") Worker worker, @JsonProperty("task") Task task, @JsonProperty("taskRemaining") Integer taskRemaining, @JsonProperty("taskCount") Integer taskCount) {
         this.worker = worker;
         this.task = task;
-        this.taskRemaining = remaining;
-        this.taskCount = tasks;
+        this.taskRemaining = taskRemaining;
+        this.taskCount = taskCount;
     }
 
     @JsonProperty
