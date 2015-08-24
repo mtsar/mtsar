@@ -1,5 +1,6 @@
 package mtsar.resources;
 
+import com.google.common.collect.Lists;
 import io.dropwizard.jersey.PATCH;
 import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
@@ -92,7 +93,7 @@ public class WorkerResource {
     @GET
     @Path("tagged/{tag}")
     public Worker getWorkerByTag(@PathParam("tag") String tag) {
-        final Worker worker = workerDAO.findByTag(process.getId(), tag);
+        final Worker worker = workerDAO.findByTags(process.getId(), Lists.newArrayList(tag));
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }

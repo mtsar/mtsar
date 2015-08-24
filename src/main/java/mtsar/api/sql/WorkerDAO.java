@@ -4,10 +4,13 @@ import mtsar.api.Worker;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 import java.util.Iterator;
 import java.util.List;
 
+@UseStringTemplate3StatementLocator
 @RegisterMapper(WorkerMapper.class)
 public interface WorkerDAO {
     @SqlQuery("select * from workers where process = :process")
@@ -16,8 +19,8 @@ public interface WorkerDAO {
     @SqlQuery("select * from workers where id = :id and process = :process limit 1")
     Worker find(@Bind("id") Integer id, @Bind("process") String process);
 
-    @SqlQuery("select * from workers where process = :process and tags @> cast(ARRAY[:tag] as text[]) limit 1")
-    Worker findByTag(@Bind("process") String process, @Bind("tag") String tag);
+    @SqlQuery("select * from workers where process = :process and tags @\\> ARRAY[<tags>]\\:\\:text[] limit 1")
+    Worker findByTags(@Bind("process") String process, @BindIn("tags") List<String> tags);
 
     @SqlQuery("insert into workers (process, datetime, tags) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[])) returning id")
     int insert(@BindBean Worker t);
