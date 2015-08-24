@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import mtsar.api.Answer;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
-import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -58,18 +57,23 @@ public final class AnswerCSV {
 
     public static void write(List<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            FORMAT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
-                    answers.stream().map(answer -> new String[]{
-                            Integer.toString(answer.getId()),                                   // id
-                            answer.getProcess(),                                                // process
-                            Long.toString(answer.getDateTime().toInstant().getEpochSecond()),   // datetime
-                            String.join("|", answer.getTags()),                                 // tags
-                            answer.getType(),                                                   // type
-                            Integer.toString(answer.getTaskId()),                               // task_id
-                            Integer.toString(answer.getWorkerId()),                             // worker_id
-                            String.join("|", answer.getAnswers())                               // answers
-                    }).iterator()
-            ));
+            FORMAT.withHeader(HEADER).print(writer).printRecords(
+                    new Iterable<String[]>() {
+                        @Override
+                        public Iterator<String[]> iterator() {
+                            return answers.stream().map(answer -> new String[]{
+                                    Integer.toString(answer.getId()),                                   // id
+                                    answer.getProcess(),                                                // process
+                                    Long.toString(answer.getDateTime().toInstant().getEpochSecond()),   // datetime
+                                    String.join("|", answer.getTags()),                                 // tags
+                                    answer.getType(),                                                   // type
+                                    Integer.toString(answer.getTaskId()),                               // task_id
+                                    Integer.toString(answer.getWorkerId()),                             // worker_id
+                                    String.join("|", answer.getAnswers())                               // answers
+                            }).iterator();
+                        }
+                    }
+            );
         }
     }
 }

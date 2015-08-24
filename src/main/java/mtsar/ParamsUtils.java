@@ -1,7 +1,5 @@
 package mtsar;
 
-import org.apache.commons.collections4.CollectionUtils;
-
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -18,7 +16,7 @@ public final class ParamsUtils {
         final Set<String> values = new HashSet<>();
         for (final Map.Entry<String, List<String>> entries : params.entrySet()) {
             if (!entries.getKey().matches(regexp)) continue;
-            if (CollectionUtils.isEmpty(entries.getValue())) continue;
+            if (entries.getValue() == null || entries.getValue().isEmpty()) continue;
             for (final String answer : entries.getValue()) values.add(answer);
         }
         return values;

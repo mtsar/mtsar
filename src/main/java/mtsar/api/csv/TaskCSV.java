@@ -3,7 +3,6 @@ package mtsar.api.csv;
 import com.google.common.collect.Sets;
 import mtsar.api.Process;
 import mtsar.api.Task;
-import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -55,17 +54,22 @@ public final class TaskCSV {
 
     public static void write(List<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            FORMAT.withHeader(HEADER).print(writer).printRecords(new IteratorIterable<>(
-                    tasks.stream().map(task -> new String[]{
-                            Integer.toString(task.getId()),                                 // id
-                            task.getProcess(),                                              // process
-                            Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
-                            String.join("|", task.getTags()),                               // tags
-                            task.getType(),                                                 // type
-                            task.getDescription(),                                          // description
-                            String.join("|", task.getAnswers()),                            // answers
-                    }).iterator()
-            ));
+            FORMAT.withHeader(HEADER).print(writer).printRecords(
+                    new Iterable<String[]>() {
+                        @Override
+                        public Iterator<String[]> iterator() {
+                            return tasks.stream().map(task -> new String[]{
+                                    Integer.toString(task.getId()),                                 // id
+                                    task.getProcess(),                                              // process
+                                    Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
+                                    String.join("|", task.getTags()),                               // tags
+                                    task.getType(),                                                 // type
+                                    task.getDescription(),                                          // description
+                                    String.join("|", task.getAnswers()),                            // answers
+                            }).iterator();
+                        }
+                    }
+            );
         }
     }
 }

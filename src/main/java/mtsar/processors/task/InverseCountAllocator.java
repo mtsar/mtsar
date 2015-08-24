@@ -7,7 +7,6 @@ import mtsar.api.Worker;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
-import org.apache.commons.collections4.comparators.ComparatorChain;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -16,19 +15,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class InverseCountAllocator implements TaskAllocator {
-    class AnswerCountComparator implements Comparator<Task> {
-        private final Map<Task, Integer> counts;
-
-        public AnswerCountComparator(Map<Task, Integer> counts) {
-            this.counts = counts;
-        }
-
-        @Override
-        public int compare(Task t1, Task t2) {
-            return counts.get(t1).compareTo(counts.get(t2));
-        }
-    }
-
     protected final Provider<Process> process;
     protected final TaskDAO taskDAO;
     protected final AnswerDAO answerDAO;
@@ -46,7 +32,7 @@ public class InverseCountAllocator implements TaskAllocator {
         final int taskRemaining = taskDAO.remaining(processId, worker.getId());
         if (taskRemaining == 0) return Optional.empty();
 
-        List<Task> tasks = taskDAO.listForProcess(process.get().getId());
+        final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
         final Map<Task, Integer> counts = getCounts(tasks, worker);
 
         final Iterator<Task> iterator = tasks.iterator();
@@ -56,7 +42,8 @@ public class InverseCountAllocator implements TaskAllocator {
         }
 
         if (tasks.isEmpty()) return Optional.empty();
-        tasks.sort(getComparator(counts, worker));
+        Collections.shuffle(tasks);
+        tasks.sort((t1, t2) -> counts.get(t1).compareTo(counts.get(t2)));
 
         return Optional.of(new TaskAllocation(worker, tasks.get(0), taskDAO.remaining(processId, worker.getId()), taskDAO.count(processId)));
     }
@@ -65,12 +52,5 @@ public class InverseCountAllocator implements TaskAllocator {
         return tasks.parallelStream().collect(
                 Collectors.toMap(Function.identity(), t -> answerDAO.listForTask(t.getId(), process.get().getId()).size())
         );
-    }
-
-    private Comparator<Task> getComparator(Map<Task, Integer> counts, Worker worker) {
-        final ComparatorChain<Task> comparator = new ComparatorChain<>();
-        comparator.addComparator(new AnswerCountComparator(counts));
-        comparator.addComparator(Comparator.comparing(o -> o.hashCode() % worker.getId()));
-        return comparator;
     }
 }
