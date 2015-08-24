@@ -152,6 +152,7 @@ public class WorkerResource {
     @DELETE
     public void deleteTasks() {
         workerDAO.deleteAll(process.getId());
+        workerDAO.resetSequence();
     }
 
     private Worker fetchWorker(Integer id) {

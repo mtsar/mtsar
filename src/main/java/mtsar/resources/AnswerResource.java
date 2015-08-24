@@ -90,6 +90,7 @@ public class AnswerResource {
     @DELETE
     public void deleteAnswers() {
         answerDAO.deleteAll(process.getId());
+        answerDAO.resetSequence();
     }
 
     private Answer fetchAnswer(Integer id) {
