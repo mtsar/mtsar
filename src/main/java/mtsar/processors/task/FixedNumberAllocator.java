@@ -1,17 +1,15 @@
 package mtsar.processors.task;
 
 import mtsar.api.Process;
-import mtsar.api.Task;
-import mtsar.api.Worker;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
+import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -20,31 +18,23 @@ public class FixedNumberAllocator extends InverseCountAllocator {
     private Integer answersPerTask = null;
 
     @Inject
-    public FixedNumberAllocator(Provider<Process> processProvider, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        super(processProvider, taskDAO, answerDAO);
+    public FixedNumberAllocator(Provider<Process> processProvider, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        super(processProvider, dbi, taskDAO, answerDAO);
     }
 
     @Override
-    protected Map<Task, Integer> getCounts(List<Task> tasks, Worker worker) {
-        ensureAnswersPerTask();
-
-        final Map<Task, Boolean> answers = tasks.parallelStream().collect(
-                Collectors.toMap(Function.identity(), t -> answerDAO.listForTask(t.getId(), process.get().getId()).stream().anyMatch(a -> a.getWorkerId().equals(worker.getId())))
-        );
-
-        final Map<Task, Integer> counts = super.getCounts(tasks, worker);
-
-        final Iterator<Map.Entry<Task, Integer>> iterator = counts.entrySet().iterator();
-        while (iterator.hasNext()) {
-            final Map.Entry<Task, Integer> entry = iterator.next();
-            if (answers.get(entry.getKey()) || (entry.getValue() >= answersPerTask)) iterator.remove();
-        }
-
-        return counts;
+    protected List<Integer> filterTasks(Map<Integer, Integer> counts) {
+        checkAnswersPerTask();
+        final List<Integer> ids = counts.entrySet().stream().
+                filter(entry -> entry.getValue() < answersPerTask).
+                map(Map.Entry::getKey).collect(Collectors.toList());
+        Collections.shuffle(ids);
+        ids.sort((id1, id2) -> counts.get(id1).compareTo(counts.get(id2)));
+        return ids;
     }
 
-    private void ensureAnswersPerTask() {
-        final Integer answersPerTask = Integer.valueOf(process.get().getOptions().get("answersPerTask"));
-        this.answersPerTask = checkNotNull(answersPerTask, "answersPerTask option is not set");
+    private void checkAnswersPerTask() {
+        if (this.answersPerTask != null) return;
+        this.answersPerTask = checkNotNull(Integer.parseInt(process.get().getOptions().get("answersPerTask")), "answersPerTask option is not set");
     }
 }

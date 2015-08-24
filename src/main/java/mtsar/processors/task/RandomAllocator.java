@@ -7,9 +7,12 @@ import mtsar.api.Worker;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
 
+import javax.annotation.Nonnegative;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class RandomAllocator implements TaskAllocator {
     protected final Provider<Process> process;
@@ -22,10 +25,11 @@ public class RandomAllocator implements TaskAllocator {
     }
 
     @Override
-    public Optional<TaskAllocation> allocate(Worker worker) {
-        final Task task = taskDAO.random(process.get().getId());
-        if (task == null) return Optional.empty();
-        final int count = taskDAO.count(process.get().getId());
-        return Optional.ofNullable(new TaskAllocation(worker, task, count, count));
+    public List<TaskAllocation> allocate(Worker worker, @Nonnegative int n) {
+        final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
+        Collections.shuffle(tasks);
+        return tasks.stream().limit(n).
+                map(t -> new TaskAllocation(worker, t, tasks.size(), tasks.size())).
+                collect(Collectors.toList());
     }
 }

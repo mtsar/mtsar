@@ -4,10 +4,13 @@ import mtsar.api.Task;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.unstable.BindIn;
 
 import java.util.Iterator;
 import java.util.List;
 
+@UseStringTemplate3StatementLocator
 @RegisterMapper(TaskMapper.class)
 public interface TaskDAO {
     @SqlQuery("select * from tasks where process = :process")
@@ -15,6 +18,9 @@ public interface TaskDAO {
 
     @SqlQuery("select * from tasks where id = :id and process = :process limit 1")
     Task find(@Bind("id") Integer id, @Bind("process") String process);
+
+    @SqlQuery("select * from tasks where id in (<ids>) and process = :process")
+    List<Task> select(@BindIn("ids") List<Integer> ids, @Bind("process") String process);
 
     @SqlQuery("select * from tasks where process = :process order by random() limit 1")
     Task random(@Bind("process") String process);

@@ -27,6 +27,7 @@ public class RandomAllocatorTest {
 
     @Before
     public void setup() {
+        reset(taskDAO);
         when(process.getId()).thenReturn("1");
         when(worker.getId()).thenReturn(1);
         Collections.shuffle(tasks);
@@ -34,8 +35,7 @@ public class RandomAllocatorTest {
 
     @Test
     public void testAllocation() {
-        reset(taskDAO);
-        when(taskDAO.random(anyString())).thenReturn(tasks.get(0));
+        when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
         assertThat(allocation.get().getTask()).isIn(tasks);
@@ -43,8 +43,7 @@ public class RandomAllocatorTest {
 
     @Test
     public void testEmpty() {
-        reset(taskDAO);
-        when(taskDAO.random(anyString())).thenReturn(null);
+        when(taskDAO.listForProcess(anyString())).thenReturn(Collections.emptyList());
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isFalse();
     }
