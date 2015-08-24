@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class FixedNumberAllocator extends InverseCountAllocator {
     private Integer answersPerTask = null;
 
@@ -43,7 +45,6 @@ public class FixedNumberAllocator extends InverseCountAllocator {
 
     private void ensureAnswersPerTask() {
         final Integer answersPerTask = Integer.valueOf(process.get().getOptions().get("answersPerTask"));
-        if (answersPerTask == null) throw new RuntimeException("answersPerTask option is not set");
-        this.answersPerTask = answersPerTask;
+        this.answersPerTask = checkNotNull(answersPerTask, "answersPerTask option is not set");
     }
 }

@@ -45,6 +45,7 @@ public class InverseCountAllocator implements TaskAllocator {
         Collections.shuffle(tasks);
         tasks.sort((t1, t2) -> counts.get(t1).compareTo(counts.get(t2)));
 
+
         return Optional.of(new TaskAllocation(worker, tasks.get(0), taskDAO.remaining(processId, worker.getId()), taskDAO.count(processId)));
     }
 

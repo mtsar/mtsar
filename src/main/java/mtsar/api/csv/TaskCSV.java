@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public final class TaskCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Task> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
-        if (Sets.intersection(header, Sets.newHashSet(HEADER)).size() == 0) {
-            throw new IllegalArgumentException("Unknown CSV header: " + String.join(",", header));
-        }
+        checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
         final Iterable<CSVRecord> iterable = () -> csv.iterator();
 
@@ -54,22 +54,17 @@ public final class TaskCSV {
 
     public static void write(List<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            FORMAT.withHeader(HEADER).print(writer).printRecords(
-                    new Iterable<String[]>() {
-                        @Override
-                        public Iterator<String[]> iterator() {
-                            return tasks.stream().map(task -> new String[]{
-                                    Integer.toString(task.getId()),                                 // id
-                                    task.getProcess(),                                              // process
-                                    Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
-                                    String.join("|", task.getTags()),                               // tags
-                                    task.getType(),                                                 // type
-                                    task.getDescription(),                                          // description
-                                    String.join("|", task.getAnswers()),                            // answers
-                            }).iterator();
-                        }
-                    }
-            );
+            final Iterable<String[]> iterable = () -> tasks.stream().map(task -> new String[]{
+                    Integer.toString(task.getId()),                                 // id
+                    task.getProcess(),                                              // process
+                    Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
+                    String.join("|", task.getTags()),                               // tags
+                    task.getType(),                                                 // type
+                    task.getDescription(),                                          // description
+                    String.join("|", task.getAnswers()),                            // answers
+            }).iterator();
+
+            FORMAT.withHeader(HEADER).print(writer).printRecords(iterable);
         }
     }
 }

@@ -19,14 +19,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public final class WorkerCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Worker> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
-        if (Sets.intersection(header, Sets.newHashSet(HEADER)).size() == 0) {
-            throw new IllegalArgumentException("Unknown CSV header: " + String.join(",", header));
-        }
+        checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
         final Iterable<CSVRecord> iterable = () -> csv.iterator();
 
@@ -48,19 +48,14 @@ public final class WorkerCSV {
 
     public static void write(List<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            FORMAT.withHeader(HEADER).print(writer).printRecords(
-                    new Iterable<String[]>() {
-                        @Override
-                        public Iterator<String[]> iterator() {
-                            return workers.stream().map(worker -> new String[]{
-                                    Integer.toString(worker.getId()),                                   // id
-                                    worker.getProcess(),                                                // process
-                                    Long.toString(worker.getDateTime().toInstant().getEpochSecond()),   // datetime
-                                    String.join("|", worker.getTags()),                                 // tags
-                            }).iterator();
-                        }
-                    }
-            );
+            final Iterable<String[]> iterable = () -> workers.stream().map(worker -> new String[]{
+                    Integer.toString(worker.getId()),                                 // id
+                    worker.getProcess(),                                              // process
+                    Long.toString(worker.getDateTime().toInstant().getEpochSecond()), // datetime
+                    String.join("|", worker.getTags()),                               // tags
+            }).iterator();
+
+            FORMAT.withHeader(HEADER).print(writer).printRecords(iterable);
         }
     }
 }
