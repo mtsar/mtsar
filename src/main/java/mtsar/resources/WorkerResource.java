@@ -121,6 +121,13 @@ public class WorkerResource {
     }
 
     @GET
+    @Path("{worker}/tasks/{n}")
+    public List<TaskAllocation> getWorkerTasks(@PathParam("worker") Integer id, @PathParam("n") Integer n) {
+        final Worker worker = fetchWorker(id);
+        return process.getTaskAllocator().allocate(worker, n);
+    }
+
+    @GET
     @Path("{worker}/answers")
     public List<Answer> getWorkerAnswers(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);
