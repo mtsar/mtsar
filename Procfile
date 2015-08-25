@@ -1,1 +1,1 @@
-web: mtsar.heroku.sh
+web: ./mtsar.heroku.sh
