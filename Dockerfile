@@ -16,6 +16,6 @@ mv -fv target/mtsar-*.jar mtsar.jar && \
 rm -rf target && \
 mkdir -p /var/log/mtsar
 
-COPY mtsar.sh /mtsar/
+COPY mtsar.docker.sh /mtsar/mtsar.sh
 
 CMD ["/mtsar/mtsar.sh"]
