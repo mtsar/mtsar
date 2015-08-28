@@ -9,6 +9,8 @@ before_script:
   - mvn versions:display-plugin-updates
   - psql -c 'create database mtsar;' -U postgres
   - java -jar target/mtsar-*.jar db migrate environment.yml.travis
+env:
+  - MTSAR_TEST_YAML=environment.yml.travis
 cache:
   directories:
     - $HOME/.m2
