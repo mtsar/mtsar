@@ -14,8 +14,11 @@ RUN \
 mvn -T 4 -B -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package && \
 mv -fv target/mtsar-*.jar mtsar.jar && \
 rm -rf target && \
-mkdir -p /var/log/mtsar
+mkdir -p /mtsar/log && \
+chown -R nobody /mtsar
 
 COPY mtsar.docker.sh /mtsar/mtsar.sh
+
+USER nobody
 
 CMD ["/mtsar/mtsar.sh"]
