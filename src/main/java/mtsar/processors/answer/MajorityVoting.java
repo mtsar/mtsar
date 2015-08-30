@@ -8,14 +8,11 @@ import mtsar.processors.AnswerAggregator;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 public class MajorityVoting implements AnswerAggregator {
-    public static final Comparator<Map.Entry<String, Long>> voteComparator =
-            (e1, e2) -> Long.compare(e2.getValue(), e1.getValue());
-
     protected final Provider<Process> process;
     protected final AnswerDAO answerDAO;
 
@@ -26,7 +23,7 @@ public class MajorityVoting implements AnswerAggregator {
     }
 
     @Override
-    public Optional<AnswerAggregation> aggregate(Task task) {
+    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
         throw new UnsupportedOperationException("Not Implemented Yet");
     }
 }

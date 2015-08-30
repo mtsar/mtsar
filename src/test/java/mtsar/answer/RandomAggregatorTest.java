@@ -22,17 +22,17 @@ public class RandomAggregatorTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Process process = mock(Process.class);
     private static final Task task = mock(Task.class);
-    private static final RandomAggregator aggregator = new RandomAggregator(Process.wrap(process), answerDAO);
+    private static final RandomAggregator aggregator = new RandomAggregator(() -> process, answerDAO);
 
     @Before
     public void setup() {
+        reset(answerDAO);
         when(process.getId()).thenReturn("1");
         when(task.getId()).thenReturn(1);
     }
 
     @Test
     public void testBasicCase() {
-        reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
                 Answer.builder().setAnswer("1").build(),
                 Answer.builder().setAnswer("2").build(),
@@ -47,8 +47,7 @@ public class RandomAggregatorTest {
 
     @Test
     public void testEmptyCase() {
-        reset(answerDAO);
-        when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
+        when(answerDAO.listForTask(any(), anyString())).thenReturn(Collections.emptyList());
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isFalse();
     }

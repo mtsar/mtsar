@@ -9,9 +9,7 @@ import mtsar.processors.AnswerAggregator;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class RandomAggregator implements AnswerAggregator {
     protected final Provider<Process> process;
@@ -24,12 +22,14 @@ public class RandomAggregator implements AnswerAggregator {
     }
 
     @Override
-    public Optional<AnswerAggregation> aggregate(Task task) {
-        final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
-        if (answers.isEmpty()) return Optional.empty();
-        Collections.shuffle(answers);
-        final Answer answer = answers.get(0);
-        /* TODO: handle the "multiple" task type */
-        return Optional.of(new AnswerAggregation(task, Answer.builder().setProcess(answer.getProcess()).setTaskId(answer.getTaskId()).setAnswer(answer.getAnswer().get()).build()));
+    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+        final Map<Task, AnswerAggregation> aggregations = new HashMap<>();
+        for (final Task task : tasks) {
+            final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
+            if (answers.isEmpty()) continue;
+            Collections.shuffle(answers);
+            aggregations.put(task, new AnswerAggregation(task, answers.get(0)));
+        }
+        return aggregations;
     }
 }

@@ -4,11 +4,13 @@ import mtsar.api.AnswerAggregation;
 import mtsar.api.Task;
 import mtsar.processors.AnswerAggregator;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
 public class EmptyAggregator implements AnswerAggregator {
     @Override
-    public Optional<AnswerAggregation> aggregate(Task task) {
-        return Optional.empty();
+    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+        return Collections.emptyMap();
     }
 }
