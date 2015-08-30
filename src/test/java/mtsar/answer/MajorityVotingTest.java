@@ -23,7 +23,7 @@ public class MajorityVotingTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Process process = mock(Process.class);
     private static final Task task = mock(Task.class);
-    private static final MajorityVoting aggregator = new MajorityVoting(Process.wrap(process), answerDAO);
+    private static final MajorityVoting aggregator = new MajorityVoting(() -> process, answerDAO);
 
     @Before
     public void setup() {

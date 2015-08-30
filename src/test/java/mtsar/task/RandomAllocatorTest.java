@@ -23,7 +23,7 @@ public class RandomAllocatorTest {
     private static final Process process = mock(Process.class);
     private static final Worker worker = mock(Worker.class);
     private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
-    private static final RandomAllocator allocator = new RandomAllocator(mtsar.api.Process.wrap(process), taskDAO);
+    private static final RandomAllocator allocator = new RandomAllocator(() -> process, taskDAO);
 
     @Before
     public void setup() {

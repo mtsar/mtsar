@@ -56,7 +56,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testUnequalAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 1), Pair.of(2, 0)));
-        final InverseCountAllocator allocator = new InverseCountAllocator(Process.wrap(process), dbi, taskDAO, answerDAO);
+        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -70,7 +70,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEqualAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 0), Pair.of(2, 0)));
-        final InverseCountAllocator allocator = new InverseCountAllocator(Process.wrap(process), dbi, taskDAO, answerDAO);
+        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -84,7 +84,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEmpty() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Collections.emptyList());
-        final InverseCountAllocator allocator = new InverseCountAllocator(Process.wrap(process), dbi, taskDAO, answerDAO);
+        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isFalse();
     }

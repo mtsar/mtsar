@@ -8,7 +8,6 @@ import mtsar.processors.WorkerRanker;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Collections;
@@ -18,10 +17,6 @@ import java.util.logging.Logger;
 @Singleton
 @XmlRootElement
 public class Process {
-    public static Provider<Process> wrap(Process process) {
-        return () -> process;
-    }
-
     protected String id, description;
     protected Map<String, String> options = Collections.emptyMap();
 
