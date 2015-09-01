@@ -75,10 +75,9 @@ public class WorkerResource {
     public Response postWorker(@Context UriInfo uriInfo, MultivaluedMap<String, String> params) {
         final Set<String> tags = ParamsUtils.extract(params, "tags");
 
-        int workerId = workerDAO.insert(Worker.builder().
+        int workerId = workerDAO.insert(new Worker.Builder().
                 setProcess(process.getId()).
-                setTags(tags.toArray(new String[tags.size()])).
-                setDateTime(DefaultDateTime.get()).
+                addAllTags(tags).
                 build());
         final Worker worker = workerDAO.find(workerId, process.getId());
         return Response.created(getWorkerURI(uriInfo, worker)).entity(worker).build();

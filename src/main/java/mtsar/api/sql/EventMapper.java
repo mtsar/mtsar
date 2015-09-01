@@ -9,6 +9,6 @@ import java.sql.SQLException;
 
 public class EventMapper implements ResultSetMapper<Event> {
     public Event map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        return new Event();
+        return null;
     }
 }

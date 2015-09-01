@@ -34,9 +34,9 @@ public class RandomAggregatorTest {
     @Test
     public void testBasicCase() {
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
-                Answer.builder().setAnswer("1").build(),
-                Answer.builder().setAnswer("2").build(),
-                Answer.builder().setAnswer("3").build()
+                new Answer.Builder().addAnswers("1").buildPartial(),
+                new Answer.Builder().addAnswers("2").buildPartial(),
+                new Answer.Builder().addAnswers("3").buildPartial()
         ));
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent());

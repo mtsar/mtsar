@@ -68,13 +68,12 @@ public class TaskResource {
         final Set<String> tags = ParamsUtils.extract(params, "tags");
         final Set<String> answers = ParamsUtils.extract(params, "answers");
 
-        int taskId = taskDAO.insert(Task.builder().
-                setTags(tags.toArray(new String[tags.size()])).
+        int taskId = taskDAO.insert(new Task.Builder().
+                addAllTags(tags).
                 setType(type).
                 setDescription(description).
-                setAnswers(answers.toArray(new String[answers.size()])).
+                addAllAnswers(answers).
                 setProcess(process.getId()).
-                setDateTime(DefaultDateTime.get()).
                 build());
         final Task task = taskDAO.find(taskId, process.getId());
         return Response.created(getTaskURI(uriInfo, task)).entity(task).build();
@@ -113,13 +112,13 @@ public class TaskResource {
         final Set<String> tags = ParamsUtils.extract(params, "tags");
         final Set<String> answers = ParamsUtils.extract(params, "answers");
 
-        final Answer record = Answer.builder().
+        final Answer record = new Answer.Builder().
                 setProcess(process.getId()).
-                setTags(tags.toArray(new String[tags.size()])).
+                addAllTags(tags).
                 setType(type).
                 setTaskId(task.getId()).
                 setWorkerId(worker.getId()).
-                setAnswers(answers.toArray(new String[answers.size()])).
+                addAllAnswers(answers).
                 setDateTime(datetime).
                 build();
 

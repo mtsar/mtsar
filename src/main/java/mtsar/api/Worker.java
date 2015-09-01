@@ -1,100 +1,47 @@
 package mtsar.api;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import mtsar.DefaultDateTime;
 import mtsar.api.sql.PostgreSQLTextArray;
-import org.apache.commons.lang3.ArrayUtils;
+import org.inferred.freebuilder.FreeBuilder;
 
+import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
-import java.util.Optional;
+import java.util.List;
 
+@FreeBuilder
 @XmlRootElement
-public class Worker {
-    public static class Builder {
+@JsonDeserialize(builder = Worker.Builder.class)
+public interface Worker {
+    @Nullable
+    @JsonProperty
+    Integer getId();
+
+    @JsonProperty
+    String getProcess();
+
+    @JsonProperty
+    Timestamp getDateTime();
+
+    @JsonProperty
+    List<String> getTags();
+
+    @JsonIgnore
+    String getTagsTextArray();
+
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    class Builder extends Worker_Builder {
+        public Builder() {
+            setDateTime(DefaultDateTime.get());
+        }
+
         public Worker build() {
-            return new Worker(this);
+            setTagsTextArray(new PostgreSQLTextArray(getTags()).toString());
+            return super.build();
         }
-
-        public Builder setId(Integer id) {
-            this.id = id;
-            return this;
-        }
-
-        public Builder setTags(String[] tags) {
-            this.tags = tags;
-            return this;
-        }
-
-        public Builder setProcess(String process) {
-            this.process = process;
-            return this;
-        }
-
-        public Builder setDateTime(Timestamp dateTime) {
-            this.dateTime = dateTime;
-            return this;
-        }
-
-        private Integer id;
-        private String[] tags;
-        private String process;
-        private Timestamp dateTime;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    private Worker(Builder builder) {
-        this(builder.id, builder.tags, builder.process, builder.dateTime);
-    }
-
-    protected final Integer id;
-    protected final String[] tags;
-    protected final String process;
-    protected final Timestamp dateTime;
-
-    @JsonCreator
-    public Worker(@JsonProperty("id") Integer id,
-                  @JsonProperty("tags") String[] tags,
-                  @JsonProperty("process") String process,
-                  @JsonProperty("dateTime") Timestamp dateTime) {
-        this.id = id;
-        this.tags = tags;
-        this.process = process;
-        this.dateTime = dateTime;
-    }
-
-    @JsonProperty
-    public Integer getId() {
-        return id;
-    }
-
-    @JsonIgnore
-    public Optional<String> getTag() {
-        if (ArrayUtils.isEmpty(tags)) return Optional.empty();
-        return Optional.of(tags[0]);
-    }
-
-    @JsonProperty
-    public String[] getTags() {
-        return tags;
-    }
-
-    @JsonIgnore
-    public String getTagsTextArray() {
-        return new PostgreSQLTextArray(ArrayUtils.nullToEmpty(tags)).toString();
-    }
-
-    @JsonProperty
-    public String getProcess() {
-        return process;
-    }
-
-    @JsonProperty
-    public Timestamp getDateTime() {
-        return dateTime;
     }
 }

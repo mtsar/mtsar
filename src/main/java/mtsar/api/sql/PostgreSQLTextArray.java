@@ -1,8 +1,11 @@
 package mtsar.api.sql;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -15,6 +18,10 @@ public class PostgreSQLTextArray implements java.sql.Array {
 
     private final String[] stringArray;
     private final String stringValue;
+
+    public PostgreSQLTextArray(Collection<String> collection) {
+        this(ArrayUtils.nullToEmpty(collection.toArray(new String[collection.size()])));
+    }
 
     /**
      * Initializing constructor

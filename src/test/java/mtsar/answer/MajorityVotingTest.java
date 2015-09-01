@@ -35,10 +35,10 @@ public class MajorityVotingTest {
     public void testBasicCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
-                Answer.builder().setAnswer("1").build(),
-                Answer.builder().setAnswer("1").build(),
-                Answer.builder().setAnswer("2").build(),
-                Answer.builder().setAnswer("3").build()
+                new Answer.Builder().addAnswers("1").buildPartial(),
+                new Answer.Builder().addAnswers("1").buildPartial(),
+                new Answer.Builder().addAnswers("2").buildPartial(),
+                new Answer.Builder().addAnswers("3").buildPartial()
         ));
         assertThatThrownBy(() -> {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
@@ -52,8 +52,8 @@ public class MajorityVotingTest {
     public void testAmbiguousCase() {
         reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
-                Answer.builder().setAnswer("2").build(),
-                Answer.builder().setAnswer("1").build()
+                new Answer.Builder().addAnswers("2").buildPartial(),
+                new Answer.Builder().addAnswers("1").buildPartial()
         ));
         assertThatThrownBy(() -> {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task);

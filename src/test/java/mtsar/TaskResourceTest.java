@@ -28,10 +28,11 @@ public class TaskResourceTest {
             .addResource(new TaskResource(process, dao, null, null))
             .build();
 
-    private final Task task = Task.builder().
+    private final Task task = new Task.Builder().
             setId(1).
             setProcess("1").
-            setDateTime(Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant())).
+            setDescription("Test example").
+            setType("single").
             build();
 
     @Before
