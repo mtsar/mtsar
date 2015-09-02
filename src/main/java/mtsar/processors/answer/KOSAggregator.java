@@ -11,6 +11,7 @@ import mtsar.processors.AnswerAggregator;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
 import java.util.function.Function;
@@ -32,6 +33,7 @@ public class KOSAggregator implements AnswerAggregator {
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
 
+    @Inject
     public KOSAggregator(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.process = process;
         this.taskDAO = taskDAO;
