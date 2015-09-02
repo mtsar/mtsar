@@ -5,127 +5,65 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
+@FreeBuilder
 @XmlRootElement
-public class ProcessDefinition {
-    public static class Builder {
-        protected String id, description, workerRanker, taskAllocator, answerAggregator;
-        protected Map<String, String> options;
-        protected Timestamp dateTime;
+@JsonDeserialize(builder = ProcessDefinition.Builder.class)
+public interface ProcessDefinition {
+    @JsonProperty
+    String getId();
 
-        public ProcessDefinition build() {
-            return new ProcessDefinition(this);
-        }
+    @JsonProperty
+    Timestamp getDateTime();
 
-        public Builder setId(String id) {
-            this.id = id;
-            return this;
-        }
+    @JsonProperty
+    String getDescription();
 
-        public Builder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
+    @JsonProperty()
+    String getWorkerRanker();
 
-        public Builder setOptions(Map<String, String> options) {
-            this.options = options;
-            return this;
-        }
+    @JsonProperty()
+    String getTaskAllocator();
 
+    @JsonProperty()
+    String getAnswerAggregator();
+
+    @JsonProperty
+    Map<String, String> getOptions();
+
+    @JsonIgnore
+    String getOptionsJSON();
+
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    class Builder extends ProcessDefinition_Builder {
         public Builder setOptions(String optionsJSON) {
             try {
-                this.options = new HashMap<>();
-                this.options.putAll(new ObjectMapper().readValue(optionsJSON, new TypeReference<Map<String, String>>() {
-                }));
+                return putAllOptions(new ObjectMapper().readValue(optionsJSON, MAP_STRING_TO_STRING));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            return this;
         }
 
-        public Builder setWorkerRanker(String workerRanker) {
-            this.workerRanker = workerRanker;
-            return this;
-        }
-
-        public Builder setTaskAllocator(String taskAllocator) {
-            this.taskAllocator = taskAllocator;
-            return this;
-        }
-
-        public Builder setAnswerAggregator(String answerAggregator) {
-            this.answerAggregator = answerAggregator;
-            return this;
-        }
-
-        public Builder setDateTime(Timestamp dateTime) {
-            this.dateTime = dateTime;
-            return this;
+        @Override
+        public ProcessDefinition build() {
+            try {
+                setOptionsJSON(new ObjectMapper().writeValueAsString(getOptions()));
+            } catch (JsonProcessingException e) {
+                setOptionsJSON("{}");
+                throw new RuntimeException(e);
+            }
+            return super.build();
         }
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    protected ProcessDefinition(Builder builder) {
-        this.id = builder.id;
-        this.description = builder.description;
-        this.workerRanker = builder.workerRanker;
-        this.taskAllocator = builder.taskAllocator;
-        this.answerAggregator = builder.answerAggregator;
-        this.options = builder.options;
-    }
-
-    protected String id, description, workerRanker, taskAllocator, answerAggregator;
-    protected Timestamp dateTime;
-
-    protected Map<String, String> options = Collections.emptyMap();
-
-    @JsonProperty
-    public String getId() {
-        return id;
-    }
-
-    @JsonProperty
-    public String getDescription() {
-        return description;
-    }
-
-    @JsonProperty
-    public Map<String, String> getOptions() {
-        return options;
-    }
-
-    @JsonIgnore
-    public String getOptionsJSON() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(options == null ? Collections.emptyMap() : options);
-    }
-
-    @JsonProperty()
-    public String getWorkerRanker() {
-        return workerRanker;
-    }
-
-    @JsonProperty()
-    public String getTaskAllocator() {
-        return taskAllocator;
-    }
-
-    @JsonProperty()
-    public String getAnswerAggregator() {
-        return answerAggregator;
-    }
-
-    @JsonProperty
-    public Timestamp getDateTime() {
-        return dateTime;
-    }
+    TypeReference<Map<String, String>> MAP_STRING_TO_STRING = new TypeReference<Map<String, String>>() {
+    };
 }

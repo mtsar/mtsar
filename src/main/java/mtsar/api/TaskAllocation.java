@@ -2,13 +2,14 @@ package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 @FreeBuilder
 @XmlRootElement
-@JsonDeserialize(builder = AnswerAggregation.Builder.class)
+@JsonDeserialize(builder = TaskAllocation.Builder.class)
 public interface TaskAllocation {
     String TYPE_DEFAULT = "allocation";
 
@@ -29,6 +30,7 @@ public interface TaskAllocation {
         return TYPE_DEFAULT;
     }
 
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends TaskAllocation_Builder {
     }
 }

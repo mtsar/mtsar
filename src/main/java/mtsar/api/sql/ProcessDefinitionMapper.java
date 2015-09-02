@@ -10,7 +10,7 @@ import java.sql.SQLException;
 public class ProcessDefinitionMapper implements ResultSetMapper<ProcessDefinition> {
     @Override
     public ProcessDefinition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-        final ProcessDefinition.Builder builder = ProcessDefinition.builder().
+        final ProcessDefinition.Builder builder = new ProcessDefinition.Builder().
                 setId(r.getString("id")).
                 setDescription(r.getString("description")).
                 setWorkerRanker(r.getString("worker_ranker")).

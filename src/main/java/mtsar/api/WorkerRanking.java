@@ -2,6 +2,7 @@ package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,6 +24,7 @@ public interface WorkerRanking {
         return TYPE_DEFAULT;
     }
 
+    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends WorkerRanking_Builder {
         public Builder() {
             setReputation(0.0);
