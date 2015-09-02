@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Optional;
 
+import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -21,12 +22,8 @@ public class KOSAggregatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final mtsar.api.Process process = mock(Process.class);
-    private static final Task task1 = new Task.Builder().
-            setId(1).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("1", "2").
-            build();
-    private static final Task task2 = new Task.Builder().
-            setId(2).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("a", "b").
-            build();
+    private static final Task task1 = fixture("task1.json", Task.class);
+    private static final Task task2 = fixture("task2.json", Task.class);
     private static final KOSAggregator aggregator = new KOSAggregator(() -> process, taskDAO, answerDAO);
 
     @Before

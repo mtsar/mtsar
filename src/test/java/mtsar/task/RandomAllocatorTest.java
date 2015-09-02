@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -22,12 +23,8 @@ public class RandomAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Process process = mock(Process.class);
     private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
-    private static final Task task1 = new Task.Builder().
-            setId(1).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("1", "2").
-            build();
-    private static final Task task2 = new Task.Builder().
-            setId(2).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("a", "b").
-            build();
+    private static final Task task1 = fixture("task1.json", Task.class);
+    private static final Task task2 = fixture("task2.json", Task.class);
     private static final List<Task> tasks = Lists.newArrayList(task1, task2);
     private static final RandomAllocator allocator = new RandomAllocator(() -> process, taskDAO);
 

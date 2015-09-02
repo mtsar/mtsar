@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -24,12 +25,7 @@ public class TaskResourceTest {
             .addResource(new TaskResource(process, dao, null, null))
             .build();
 
-    private final Task task = new Task.Builder().
-            setId(1).
-            setProcess("1").
-            setDescription("Test example").
-            setType("single").
-            build();
+    private static final Task task = fixture("task1.json", Task.class);
 
     @Before
     public void setup() {
