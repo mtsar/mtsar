@@ -10,7 +10,8 @@ import java.util.List;
 
 @RegisterMapper(AnswerMapper.class)
 public interface AnswerDAO {
-   String DEFAULT_ANSWER_TYPE = "answer";
+    String ANSWER_TYPE_ANSWER = "answer";
+    String ANSWER_TYPE_DEFAULT = ANSWER_TYPE_ANSWER;
 
     @SqlQuery("select * from answers where process = :process")
     List<Answer> listForProcess(@Bind("process") String process);

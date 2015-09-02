@@ -13,6 +13,8 @@ import java.util.List;
 @UseStringTemplate3StatementLocator
 @RegisterMapper(TaskMapper.class)
 public interface TaskDAO {
+    String TASK_TYPE_SINGLE = "single";
+
     @SqlQuery("select * from tasks where process = :process")
     List<Task> listForProcess(@Bind("process") String process);
 

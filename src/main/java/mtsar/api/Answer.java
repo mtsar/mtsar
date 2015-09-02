@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import mtsar.DefaultDateTime;
+import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.PostgreSQLTextArray;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -59,6 +60,7 @@ public interface Answer {
     class Builder extends Answer_Builder {
         public Builder() {
             setDateTime(DefaultDateTime.get());
+            setType(AnswerDAO.ANSWER_TYPE_DEFAULT);
         }
 
         public Answer build() {

@@ -46,7 +46,7 @@ public final class AnswerCSV {
                     setProcess(process.getId()).
                     addAllTags(Arrays.asList(tags)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
-                    setType(StringUtils.defaultIfEmpty(type, AnswerDAO.DEFAULT_ANSWER_TYPE)).
+                    setType(StringUtils.defaultIfEmpty(type, AnswerDAO.ANSWER_TYPE_DEFAULT)).
                     setWorkerId(Integer.valueOf(workerId)).
                     setTaskId(Integer.valueOf(taskId)).
                     addAllAnswers(Arrays.asList(answers)).
