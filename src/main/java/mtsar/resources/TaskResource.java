@@ -133,14 +133,10 @@ public class TaskResource {
 
     @GET
     @Path("{task}/answer")
-    public Answer getTaskAnswer(@PathParam("task") Integer id) {
+    public AnswerAggregation getTaskAnswer(@PathParam("task") Integer id) {
         final Task task = fetchTask(id);
         final Optional<AnswerAggregation> aggregation = process.getAnswerAggregator().aggregate(task);
-        if (aggregation.isPresent()) {
-            return aggregation.get().getAnswer();
-        } else {
-            throw new WebApplicationException(Response.Status.NO_CONTENT);
-        }
+        return aggregation.isPresent() ? aggregation.get() : null;
     }
 
     @PATCH

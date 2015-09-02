@@ -1,9 +1,6 @@
 package mtsar.processors.answer;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Table;
+import com.google.common.collect.*;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
@@ -78,8 +75,7 @@ public class KOSAggregator implements AnswerAggregator {
                 estimation -> taskMap.get(estimation.getKey()),
                 estimation -> {
                     final String answer = answerIndex.get(estimation.getKey()).inverse().get(estimation.getValue() < 0 ? (short) -1 : (short) +1);
-                    final Answer wrapper = new Answer.Builder().addAnswers(answer).buildPartial();
-                    return new AnswerAggregation(taskMap.get(estimation.getKey()), wrapper);
+                    return new AnswerAggregation(taskMap.get(estimation.getKey()), Lists.newArrayList(answer));
                 }
         ));
     }

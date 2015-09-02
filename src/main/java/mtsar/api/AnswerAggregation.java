@@ -4,20 +4,23 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 @XmlRootElement
 public class AnswerAggregation {
     private final Task task;
-    private final Answer answer;
+    private final List<String> answers;
 
     @JsonCreator
-    public AnswerAggregation(@JsonProperty("task") Task task, @JsonProperty("answer") Answer answer) {
+    public AnswerAggregation(@JsonProperty("task") Task task, @JsonProperty("answers") List<String> answers) {
         this.task = task;
-        this.answer = answer;
+        this.answers = answers;
     }
 
     @JsonProperty
-    public String getType() { return getClass().getSimpleName(); }
+    public String getType() {
+        return getClass().getSimpleName();
+    }
 
     @JsonProperty
     public Task getTask() {
@@ -25,7 +28,7 @@ public class AnswerAggregation {
     }
 
     @JsonProperty
-    public Answer getAnswer() {
-        return answer;
+    public List<String> getAnswers() {
+        return answers;
     }
 }

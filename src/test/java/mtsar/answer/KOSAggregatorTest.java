@@ -51,16 +51,14 @@ public class KOSAggregatorTest {
         {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task1);
             assertThat(winner.isPresent());
-            final Answer answer = winner.get().getAnswer();
-            assertThat(answer.getAnswers()).hasSize(1);
-            assertThat(answer.getAnswer().get()).isEqualTo("1");
+            assertThat(winner.get().getAnswers()).hasSize(1);
+            assertThat(winner.get().getAnswers().get(0)).isEqualTo("1");
         }
         {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task2);
             assertThat(winner.isPresent());
-            final Answer answer = winner.get().getAnswer();
-            assertThat(answer.getAnswers()).hasSize(1);
-            assertThat(answer.getAnswer().get()).isEqualTo("b");
+            assertThat(winner.get().getAnswers()).hasSize(1);
+            assertThat(winner.get().getAnswers().get(0)).isEqualTo("b");
         }
     }
 

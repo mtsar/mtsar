@@ -43,8 +43,8 @@ public class MajorityVotingTest {
         assertThatThrownBy(() -> {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
             assertThat(winner.isPresent()).isTrue();
-            final Answer answer = winner.get().getAnswer();
-            assertThat(answer.getAnswer()).isEqualTo("1");
+            assertThat(winner.get().getAnswers()).hasSize(1);
+            assertThat(winner.get().getAnswers().get(0)).isEqualTo("1");
         }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
     }
 
@@ -58,8 +58,8 @@ public class MajorityVotingTest {
         assertThatThrownBy(() -> {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
             assertThat(winner.isPresent()).isTrue();
-            final Answer answer = winner.get().getAnswer();
-            assertThat(answer.getAnswer()).isEqualTo("1");
+            assertThat(winner.get().getAnswers()).hasSize(1);
+            assertThat(winner.get().getAnswers().get(0)).isIn("1", "2");
         }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
     }
 

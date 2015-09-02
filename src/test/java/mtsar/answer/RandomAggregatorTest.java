@@ -40,9 +40,8 @@ public class RandomAggregatorTest {
         ));
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent());
-        final Answer answer = winner.get().getAnswer();
-        assertThat(answer.getAnswers()).hasSize(1);
-        assertThat(answer.getAnswer().get()).isIn("1", "2", "3");
+        assertThat(winner.get().getAnswers()).hasSize(1);
+        assertThat(winner.get().getAnswers().get(0)).isIn("1", "2", "3");
     }
 
     @Test
