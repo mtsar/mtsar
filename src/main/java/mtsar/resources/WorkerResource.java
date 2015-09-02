@@ -110,11 +110,16 @@ public class WorkerResource {
         final Worker worker = fetchWorker(id);
         final Task task = fetchTask(taskId);
         final Optional<TaskAllocation> optional = process.getTaskAllocator().allocate(worker);
+
         if (optional.isPresent()) {
-            final TaskAllocation allocation = optional.get();
-            return new TaskAllocation(allocation.getWorker(), task, allocation.getTaskRemaining(), allocation.getTaskCount());
+            return new TaskAllocation.Builder().mergeFrom(optional.get()).build();
         } else {
-            return new TaskAllocation(worker, task, 1, taskDAO.count(process.getId()));
+            return new TaskAllocation.Builder().
+                    setWorker(worker).
+                    setTask(task).
+                    setTaskRemaining(1).
+                    setTaskCount(taskDAO.count(process.getId())).
+                    build();
         }
     }
 

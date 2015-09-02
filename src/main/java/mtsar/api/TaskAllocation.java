@@ -1,46 +1,34 @@
 package mtsar.api;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+@FreeBuilder
 @XmlRootElement
-public class TaskAllocation {
-    private final Worker worker;
-    private final Task task;
-    private final Integer taskRemaining, taskCount;
-
-    @JsonCreator
-    public TaskAllocation(@JsonProperty("worker") Worker worker, @JsonProperty("task") Task task, @JsonProperty("taskRemaining") Integer taskRemaining, @JsonProperty("taskCount") Integer taskCount) {
-        this.worker = worker;
-        this.task = task;
-        this.taskRemaining = taskRemaining;
-        this.taskCount = taskCount;
-    }
+@JsonDeserialize(builder = AnswerAggregation.Builder.class)
+public interface TaskAllocation {
+    String TYPE_DEFAULT = "allocation";
 
     @JsonProperty
-    public String getType() {
-        return getClass().getSimpleName();
-    }
+    Worker getWorker();
 
     @JsonProperty
-    public Worker getWorker() {
-        return worker;
-    }
+    Task getTask();
 
     @JsonProperty
-    public Task getTask() {
-        return task;
-    }
+    int getTaskRemaining();
 
     @JsonProperty
-    public int getTaskRemaining() {
-        return taskRemaining;
-    }
+    int getTaskCount();
 
     @JsonProperty
-    public int getTaskCount() {
-        return taskCount;
+    default String getType() {
+        return TYPE_DEFAULT;
+    }
+
+    class Builder extends TaskAllocation_Builder {
     }
 }

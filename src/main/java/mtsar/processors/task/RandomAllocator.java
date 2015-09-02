@@ -29,7 +29,12 @@ public class RandomAllocator implements TaskAllocator {
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
         Collections.shuffle(tasks);
         return tasks.stream().limit(n).
-                map(t -> new TaskAllocation(worker, t, tasks.size(), tasks.size())).
+                map(task -> new TaskAllocation.Builder()
+                        .setWorker(worker)
+                        .setTask(task)
+                        .setTaskRemaining(tasks.size())
+                        .setTaskCount(tasks.size())
+                        .build()).
                 collect(Collectors.toList());
     }
 }

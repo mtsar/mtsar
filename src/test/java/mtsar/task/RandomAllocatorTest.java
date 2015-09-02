@@ -21,15 +21,20 @@ import static org.mockito.Mockito.*;
 public class RandomAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Process process = mock(Process.class);
-    private static final Worker worker = mock(Worker.class);
-    private static final List<Task> tasks = Lists.newArrayList(mock(Task.class), mock(Task.class));
+    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
+    private static final Task task1 = new Task.Builder().
+            setId(1).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("1", "2").
+            build();
+    private static final Task task2 = new Task.Builder().
+            setId(2).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("a", "b").
+            build();
+    private static final List<Task> tasks = Lists.newArrayList(task1, task2);
     private static final RandomAllocator allocator = new RandomAllocator(() -> process, taskDAO);
 
     @Before
     public void setup() {
         reset(taskDAO);
         when(process.getId()).thenReturn("1");
-        when(worker.getId()).thenReturn(1);
         Collections.shuffle(tasks);
     }
 

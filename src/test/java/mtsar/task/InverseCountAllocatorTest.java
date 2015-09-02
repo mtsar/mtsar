@@ -21,10 +21,15 @@ import static org.mockito.Mockito.*;
 
 public class InverseCountAllocatorTest {
     private static final Process process = mock(Process.class);
-    private static final Worker worker = mock(Worker.class);
+    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
 
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
-    private static final Task task1 = mock(Task.class), task2 = mock(Task.class);
+    private static final Task task1 = new Task.Builder().
+            setId(1).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("1", "2").
+            build();
+    private static final Task task2 = new Task.Builder().
+            setId(2).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("a", "b").
+            build();
     private static final List<Task> tasks = Lists.newArrayList(task1, task2);
 
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
@@ -46,8 +51,6 @@ public class InverseCountAllocatorTest {
         when(answerDAO.listForWorker(anyInt(), anyString())).thenReturn(Collections.emptyList());
         when(dbi.onDemand(any())).thenReturn(countDAO);
         when(process.getId()).thenReturn("1");
-        when(task1.getId()).thenReturn(1);
-        when(task2.getId()).thenReturn(2);
         when(answer1.getTaskId()).thenReturn(1);
         when(answer2.getTaskId()).thenReturn(2);
         when(answer3.getTaskId()).thenReturn(2);

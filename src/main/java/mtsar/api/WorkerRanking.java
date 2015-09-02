@@ -1,31 +1,31 @@
 package mtsar.api;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+@FreeBuilder
 @XmlRootElement
-public class WorkerRanking {
-    private final Worker worker;
-    private final double reputation;
+@JsonDeserialize(builder = WorkerRanking.Builder.class)
+public interface WorkerRanking {
+    String TYPE_DEFAULT = "ranking";
 
-    @JsonCreator
-    public WorkerRanking(@JsonProperty("worker") Worker worker, @JsonProperty("reputation") double reputation) {
-        this.worker = worker;
-        this.reputation = reputation;
+    @JsonProperty
+    Worker getWorker();
+
+    @JsonProperty
+    Double getReputation();
+
+    @JsonProperty
+    default String getType() {
+        return TYPE_DEFAULT;
     }
 
-    @JsonProperty
-    public String getType() { return getClass().getSimpleName(); }
-
-    @JsonProperty
-    public Worker getWorker() {
-        return worker;
-    }
-
-    @JsonProperty
-    public double getReputation() {
-        return reputation;
+    class Builder extends WorkerRanking_Builder {
+        public Builder() {
+            setReputation(0.0);
+        }
     }
 }

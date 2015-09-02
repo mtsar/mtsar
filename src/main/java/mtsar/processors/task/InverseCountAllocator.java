@@ -54,7 +54,13 @@ public class InverseCountAllocator implements TaskAllocator {
         final List<Task> tasks = taskDAO.select(ids, process.get().getId());
 
         final int taskCount = taskDAO.count(process.get().getId());
-        return tasks.stream().map(task -> new TaskAllocation(worker, task, taskRemaining, taskCount)).collect(Collectors.toList());
+        return tasks.stream().map(task -> new TaskAllocation.Builder()
+                        .setWorker(worker)
+                        .setTask(task)
+                        .setTaskRemaining(taskRemaining)
+                        .setTaskCount(taskCount)
+                        .build()
+        ).collect(Collectors.toList());
     }
 
     protected List<Integer> filterTasks(Map<Integer, Integer> counts) {

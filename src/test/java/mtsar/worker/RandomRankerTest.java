@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 public class RandomRankerTest {
     private static final ProcessDefinition process = mock(ProcessDefinition.class);
-    private static final Worker worker = mock(Worker.class);
+    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
     private static final Task task = mock(Task.class);
     private static final RandomRanker ranker = new RandomRanker();
 

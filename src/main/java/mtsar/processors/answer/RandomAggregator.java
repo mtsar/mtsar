@@ -28,7 +28,7 @@ public class RandomAggregator implements AnswerAggregator {
             final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
             if (answers.isEmpty()) continue;
             Collections.shuffle(answers);
-            aggregations.put(task, new AnswerAggregation(task, answers.get(0).getAnswers()));
+            aggregations.put(task, new AnswerAggregation.Builder().setTask(task).addAllAnswers(answers.get(0).getAnswers()).build());
         }
         return aggregations;
     }

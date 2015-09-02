@@ -21,7 +21,12 @@ public class KOSAggregatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final mtsar.api.Process process = mock(Process.class);
-    private static final Task task1 = mock(Task.class), task2 = mock(Task.class);
+    private static final Task task1 = new Task.Builder().
+            setId(1).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("1", "2").
+            build();
+    private static final Task task2 = new Task.Builder().
+            setId(2).setProcess("1").setDescription("").setType(TaskDAO.TASK_TYPE_SINGLE).addAnswers("a", "b").
+            build();
     private static final KOSAggregator aggregator = new KOSAggregator(() -> process, taskDAO, answerDAO);
 
     @Before
@@ -29,12 +34,6 @@ public class KOSAggregatorTest {
         reset(taskDAO);
         reset(answerDAO);
         when(process.getId()).thenReturn("1");
-        when(task1.getId()).thenReturn(1);
-        when(task1.getType()).thenReturn(TaskDAO.TASK_TYPE_SINGLE);
-        when(task1.getAnswers()).thenReturn(Lists.newArrayList("1", "2"));
-        when(task2.getId()).thenReturn(2);
-        when(task2.getType()).thenReturn(TaskDAO.TASK_TYPE_SINGLE);
-        when(task2.getAnswers()).thenReturn(Lists.newArrayList("a", "b"));
     }
 
     @Test
