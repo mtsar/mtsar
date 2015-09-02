@@ -40,9 +40,9 @@ public class KOSAggregatorTest {
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(3).setTaskId(1).addAnswers("2").buildPartial(),
-                new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("a").buildPartial(),
-                new Answer.Builder().setWorkerId(2).setTaskId(2).addAnswers("b").buildPartial(),
-                new Answer.Builder().setWorkerId(3).setTaskId(2).addAnswers("b").buildPartial()
+                new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("1").buildPartial(),
+                new Answer.Builder().setWorkerId(2).setTaskId(2).addAnswers("2").buildPartial(),
+                new Answer.Builder().setWorkerId(3).setTaskId(2).addAnswers("2").buildPartial()
         ));
         {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task1);
@@ -54,7 +54,7 @@ public class KOSAggregatorTest {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task2);
             assertThat(winner.isPresent());
             assertThat(winner.get().getAnswers()).hasSize(1);
-            assertThat(winner.get().getAnswers().get(0)).isEqualTo("b");
+            assertThat(winner.get().getAnswers().get(0)).isEqualTo("2");
         }
     }
 
