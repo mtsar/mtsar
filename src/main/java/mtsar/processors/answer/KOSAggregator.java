@@ -1,4 +1,4 @@
-package mtsar.processors.answer;
+ package mtsar.processors.answer;
 
 import com.google.common.collect.*;
 import mtsar.api.Answer;
@@ -21,7 +21,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Implementation of the answer aggregation algorithm proposed by Karger, Oh & Shah for binary tasks.
- *
+ * <p>
  * This code is not verified, thus it provides random results and breaks unit tests.
  * Do not use it now, please.
  *
@@ -45,15 +45,15 @@ public class KOSAggregator implements AnswerAggregator {
         if (tasks.isEmpty()) return Collections.emptyMap();
 
         checkArgument(tasks.stream().allMatch(
-                task -> task.getAnswers().size() == 2 && task.getType() == TaskDAO.TASK_TYPE_SINGLE
+                task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE)
         ), "tasks should be of the type single and have only two possible answers");
 
         final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
         if (answers.isEmpty()) return Collections.emptyMap();
 
-        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().
-                filter(task -> task.getType() == TaskDAO.TASK_TYPE_SINGLE && task.getAnswers().size() == 2).
-                collect(Collectors.toMap(Task::getId, Function.identity()));
+        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().filter(
+                task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE)
+        ).collect(Collectors.toMap(Task::getId, Function.identity()));
 
         final Map<Integer, BiMap<String, Short>> answerIndex = taskMap.values().stream().collect(Collectors.toMap(Task::getId,
                 task -> {
@@ -68,7 +68,7 @@ public class KOSAggregator implements AnswerAggregator {
         final Table<Integer, Integer, Short> graph = HashBasedTable.create();
 
         for (final Answer answer : answers) {
-            if (answer.getType() != AnswerDAO.ANSWER_TYPE_ANSWER) continue;
+            if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;
             graph.put(answer.getTaskId(), answer.getWorkerId(), answerIndex.get(answer.getTaskId()).get(answer.getAnswers().get(0)));
         }
 
