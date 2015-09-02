@@ -5,10 +5,10 @@ jdk:
 addons:
   postgresql: 9.4
 before_script:
-  - mvn versions:display-dependency-updates
-  - mvn versions:display-plugin-updates
+  - mvn versions:display-dependency-updates versions:display-plugin-updates
   - psql -c 'create database mtsar;' -U postgres
   - java -jar target/mtsar-*.jar db migrate environment.yml.travis
+  - mvn clean
 env:
   - MTSAR_TEST_YAML=environment.yml.travis
 cache:
