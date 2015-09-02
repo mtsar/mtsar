@@ -10,6 +10,7 @@
     <name>Mechanical Tsar</name>
     <description>Mechanical Tsar is an engine for mechanized labor workflows.</description>
     <url>https://github.com/dustalov/mtsar</url>
+    <inceptionYear>2014</inceptionYear>
 
     <scm>
         <connection>scm:git:https://github.com/dustalov/mtsar</connection>
