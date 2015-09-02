@@ -15,8 +15,8 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.StreamSupport;
 
@@ -53,7 +53,7 @@ public final class TaskCSV {
 
     public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "description", "answers"};
 
-    public static void write(List<Task> tasks, OutputStream output) throws IOException {
+    public static void write(Collection<Task> tasks, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> tasks.stream().map(task -> new String[]{
                     Integer.toString(task.getId()),                                 // id

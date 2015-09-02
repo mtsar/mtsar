@@ -2,7 +2,10 @@ package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.Answer;
+import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
+import mtsar.api.Task;
+import mtsar.api.csv.AnswerAggregationCSV;
 import mtsar.api.csv.AnswerCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -20,6 +23,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 
 @Path("/answers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
@@ -64,6 +68,15 @@ public class AnswerResource {
         }
         answerDAO.resetSequence();
         return Response.seeOther(getAnswersURI(uriInfo)).build();
+    }
+
+    @GET
+    @Path("aggregations.csv")
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getAnswerAggregationsCSV() {
+        final List<Task> tasks = taskDAO.listForProcess(process.getId());
+        final Map<Task, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
+        return output -> AnswerAggregationCSV.write(aggregations.values(), output);
     }
 
     @GET
