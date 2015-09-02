@@ -1,4 +1,4 @@
- package mtsar.processors.answer;
+package mtsar.processors.answer;
 
 import com.google.common.collect.*;
 import mtsar.api.Answer;
@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -29,6 +30,8 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @see MajorityVoting
  */
 public class KOSAggregator implements AnswerAggregator {
+    public final static Predicate<Task> SINGLE_BINARY_TYPE = task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
+
     private final Provider<Process> process;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
@@ -42,18 +45,14 @@ public class KOSAggregator implements AnswerAggregator {
 
     @Override
     public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+        checkArgument(tasks.stream().allMatch(SINGLE_BINARY_TYPE), "tasks should be of the type single and have only two possible answers");
         if (tasks.isEmpty()) return Collections.emptyMap();
-
-        checkArgument(tasks.stream().allMatch(
-                task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE)
-        ), "tasks should be of the type single and have only two possible answers");
 
         final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
         if (answers.isEmpty()) return Collections.emptyMap();
 
-        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().filter(
-                task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE)
-        ).collect(Collectors.toMap(Task::getId, Function.identity()));
+        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().
+                filter(SINGLE_BINARY_TYPE).collect(Collectors.toMap(Task::getId, Function.identity()));
 
         final Map<Integer, BiMap<String, Short>> answerIndex = taskMap.values().stream().collect(Collectors.toMap(Task::getId,
                 task -> {
