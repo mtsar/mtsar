@@ -14,3 +14,7 @@ env:
 cache:
   directories:
     - $HOME/.m2
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
