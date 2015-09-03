@@ -1,4 +1,4 @@
-package mtsar.processors.answer;
+package mtsar.processors.meta;
 
 import com.ipeirotis.gal.algorithms.DawidSkene;
 import com.ipeirotis.gal.core.AssignedLabel;
@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @see <a href="http://dl.acm.org/citation.cfm?id=1401965">10.1145/1401890.1401965</a>
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>
  */
-public class DSAggregator implements AnswerAggregator {
+public class DawidSkeneProcessor implements AnswerAggregator {
     public static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
         return Comparator.comparingDouble(keyExtractor).reversed();
     }
@@ -36,7 +36,7 @@ public class DSAggregator implements AnswerAggregator {
     private final AnswerDAO answerDAO;
 
     @Inject
-    public DSAggregator(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
+    public DawidSkeneProcessor(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.process = process;
         this.taskDAO = taskDAO;
         this.answerDAO = answerDAO;
@@ -53,7 +53,7 @@ public class DSAggregator implements AnswerAggregator {
                 flatMap(task -> task.getAnswers().stream().map(answer -> new Category(answer))).
                 collect(Collectors.toSet());
 
-        final DawidSkene ds = new DawidSkene(categories);
+        final com.ipeirotis.gal.algorithms.DawidSkene ds = new com.ipeirotis.gal.algorithms.DawidSkene(categories);
 
         final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
 

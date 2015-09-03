@@ -1,4 +1,4 @@
-package mtsar.answer;
+package mtsar.meta;
 
 import com.google.common.collect.Lists;
 import mtsar.api.Answer;
@@ -7,7 +7,7 @@ import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
-import mtsar.processors.answer.DSAggregator;
+import mtsar.processors.meta.DawidSkeneProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class DSAggregatorTest {
+public class DawidSkeneProcessorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final mtsar.api.Process process = mock(mtsar.api.Process.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
-    private static final AnswerAggregator aggregator = new DSAggregator(() -> process, taskDAO, answerDAO);
+    private static final AnswerAggregator aggregator = new DawidSkeneProcessor(() -> process, taskDAO, answerDAO);
 
     @Before
     public void setup() {
