@@ -60,20 +60,18 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     }
 
     @Override
-    public Optional<WorkerRanking> rank(Worker worker) {
+    public Map<Worker, WorkerRanking> rank(Collection<Worker> workers) {
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
         ds.evaluateWorkers();
-        final double quality = ds.getWorkers().get(worker.getId().toString()).getWorkerQuality(
-                ds.getCategories(),
-                com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm
-        );
-        return Optional.of(new WorkerRanking.Builder().setWorker(worker).setReputation(quality).build());
-    }
-
-    @Override
-    public Optional<WorkerRanking> rank(Worker worker, Task task) {
-        return rank(worker);
+        final Map<Worker, WorkerRanking> rankings = workers.stream().collect(Collectors.toMap(
+                Function.identity(),
+                worker -> {
+                    final double reputation = ds.getWorkers().get(worker.getId().toString()).getWorkerQuality(ds.getCategories(), com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm);
+                    return new WorkerRanking.Builder().setWorker(worker).setReputation(reputation).build();
+                }
+        ));
+        return rankings;
     }
 
     protected Map<Integer, Task> getTaskMap() {

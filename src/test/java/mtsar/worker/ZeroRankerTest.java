@@ -1,7 +1,6 @@
 package mtsar.worker;
 
 import mtsar.api.ProcessDefinition;
-import mtsar.api.Task;
 import mtsar.api.Worker;
 import mtsar.processors.WorkerRanker;
 import mtsar.processors.worker.ZeroRanker;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.when;
 public class ZeroRankerTest {
     private static final ProcessDefinition process = mock(ProcessDefinition.class);
     private static final Worker worker = fixture("worker1.json", Worker.class);
-    private static final Task task = fixture("task1.json", Task.class);
     private static final WorkerRanker ranker = new ZeroRanker();
 
     @Before
@@ -28,8 +26,5 @@ public class ZeroRankerTest {
     public void testRanking() {
         assertThat(ranker.rank(worker).isPresent()).isTrue();
         assertThat(ranker.rank(worker).get().getReputation()).isEqualTo(0);
-
-        assertThat(ranker.rank(worker, task).isPresent()).isTrue();
-        assertThat(ranker.rank(worker, task).get().getReputation()).isEqualTo(0);
     }
 }

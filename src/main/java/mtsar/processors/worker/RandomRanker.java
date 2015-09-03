@@ -1,20 +1,20 @@
 package mtsar.processors.worker;
 
-import mtsar.api.Task;
 import mtsar.api.Worker;
 import mtsar.api.WorkerRanking;
 import mtsar.processors.WorkerRanker;
 
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class RandomRanker implements WorkerRanker {
     @Override
-    public Optional<WorkerRanking> rank(Worker worker) {
-        return Optional.of(new WorkerRanking.Builder().setWorker(worker).setReputation(Math.random()).build());
-    }
-
-    @Override
-    public Optional<WorkerRanking> rank(Worker worker, Task task) {
-        return Optional.of(new WorkerRanking.Builder().setWorker(worker).setReputation(Math.random()).build());
+    public Map<Worker, WorkerRanking> rank(Collection<Worker> workers) {
+        return workers.stream().collect(Collectors.toMap(
+                Function.identity(),
+                worker -> new WorkerRanking.Builder().setWorker(worker).setReputation(Math.random()).build()
+        ));
     }
 }
