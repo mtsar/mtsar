@@ -6,6 +6,7 @@ import mtsar.api.Task;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.sql.TaskDAO;
+import mtsar.processors.TaskAllocator;
 import mtsar.processors.task.RandomAllocator;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,11 +23,11 @@ import static org.mockito.Mockito.*;
 public class RandomAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Process process = mock(Process.class);
-    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
+    private static final Worker worker = fixture("worker1.json", Worker.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
     private static final List<Task> tasks = Lists.newArrayList(task1, task2);
-    private static final RandomAllocator allocator = new RandomAllocator(() -> process, taskDAO);
+    private static final TaskAllocator allocator = new RandomAllocator(() -> process, taskDAO);
 
     @Before
     public void setup() {

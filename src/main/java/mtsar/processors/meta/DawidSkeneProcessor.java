@@ -4,13 +4,12 @@ import com.ipeirotis.gal.algorithms.DawidSkene;
 import com.ipeirotis.gal.core.AssignedLabel;
 import com.ipeirotis.gal.core.Category;
 import com.ipeirotis.gal.core.Datum;
-import mtsar.api.Answer;
-import mtsar.api.AnswerAggregation;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
+import mtsar.processors.WorkerRanker;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  * @see <a href="http://dl.acm.org/citation.cfm?id=1401965">10.1145/1401890.1401965</a>
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>
  */
-public class DawidSkeneProcessor implements AnswerAggregator {
+public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     public static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
         return Comparator.comparingDouble(keyExtractor).reversed();
     }
@@ -45,15 +44,48 @@ public class DawidSkeneProcessor implements AnswerAggregator {
     @Override
     public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
         if (tasks.isEmpty()) return Collections.emptyMap();
+        final Map<Integer, Task> taskMap = getTaskMap();
+        final DawidSkene ds = compute(taskMap);
+        final Map<Task, AnswerAggregation> results = ds.getObjects().values().stream().collect(Collectors.toMap(
+                datum -> taskMap.get(Integer.valueOf(datum.getName())),
+                datum -> {
+                    final Task task = taskMap.get(Integer.valueOf(datum.getName()));
+                    final Map<String, Double> probabilities = datum.getProbabilityVector(Datum.ClassificationMethod.DS_Soft);
+                    final Map.Entry<String, Double> winner = probabilities.entrySet().stream().sorted(comparingDouble(Map.Entry::getValue)).findFirst().get();
+                    return new AnswerAggregation.Builder().setTask(task).addAnswers(winner.getKey()).build();
+                }
+        ));
 
-        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().
-                collect(Collectors.toMap(Task::getId, Function.identity()));
+        return results;
+    }
 
+    @Override
+    public Optional<WorkerRanking> rank(Worker worker) {
+        final Map<Integer, Task> taskMap = getTaskMap();
+        final DawidSkene ds = compute(taskMap);
+        ds.evaluateWorkers();
+        final double quality = ds.getWorkers().get(worker.getId().toString()).getWorkerQuality(
+                ds.getCategories(),
+                com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm
+        );
+        return Optional.of(new WorkerRanking.Builder().setWorker(worker).setReputation(quality).build());
+    }
+
+    @Override
+    public Optional<WorkerRanking> rank(Worker worker, Task task) {
+        return rank(worker);
+    }
+
+    protected Map<Integer, Task> getTaskMap() {
+        return taskDAO.listForProcess(process.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
+    }
+
+    protected DawidSkene compute(Map<Integer, Task> taskMap) {
         final Set<Category> categories = taskMap.values().stream().
                 flatMap(task -> task.getAnswers().stream().map(answer -> new Category(answer))).
                 collect(Collectors.toSet());
 
-        final com.ipeirotis.gal.algorithms.DawidSkene ds = new com.ipeirotis.gal.algorithms.DawidSkene(categories);
+        final DawidSkene ds = new DawidSkene(categories);
 
         final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
 
@@ -68,18 +100,8 @@ public class DawidSkeneProcessor implements AnswerAggregator {
             }
         }
 
-        ds.estimate(tasks.size() <= 50 ? 50 : tasks.size(), 0.0001);
+        ds.estimate(taskMap.size() <= 50 ? 50 : taskMap.size(), 0.0001);
 
-        final Map<Task, AnswerAggregation> results = ds.getObjects().values().stream().collect(Collectors.toMap(
-                datum -> taskMap.get(Integer.valueOf(datum.getName())),
-                datum -> {
-                    final Task task = taskMap.get(Integer.valueOf(datum.getName()));
-                    final Map<String, Double> probabilities = datum.getProbabilityVector(Datum.ClassificationMethod.DS_Soft);
-                    final Map.Entry<String, Double> winner = probabilities.entrySet().stream().sorted(comparingDouble(Map.Entry::getValue)).findFirst().get();
-                    return new AnswerAggregation.Builder().setTask(task).addAnswers(winner.getKey()).build();
-                }
-        ));
-
-        return results;
+        return ds;
     }
 }

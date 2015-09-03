@@ -5,6 +5,7 @@ import mtsar.api.*;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
+import mtsar.processors.TaskAllocator;
 import mtsar.processors.task.InverseCountAllocator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 public class InverseCountAllocatorTest {
     private static final Process process = mock(Process.class);
-    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
+    private static final Worker worker = fixture("worker1.json", Worker.class);
 
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Task task1 = fixture("task1.json", Task.class);
@@ -56,7 +57,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testUnequalAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 1), Pair.of(2, 0)));
-        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -70,7 +71,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEqualAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 0), Pair.of(2, 0)));
-        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -84,7 +85,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEmpty() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Collections.emptyList());
-        final InverseCountAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isFalse();
     }

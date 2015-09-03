@@ -3,19 +3,21 @@ package mtsar.worker;
 import mtsar.api.ProcessDefinition;
 import mtsar.api.Task;
 import mtsar.api.Worker;
+import mtsar.processors.WorkerRanker;
 import mtsar.processors.worker.RandomRanker;
 import org.junit.Before;
 import org.junit.Test;
 
+import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RandomRankerTest {
     private static final ProcessDefinition process = mock(ProcessDefinition.class);
-    private static final Worker worker = new Worker.Builder().setId(1).setProcess("1").build();
-    private static final Task task = mock(Task.class);
-    private static final RandomRanker ranker = new RandomRanker();
+    private static final Worker worker = fixture("worker1.json", Worker.class);
+    private static final Task task = fixture("task1.json", Task.class);
+    private static final WorkerRanker ranker = new RandomRanker();
 
     @Before
     public void setup() {

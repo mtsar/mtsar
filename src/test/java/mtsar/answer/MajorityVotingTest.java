@@ -6,6 +6,7 @@ import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
+import mtsar.processors.AnswerAggregator;
 import mtsar.processors.answer.MajorityVoting;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.Optional;
 
+import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyString;
@@ -22,13 +24,12 @@ import static org.mockito.Mockito.*;
 public class MajorityVotingTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Process process = mock(Process.class);
-    private static final Task task = mock(Task.class);
-    private static final MajorityVoting aggregator = new MajorityVoting(() -> process, answerDAO);
+    private static final Task task = fixture("task1.json", Task.class);
+    private static final AnswerAggregator aggregator = new MajorityVoting(() -> process, answerDAO);
 
     @Before
     public void setup() {
         when(process.getId()).thenReturn("1");
-        when(task.getId()).thenReturn(1);
     }
 
     @Test

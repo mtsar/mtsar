@@ -7,6 +7,7 @@ import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
+import mtsar.processors.AnswerAggregator;
 import mtsar.processors.answer.KOSAggregator;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class KOSAggregatorTest {
     private static final mtsar.api.Process process = mock(Process.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
-    private static final KOSAggregator aggregator = new KOSAggregator(() -> process, taskDAO, answerDAO);
+    private static final AnswerAggregator aggregator = new KOSAggregator(() -> process, taskDAO, answerDAO);
 
     @Before
     public void setup() {
@@ -46,13 +47,13 @@ public class KOSAggregatorTest {
         ));
         {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task1);
-            assertThat(winner.isPresent());
+            assertThat(winner.isPresent()).isTrue();
             assertThat(winner.get().getAnswers()).hasSize(1);
             assertThat(winner.get().getAnswers().get(0)).isEqualTo("1");
         }
         {
             final Optional<AnswerAggregation> winner = aggregator.aggregate(task2);
-            assertThat(winner.isPresent());
+            assertThat(winner.isPresent()).isTrue();
             assertThat(winner.get().getAnswers()).hasSize(1);
             assertThat(winner.get().getAnswers().get(0)).isEqualTo("2");
         }
