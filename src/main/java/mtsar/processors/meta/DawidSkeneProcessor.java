@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 /**
  * A classical Dawid-Skene inference algorithm has been proposed far back in 1979.
- * This aggregator is driven by the well-known implementation by Sheng, Provost & Ipeirotis.
+ * This aggregator is driven by the well-known implementation by Sheng, Provost &amp; Ipeirotis.
  *
  * @see <a href="http://dl.acm.org/citation.cfm?id=1401965">10.1145/1401890.1401965</a>
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>

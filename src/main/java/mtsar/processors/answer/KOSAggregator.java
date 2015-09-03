@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Implementation of the answer aggregation algorithm proposed by Karger, Oh & Shah for binary tasks.
+ * Implementation of the answer aggregation algorithm proposed by Karger, Oh &amp; Shah for binary tasks.
  * <p>
  * This code is not verified, thus it provides random results and breaks unit tests.
  * Do not use it now, please.

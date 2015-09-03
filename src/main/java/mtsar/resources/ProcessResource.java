@@ -63,7 +63,7 @@ public class ProcessResource {
         return new WorkerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /**
+    /*
      * TODO: how to implement this route correctly?
      */
     @GET
@@ -78,7 +78,7 @@ public class ProcessResource {
         return new TaskResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /**
+    /*
      * TODO: how to implement this route correctly?
      */
     @GET
@@ -93,7 +93,7 @@ public class ProcessResource {
         return new AnswerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /**
+    /*
      * TODO: how to implement this route correctly?
      */
     @GET
