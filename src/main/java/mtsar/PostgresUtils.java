@@ -27,8 +27,7 @@ public class PostgresUtils {
     }
 
     public static String buildArrayString(@Nonnull String[] elements) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append('{');
+        final StringBuilder sb = new StringBuilder("{");
         for (int i = 0, len = elements.length; i < len; i++) {
             if (i > 0) sb.append(',');
             final String element = elements[i];
@@ -38,7 +37,6 @@ public class PostgresUtils {
                 sb.append("NULL");
             }
         }
-        sb.append('}');
-        return sb.toString();
+        return sb.append('}').toString();
     }
 }
