@@ -34,6 +34,28 @@
         <url>https://github.com/dustalov/mtsar</url>
     </scm>
 
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/dustalov/mtsar/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/dustalov/mtsar</url>
+    </ciManagement>
+
+    <developers>
+        <developer>
+            <id>dustalov</id>
+            <name>Dmitry Ustalov</name>
+            <url>https://ustalov.name/en/</url>
+            <timezone>Asia/Yekaterinburg</timezone>
+            <roles>
+                <role>author</role>
+            </roles>
+        </developer>
+    </developers>
+
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
