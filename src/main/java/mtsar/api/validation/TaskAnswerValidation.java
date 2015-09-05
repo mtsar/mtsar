@@ -20,6 +20,9 @@ import io.dropwizard.validation.ValidationMethod;
 import mtsar.api.Answer;
 import mtsar.api.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskAnswerValidation {
     private final Task task;
     private final Answer answer;
@@ -27,6 +30,13 @@ public class TaskAnswerValidation {
     public TaskAnswerValidation(Task task, Answer answer) {
         this.task = task;
         this.answer = answer;
+    }
+
+    @ValidationMethod(message = "#answer-not-in-task: task has no such an answer in possible ones")
+    public boolean isAnswerInDomain() {
+        final List<String> answers = new ArrayList<>(answer.getAnswers());
+        answers.removeAll(task.getAnswers());
+        return answers.isEmpty();
     }
 
     @ValidationMethod(message = "#task-single-no-answer: task type 'single' requires one answer")
