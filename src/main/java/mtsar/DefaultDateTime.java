@@ -16,11 +16,13 @@
 
 package mtsar;
 
+import javax.annotation.Nonnull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public final class DefaultDateTime {
+    @Nonnull
     public static Timestamp get() {
         return Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
     }

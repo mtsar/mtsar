@@ -39,7 +39,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Path("/workers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
@@ -88,7 +87,7 @@ public class WorkerResource {
 
     @POST
     public Response postWorker(@Context UriInfo uriInfo, MultivaluedMap<String, String> params) {
-        final Set<String> tags = ParamsUtils.extract(params, "tags");
+        final List<String> tags = ParamsUtils.extract(params, "tags");
 
         int workerId = workerDAO.insert(new Worker.Builder().
                 setProcess(process.getId()).

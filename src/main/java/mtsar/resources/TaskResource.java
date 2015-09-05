@@ -43,7 +43,6 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Path("/tasks")
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -81,8 +80,8 @@ public class TaskResource {
 
     @POST
     public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("description") String description, MultivaluedMap<String, String> params) {
-        final Set<String> tags = ParamsUtils.extract(params, "tags");
-        final Set<String> answers = ParamsUtils.extract(params, "answers");
+        final List<String> tags = ParamsUtils.extract(params, "tags");
+        final List<String> answers = ParamsUtils.extract(params, "answers");
 
         int taskId = taskDAO.insert(new Task.Builder().
                 addAllTags(tags).
@@ -125,8 +124,8 @@ public class TaskResource {
         final Timestamp datetime = (datetimeParam == null) ? DefaultDateTime.get() : Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(workerId);
         final Task task = fetchTask(id);
-        final Set<String> tags = ParamsUtils.extract(params, "tags");
-        final Set<String> answers = ParamsUtils.extract(params, "answers");
+        final List<String> tags = ParamsUtils.extract(params, "tags");
+        final List<String> answers = ParamsUtils.extract(params, "answers");
 
         final Answer record = new Answer.Builder().
                 setProcess(process.getId()).

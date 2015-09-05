@@ -16,31 +16,35 @@
 
 package mtsar;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public final class ParamsUtils {
-    public final static Set<String> extract(MultivaluedMap<String, String> params, String prefix) {
+    @ParametersAreNonnullByDefault
+    @Nonnull
+    public final static List<String> extract(MultivaluedMap<String, String> params, String prefix) {
         final String regexp = "^" + Pattern.quote(prefix) + "(\\[\\d+\\]|)$";
-        final Set<String> values = new HashSet<>();
-        for (final Map.Entry<String, List<String>> entries : params.entrySet()) {
-            if (!entries.getKey().matches(regexp)) continue;
-            if (entries.getValue() == null || entries.getValue().isEmpty()) continue;
-            for (final String answer : entries.getValue()) values.add(answer);
-        }
+
+        final List<String> values = params.entrySet().stream().
+                filter(entries -> entries.getKey().matches(regexp) && entries.getValue() != null && !entries.getValue().isEmpty()).
+                flatMap(entries -> entries.getValue().stream()).
+                collect(Collectors.toList());
+
         return values;
     }
 
     public final static void validate(Validator validator, Object... objects) throws ConstraintViolationException {
         final Set<ConstraintViolation<Object>> violations = new HashSet<>();
-        for (Object object : objects) violations.addAll(validator.validate(object));
+        for (final Object object : objects) violations.addAll(validator.validate(object));
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }
 }
