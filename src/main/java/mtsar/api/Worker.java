@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import mtsar.DefaultDateTime;
-import mtsar.api.sql.PostgreSQLTextArray;
+import mtsar.PostgresUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.annotation.Nullable;
@@ -56,7 +56,7 @@ public interface Worker {
         }
 
         public Worker build() {
-            setTagsTextArray(new PostgreSQLTextArray(getTags()).toString());
+            setTagsTextArray(PostgresUtils.buildArrayString(getTags()));
             return super.build();
         }
     }
