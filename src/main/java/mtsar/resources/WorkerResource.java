@@ -22,6 +22,7 @@ import mtsar.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.Process;
 import mtsar.api.csv.WorkerCSV;
+import mtsar.api.csv.WorkerRankingCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -38,6 +39,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Path("/workers")
@@ -71,6 +73,15 @@ public class WorkerResource {
     public StreamingOutput getCSV() {
         final List<Worker> workers = workerDAO.listForProcess(process.getId());
         return output -> WorkerCSV.write(workers, output);
+    }
+
+    @GET
+    @Path("rankings.csv")
+    @Produces(mtsar.MediaType.TEXT_CSV)
+    public StreamingOutput getWorkerRankingsCSV() {
+        final List<Worker> workers = workerDAO.listForProcess(process.getId());
+        final Map<Worker, WorkerRanking> rankings = process.getWorkerRanker().rank(workers);
+        return output -> WorkerRankingCSV.write(rankings.values(), output);
     }
 
     @POST
