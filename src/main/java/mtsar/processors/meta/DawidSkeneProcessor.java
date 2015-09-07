@@ -83,7 +83,8 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
         final Map<Worker, WorkerRanking> rankings = workers.stream().collect(Collectors.toMap(
                 Function.identity(),
                 worker -> {
-                    final double reputation = ds.getWorkers().get(worker.getId().toString()).getWorkerQuality(ds.getCategories(), com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm);
+                    final com.ipeirotis.gal.core.Worker dsWorker = ds.getWorkers().get(worker.getId().toString());
+                    final double reputation = dsWorker == null ? Double.NaN : dsWorker.getWorkerQuality(ds.getCategories(), com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm);
                     return new WorkerRanking.Builder().setWorker(worker).setReputation(reputation).build();
                 }
         ));
