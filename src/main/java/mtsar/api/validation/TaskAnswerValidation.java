@@ -19,28 +19,29 @@ package mtsar.api.validation;
 import io.dropwizard.validation.ValidationMethod;
 import mtsar.api.Answer;
 import mtsar.api.Task;
+import org.inferred.freebuilder.FreeBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskAnswerValidation {
-    private final Task task;
-    private final Answer answer;
+@FreeBuilder
+public interface TaskAnswerValidation {
+    Task getTask();
 
-    public TaskAnswerValidation(Task task, Answer answer) {
-        this.task = task;
-        this.answer = answer;
-    }
+    Answer getAnswer();
 
     @ValidationMethod(message = "#answer-not-in-task: task has no such an answer in possible ones")
-    public boolean isAnswerInDomain() {
-        final List<String> answers = new ArrayList<>(answer.getAnswers());
-        answers.removeAll(task.getAnswers());
+    default boolean isAnswerInDomain() {
+        final List<String> answers = new ArrayList<>(getAnswer().getAnswers());
+        answers.removeAll(getTask().getAnswers());
         return answers.isEmpty();
     }
 
     @ValidationMethod(message = "#task-single-no-answer: task type 'single' requires one answer")
-    public boolean isAnswerPresentForTypeSingle() {
-        return !task.getType().equalsIgnoreCase("single") || answer.getAnswers().size() == 1;
+    default boolean isAnswerPresentForTypeSingle() {
+        return !getTask().getType().equalsIgnoreCase("single") || getAnswer().getAnswers().size() == 1;
+    }
+
+    class Builder extends TaskAnswerValidation_Builder {
     }
 }

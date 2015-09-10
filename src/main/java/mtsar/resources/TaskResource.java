@@ -138,8 +138,9 @@ public class TaskResource {
                 build();
 
         ParamsUtils.validate(validator,
-                new TaskAnswerValidation(task, record),
-                new AnswerValidation(record, answerDAO));
+                new TaskAnswerValidation.Builder().setTask(task).setAnswer(record).build(),
+                new AnswerValidation.Builder().setAnswer(record).setAnswerDAO(answerDAO).build()
+        );
 
         int answerId = answerDAO.insert(record);
         final Answer answer = answerDAO.find(answerId, process.getId());

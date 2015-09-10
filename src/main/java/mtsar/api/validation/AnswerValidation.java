@@ -19,18 +19,19 @@ package mtsar.api.validation;
 import io.dropwizard.validation.ValidationMethod;
 import mtsar.api.Answer;
 import mtsar.api.sql.AnswerDAO;
+import org.inferred.freebuilder.FreeBuilder;
 
-public class AnswerValidation {
-    private final Answer answer;
-    private final AnswerDAO answerDAO;
+@FreeBuilder
+public interface AnswerValidation {
+    Answer getAnswer();
 
-    public AnswerValidation(Answer answer, AnswerDAO answerDAO) {
-        this.answer = answer;
-        this.answerDAO = answerDAO;
-    }
+    AnswerDAO getAnswerDAO();
 
     @ValidationMethod(message = "#answer-duplicate: worker has already completed this task")
-    public boolean isAnswerUnique() {
-        return answerDAO.findByWorkerAndTask(answer.getProcess(), answer.getWorkerId(), answer.getTaskId()) == null;
+    default boolean isAnswerUnique() {
+        return getAnswerDAO().findByWorkerAndTask(getAnswer().getProcess(), getAnswer().getWorkerId(), getAnswer().getTaskId()) == null;
+    }
+
+    class Builder extends AnswerValidation_Builder {
     }
 }
