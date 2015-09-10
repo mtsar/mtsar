@@ -86,15 +86,15 @@ public class InverseCountAllocator implements TaskAllocator {
         return ids;
     }
 
-    @RegisterMapper(CountPairMapper.class)
+    @RegisterMapper(CountDAO.Mapper.class)
     public interface CountDAO {
         @SqlQuery("select tasks.id, count(answers.id) from tasks left join answers on answers.task_id = tasks.id and answers.process = tasks.process and answers.type <> 'skip' where tasks.process = :process group by tasks.id")
         List<Pair<Integer, Integer>> getCountsSQL(@Bind("process") String process);
-    }
 
-    public static class CountPairMapper implements ResultSetMapper<Pair> {
-        public Pair<Integer, Integer> map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            return Pair.of(r.getInt("id"), r.getInt("count"));
+        class Mapper implements ResultSetMapper<Pair> {
+            public Pair<Integer, Integer> map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+                return Pair.of(r.getInt("id"), r.getInt("count"));
+            }
         }
     }
 }

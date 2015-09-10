@@ -16,9 +16,21 @@
 
 package mtsar.api.sql;
 
+import mtsar.api.Event;
+import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
-@RegisterMapper(EventMapper.class)
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+@RegisterMapper(EventDAO.Mapper.class)
 public interface EventDAO {
     void close();
+
+    class Mapper implements ResultSetMapper<Event> {
+        public Event map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+            return new Event.Builder().build();
+        }
+    }
 }

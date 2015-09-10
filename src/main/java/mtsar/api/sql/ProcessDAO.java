@@ -17,15 +17,19 @@
 package mtsar.api.sql;
 
 import mtsar.api.ProcessDefinition;
+import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
-@RegisterMapper(ProcessDefinitionMapper.class)
+@RegisterMapper(ProcessDAO.Mapper.class)
 public interface ProcessDAO {
     @SqlQuery("select * from processes order by datetime")
     List<ProcessDefinition> select();
@@ -46,4 +50,19 @@ public interface ProcessDAO {
     void deleteAll();
 
     void close();
+
+    class Mapper implements ResultSetMapper<ProcessDefinition> {
+        @Override
+        public ProcessDefinition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+            final ProcessDefinition.Builder builder = new ProcessDefinition.Builder().
+                    setId(r.getString("id")).
+                    setDescription(r.getString("description")).
+                    setWorkerRanker(r.getString("worker_ranker")).
+                    setTaskAllocator(r.getString("task_allocator")).
+                    setAnswerAggregator(r.getString("answer_aggregator")).
+                    setOptions(r.getString("options")).
+                    setDateTime(r.getTimestamp("datetime"));
+            return builder.build();
+        }
+    }
 }

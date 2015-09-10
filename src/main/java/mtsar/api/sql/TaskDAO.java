@@ -17,17 +17,22 @@
 package mtsar.api.sql;
 
 import mtsar.api.Task;
+import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import org.skife.jdbi.v2.unstable.BindIn;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 @UseStringTemplate3StatementLocator
-@RegisterMapper(TaskMapper.class)
+@RegisterMapper(TaskDAO.Mapper.class)
 public interface TaskDAO {
     String TASK_TYPE_SINGLE = "single";
 
@@ -79,4 +84,19 @@ public interface TaskDAO {
     void resetSequence();
 
     void close();
+
+    class Mapper implements ResultSetMapper<Task> {
+        public Task map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+
+            return new Task.Builder().
+                    setId(r.getInt("id")).
+                    setProcess(r.getString("process")).
+                    setDateTime(r.getTimestamp("datetime")).
+                    addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
+                    setType(r.getString("type")).
+                    setDescription(r.getString("description")).
+                    addAllAnswers(Arrays.asList((String[]) r.getArray("answers").getArray())).
+                    build();
+        }
+    }
 }

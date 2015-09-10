@@ -17,17 +17,22 @@
 package mtsar.api.sql;
 
 import mtsar.api.Worker;
+import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
+import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import org.skife.jdbi.v2.unstable.BindIn;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 @UseStringTemplate3StatementLocator
-@RegisterMapper(WorkerMapper.class)
+@RegisterMapper(WorkerDAO.Mapper.class)
 public interface WorkerDAO {
     @SqlQuery("select * from workers where process = :process")
     List<Worker> listForProcess(@Bind("process") String process);
@@ -64,4 +69,15 @@ public interface WorkerDAO {
     void resetSequence();
 
     void close();
+
+    class Mapper implements ResultSetMapper<Worker> {
+        public Worker map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+            return new Worker.Builder().
+                    setId(r.getInt("id")).
+                    setProcess(r.getString("process")).
+                    setDateTime(r.getTimestamp("datetime")).
+                    addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
+                    build();
+        }
+    }
 }
