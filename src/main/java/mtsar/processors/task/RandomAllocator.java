@@ -24,6 +24,7 @@ import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
 
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
@@ -41,7 +42,8 @@ public class RandomAllocator implements TaskAllocator {
     }
 
     @Override
-    public List<TaskAllocation> allocate(Worker worker, @Nonnegative int n) {
+    @Nonnull
+    public List<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
         Collections.shuffle(tasks);
         return tasks.stream().limit(n).

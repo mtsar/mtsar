@@ -30,6 +30,7 @@ import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.sql.ResultSet;
@@ -54,7 +55,8 @@ public class InverseCountAllocator implements TaskAllocator {
     }
 
     @Override
-    public List<TaskAllocation> allocate(Worker worker, @Nonnegative int n) {
+    @Nonnull
+    public List<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
         final Set<Integer> answered = answerDAO.listForWorker(worker.getId(), process.get().getId()).stream().
                 map(Answer::getTaskId).collect(Collectors.toSet());
 

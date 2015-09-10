@@ -27,6 +27,7 @@ import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.WorkerRanker;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
@@ -58,7 +59,8 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     }
 
     @Override
-    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+    @Nonnull
+    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
@@ -76,7 +78,8 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     }
 
     @Override
-    public Map<Worker, WorkerRanking> rank(Collection<Worker> workers) {
+    @Nonnull
+    public Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
         ds.evaluateWorkers();

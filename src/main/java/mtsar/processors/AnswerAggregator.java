@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Task;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +32,8 @@ public interface AnswerAggregator {
      * @param tasks tasks.
      * @return Aggregated answers.
      */
-    Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks);
+    @Nonnull
+    Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks);
 
     /**
      * Given a task, an aggregator returns either an aggregated answer, or nothing.
@@ -40,7 +42,8 @@ public interface AnswerAggregator {
      * @param task task.
      * @return Aggregated answer.
      */
-    default Optional<AnswerAggregation> aggregate(Task task) {
+    @Nonnull
+    default Optional<AnswerAggregation> aggregate(@Nonnull Task task) {
         final Map<Task, AnswerAggregation> aggregations = aggregate(Lists.newArrayList(task));
         if (aggregations.isEmpty()) return Optional.empty();
         return Optional.of(aggregations.get(task));

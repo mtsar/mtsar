@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import mtsar.api.Worker;
 import mtsar.api.WorkerRanking;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +32,8 @@ public interface WorkerRanker {
      * @param workers workers.
      * @return Worker rankings.
      */
-    Map<Worker, WorkerRanking> rank(Collection<Worker> workers);
+    @Nonnull
+    Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers);
 
     /**
      * Given a worker, a ranker returns either a worker ranking, or nothing.
@@ -40,7 +42,8 @@ public interface WorkerRanker {
      * @param worker worker.
      * @return Worker ranking.
      */
-    default Optional<WorkerRanking> rank(Worker worker) {
+    @Nonnull
+    default Optional<WorkerRanking> rank(@Nonnull Worker worker) {
         final Map<Worker, WorkerRanking> rankings = rank(Lists.newArrayList(worker));
         if (rankings.isEmpty()) return Optional.empty();
         return Optional.of(rankings.get(worker));

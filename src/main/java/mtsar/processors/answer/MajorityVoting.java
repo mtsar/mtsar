@@ -22,6 +22,7 @@ import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.AnswerAggregator;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collection;
@@ -38,7 +39,8 @@ public class MajorityVoting implements AnswerAggregator {
     }
 
     @Override
-    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+    @Nonnull
+    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         throw new UnsupportedOperationException("Not Implemented Yet");
     }
 }

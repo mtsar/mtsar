@@ -20,6 +20,7 @@ import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 
 import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +32,11 @@ public interface TaskAllocator {
      * Given a worker, an allocator returns either an allocated task, or nothing.
      *
      * @param worker worker.
-     * @param n maximum number of tasks to be allocated.
+     * @param n      maximum number of tasks to be allocated.
      * @return Allocated tasks.
      */
-    List<TaskAllocation> allocate(Worker worker, @Nonnegative int n);
+    @Nonnull
+    List<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n);
 
     /**
      * Given a worker, an allocator returns either an allocated task, or nothing.
@@ -43,7 +45,8 @@ public interface TaskAllocator {
      * @param worker worker.
      * @return Allocated task.
      */
-    default Optional<TaskAllocation> allocate(Worker worker) {
+    @Nonnull
+    default Optional<TaskAllocation> allocate(@Nonnull Worker worker) {
         final List<TaskAllocation> allocations = allocate(worker, 1);
         if (allocations.isEmpty()) return Optional.empty();
         return Optional.ofNullable(allocations.get(0));

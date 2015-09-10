@@ -20,6 +20,7 @@ import mtsar.api.Worker;
 import mtsar.api.WorkerRanking;
 import mtsar.processors.WorkerRanker;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,7 +28,8 @@ import java.util.stream.Collectors;
 
 public class RandomRanker implements WorkerRanker {
     @Override
-    public Map<Worker, WorkerRanking> rank(Collection<Worker> workers) {
+    @Nonnull
+    public Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
         return workers.stream().collect(Collectors.toMap(
                 Function.identity(),
                 worker -> new WorkerRanking.Builder().setWorker(worker).setReputation(Math.random()).build()

@@ -30,6 +30,7 @@ import mtsar.processors.AnswerAggregator;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
@@ -63,7 +64,8 @@ public class KOSAggregator implements AnswerAggregator {
     }
 
     @Override
-    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+    @Nonnull
+    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         checkArgument(tasks.stream().allMatch(SINGLE_BINARY_TYPE), "tasks should be of the type single and have only two possible answers");
         if (tasks.isEmpty()) return Collections.emptyMap();
 

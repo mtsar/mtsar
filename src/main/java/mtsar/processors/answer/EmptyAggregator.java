@@ -20,13 +20,15 @@ import mtsar.api.AnswerAggregation;
 import mtsar.api.Task;
 import mtsar.processors.AnswerAggregator;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
 public class EmptyAggregator implements AnswerAggregator {
     @Override
-    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+    @Nonnull
+    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         return Collections.emptyMap();
     }
 }

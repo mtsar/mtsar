@@ -23,6 +23,7 @@ import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.AnswerAggregator;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
@@ -38,7 +39,8 @@ public class RandomAggregator implements AnswerAggregator {
     }
 
     @Override
-    public Map<Task, AnswerAggregation> aggregate(Collection<Task> tasks) {
+    @Nonnull
+    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         final Map<Task, AnswerAggregation> aggregations = new HashMap<>();
         for (final Task task : tasks) {
             final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
