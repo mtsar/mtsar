@@ -24,14 +24,32 @@ import javax.validation.Validator;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@ParametersAreNonnullByDefault
 public final class ParamsUtils {
-    @ParametersAreNonnullByDefault
     @Nonnull
-    public final static List<String> extract(MultivaluedMap<String, String> params, String prefix) {
+    public static Map<String, List<String>> nested(MultivaluedMap<String, String> params, String prefix) {
+        final Pattern pattern = Pattern.compile("^(" + Pattern.quote(prefix) + "\\[(\\w+?)\\])(\\[\\d+\\]|)$");
+
+        final Map<String, Matcher> prefixes = params.keySet().stream().
+                map(param -> pattern.matcher(param)).
+                filter(Matcher::matches).
+                collect(Collectors.toMap(matcher -> matcher.group(1), Function.identity(), (m1, m2) -> m1));
+
+        final Map<String, List<String>> values = prefixes.entrySet().stream().
+                collect(Collectors.toMap(entry -> entry.getValue().group(2), entry -> extract(params, entry.getKey())));
+
+        return values;
+    }
+
+    @Nonnull
+    public static List<String> extract(MultivaluedMap<String, String> params, String prefix) {
         final String regexp = "^" + Pattern.quote(prefix) + "(\\[\\d+\\]|)$";
 
         final List<String> values = params.entrySet().stream().
