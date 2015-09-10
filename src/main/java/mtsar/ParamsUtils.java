@@ -17,15 +17,13 @@
 package mtsar;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.core.MultivaluedMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +31,11 @@ import java.util.stream.Collectors;
 
 @ParametersAreNonnullByDefault
 public final class ParamsUtils {
+    @Nullable
+    public static <T> T optional(Optional<T> optional) {
+        return optional.isPresent() ? optional.get() : null;
+    }
+
     @Nonnull
     public static Map<String, List<String>> nested(MultivaluedMap<String, String> params, String prefix) {
         final Pattern pattern = Pattern.compile("^(" + Pattern.quote(prefix) + "\\[(\\w+?)\\])(\\[\\d+\\]|)$");

@@ -131,9 +131,14 @@ public class WorkerResource {
     @GET
     @Path("{worker}/task")
     public TaskAllocation getWorkerTask(@PathParam("worker") Integer id) {
+        return getWorkerTasks(id, 1);
+    }
+
+    @GET
+    @Path("{worker}/tasks/{n}")
+    public TaskAllocation getWorkerTasks(@PathParam("worker") Integer id, @PathParam("n") Integer n) {
         final Worker worker = fetchWorker(id);
-        final Optional<TaskAllocation> allocation = process.getTaskAllocator().allocate(worker);
-        return allocation.isPresent() ? allocation.get() : null;
+        return ParamsUtils.optional(process.getTaskAllocator().allocate(worker, n));
     }
 
     @GET
@@ -144,22 +149,19 @@ public class WorkerResource {
         final Optional<TaskAllocation> optional = process.getTaskAllocator().allocate(worker);
 
         if (optional.isPresent()) {
-            return new TaskAllocation.Builder().mergeFrom(optional.get()).build();
+            return new TaskAllocation.Builder().
+                    mergeFrom(optional.get()).
+                    clearTasks().
+                    addTasks(task).
+                    build();
         } else {
             return new TaskAllocation.Builder().
                     setWorker(worker).
-                    setTask(task).
+                    addTasks(task).
                     setTaskRemaining(1).
                     setTaskCount(taskDAO.count(process.getId())).
                     build();
         }
-    }
-
-    @GET
-    @Path("{worker}/tasks/{n}")
-    public List<TaskAllocation> getWorkerTasks(@PathParam("worker") Integer id, @PathParam("n") Integer n) {
-        final Worker worker = fetchWorker(id);
-        return process.getTaskAllocator().allocate(worker, n);
     }
 
     @GET

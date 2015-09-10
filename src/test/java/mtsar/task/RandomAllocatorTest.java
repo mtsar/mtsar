@@ -57,7 +57,7 @@ public class RandomAllocatorTest {
         when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
-        assertThat(allocation.get().getTask()).isIn(tasks);
+        assertThat(allocation.get().getTask().get()).isIn(tasks);
     }
 
     @Test

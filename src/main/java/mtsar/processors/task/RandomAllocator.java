@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RandomAllocator implements TaskAllocator {
@@ -43,16 +44,18 @@ public class RandomAllocator implements TaskAllocator {
 
     @Override
     @Nonnull
-    public List<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
+    public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
+
+        if (tasks.isEmpty()) return Optional.empty();
         Collections.shuffle(tasks);
-        return tasks.stream().limit(n).
-                map(task -> new TaskAllocation.Builder()
-                        .setWorker(worker)
-                        .setTask(task)
-                        .setTaskRemaining(tasks.size())
-                        .setTaskCount(tasks.size())
-                        .build()).
-                collect(Collectors.toList());
+
+        final TaskAllocation allocation = new TaskAllocation.Builder()
+                .setWorker(worker)
+                .addAllTasks(tasks.stream().limit(n).collect(Collectors.toList()))
+                .setTaskRemaining(tasks.size())
+                .setTaskCount(tasks.size())
+                .build();
+        return Optional.of(allocation);
     }
 }

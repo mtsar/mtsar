@@ -56,7 +56,7 @@ public class InverseCountAllocator implements TaskAllocator {
 
     @Override
     @Nonnull
-    public List<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
+    public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
         final Set<Integer> answered = answerDAO.listForWorker(worker.getId(), process.get().getId()).stream().
                 map(Answer::getTaskId).collect(Collectors.toSet());
 
@@ -67,18 +67,18 @@ public class InverseCountAllocator implements TaskAllocator {
         final List<Integer> ids = filterTasks(counts);
         final int taskRemaining = ids.size();
 
-        if (ids.isEmpty()) return Collections.emptyList();
+        if (ids.isEmpty()) return Optional.empty();
         if (taskRemaining > n) ids.subList(n, ids.size()).clear();
         final List<Task> tasks = taskDAO.select(ids, process.get().getId());
 
         final int taskCount = taskDAO.count(process.get().getId());
-        return tasks.stream().map(task -> new TaskAllocation.Builder()
-                        .setWorker(worker)
-                        .setTask(task)
-                        .setTaskRemaining(taskRemaining)
-                        .setTaskCount(taskCount)
-                        .build()
-        ).collect(Collectors.toList());
+        final TaskAllocation allocation = new TaskAllocation.Builder().
+                setWorker(worker).
+                addAllTasks(tasks).
+                setTaskRemaining(taskRemaining).
+                setTaskCount(taskCount).
+                build();
+        return Optional.of(allocation);
     }
 
     protected List<Integer> filterTasks(Map<Integer, Integer> counts) {

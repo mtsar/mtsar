@@ -79,7 +79,7 @@ public class InverseCountAllocatorTest {
         assertThat(optional.isPresent()).isTrue();
 
         final TaskAllocation allocation = optional.get();
-        assertThat(allocation.getTask().getId()).isEqualTo(2);
+        assertThat(allocation.getTask().get().getId()).isEqualTo(2);
         assertThat(allocation.getTaskRemaining()).isEqualTo(2);
         assertThat(allocation.getTaskCount()).isEqualTo(2);
     }
@@ -93,7 +93,7 @@ public class InverseCountAllocatorTest {
         assertThat(optional.isPresent()).isTrue();
 
         final TaskAllocation allocation = optional.get();
-        assertThat(allocation.getTask().getId()).isBetween(1, 2);
+        assertThat(allocation.getTask().get().getId()).isBetween(1, 2);
         assertThat(allocation.getTaskRemaining()).isEqualTo(2);
         assertThat(allocation.getTaskCount()).isEqualTo(2);
     }

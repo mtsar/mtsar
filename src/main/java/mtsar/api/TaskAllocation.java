@@ -16,12 +16,15 @@
 
 package mtsar.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
+import java.util.Optional;
 
 @FreeBuilder
 @XmlRootElement
@@ -33,7 +36,7 @@ public interface TaskAllocation {
     Worker getWorker();
 
     @JsonProperty
-    Task getTask();
+    List<Task> getTasks();
 
     @JsonProperty
     int getTaskRemaining();
@@ -44,6 +47,12 @@ public interface TaskAllocation {
     @JsonProperty
     default String getType() {
         return TYPE_DEFAULT;
+    }
+
+    @JsonIgnore
+    default Optional<Task> getTask() {
+        if (getTasks().isEmpty()) return Optional.empty();
+        return Optional.of(getTasks().get(0));
     }
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
