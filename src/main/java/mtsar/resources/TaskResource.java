@@ -96,7 +96,7 @@ public class TaskResource {
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response postTasks(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
+    public Response postTasksCSV(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, TaskCSV.FORMAT)) {
                 taskDAO.insert(TaskCSV.parse(process, csv));
