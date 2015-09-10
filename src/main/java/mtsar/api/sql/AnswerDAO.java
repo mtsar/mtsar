@@ -21,6 +21,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.BatchChunkSize;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import org.skife.jdbi.v2.sqlobject.stringtemplate.UseStringTemplate3StatementLocator;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
 import java.sql.ResultSet;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+@UseStringTemplate3StatementLocator
 @RegisterMapper(AnswerDAO.Mapper.class)
 public interface AnswerDAO {
     String ANSWER_TYPE_ANSWER = "answer";
@@ -54,7 +56,7 @@ public interface AnswerDAO {
 
     @SqlBatch("insert into answers (id, process, datetime, tags, type, worker_id, task_id, answers) values (coalesce(:id, nextval('answers_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[]))")
     @BatchChunkSize(1000)
-    void insert(@BindBean Iterator<Answer> tasks);
+    int[] insert(@BindBean Iterator<Answer> tasks);
 
     @SqlQuery("select count(*) from answers")
     int count();

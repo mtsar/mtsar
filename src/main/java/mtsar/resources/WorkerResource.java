@@ -18,6 +18,7 @@ package mtsar.resources;
 
 import com.google.common.collect.Lists;
 import io.dropwizard.jersey.PATCH;
+import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.Process;
@@ -26,10 +27,13 @@ import mtsar.api.csv.WorkerRankingCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.api.validation.AnswerValidation;
+import mtsar.api.validation.TaskAnswerValidation;
 import mtsar.views.WorkersView;
 import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -38,9 +42,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Path("/workers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
@@ -164,6 +170,39 @@ public class WorkerResource {
     }
 
     @PATCH
+    @Path("{worker}/answers")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response postAnswers(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("worker") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+        final Timestamp datetime = (datetimeParam == null) ? DefaultDateTime.get() : Timestamp.valueOf(datetimeParam);
+        final Worker worker = fetchWorker(id);
+        final Map<String, List<String>> nested = ParamsUtils.nested(params, "answers");
+
+        final List<Answer> answers = nested.entrySet().stream().map(entry -> {
+            final Integer taskId = Integer.valueOf(entry.getKey());
+            final Task task = fetchTask(taskId);
+
+            final Answer answer = new Answer.Builder().
+                    setProcess(process.getId()).
+                    setType(type).
+                    setTaskId(task.getId()).
+                    setWorkerId(worker.getId()).
+                    addAllAnswers(entry.getValue()).
+                    setDateTime(datetime).
+                    build();
+
+            ParamsUtils.validate(validator,
+                    new TaskAnswerValidation.Builder().setTask(task).setAnswer(answer).build(),
+                    new AnswerValidation.Builder().setAnswer(answer).setAnswerDAO(answerDAO).build()
+            );
+
+            return answer;
+        }).collect(Collectors.toList());
+
+        int modified[] = answerDAO.insert(answers.iterator());
+        return Response.seeOther(getWorkerAnswersURI(uriInfo, worker)).entity(modified).build();
+    }
+
+    @PATCH
     @Path("{worker}")
     public Worker patchWorker(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);
@@ -207,6 +246,14 @@ public class WorkerResource {
         return uriInfo.getBaseUriBuilder().
                 path("processes").path(process.getId()).
                 path("workers").path(worker.getId().toString()).
+                build();
+    }
+
+    private URI getWorkerAnswersURI(UriInfo uriInfo, Worker worker) {
+        return uriInfo.getBaseUriBuilder().
+                path("processes").path(process.getId()).
+                path("workers").path(worker.getId().toString()).
+                path("answers").
                 build();
     }
 }
