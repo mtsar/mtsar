@@ -31,8 +31,11 @@ import mtsar.api.validation.AnswerValidation;
 import mtsar.api.validation.TaskAnswerValidation;
 import mtsar.views.WorkersView;
 import org.apache.commons.csv.CSVParser;
+import org.apache.commons.lang3.tuple.Pair;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -46,6 +49,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Path("/workers")
@@ -179,7 +183,7 @@ public class WorkerResource {
         final Worker worker = fetchWorker(id);
         final Map<String, List<String>> nested = ParamsUtils.nested(params, "answers");
 
-        final List<Answer> answers = nested.entrySet().stream().map(entry -> {
+        final Map<Answer, Set<ConstraintViolation<Object>>> answers = nested.entrySet().stream().map(entry -> {
             final Integer taskId = Integer.valueOf(entry.getKey());
             final Task task = fetchTask(taskId);
 
@@ -192,15 +196,18 @@ public class WorkerResource {
                     setDateTime(datetime).
                     build();
 
-            ParamsUtils.validate(validator,
+            final Set<ConstraintViolation<Object>> violations = ParamsUtils.violate(validator,
                     new TaskAnswerValidation.Builder().setTask(task).setAnswer(answer).build(),
                     new AnswerValidation.Builder().setAnswer(answer).setAnswerDAO(answerDAO).build()
             );
 
-            return answer;
-        }).collect(Collectors.toList());
+            return Pair.of(answer, violations);
+        }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
-        int modified[] = answerDAO.insert(answers.iterator());
+        final Set<ConstraintViolation<Object>> violations = answers.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+        if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
+
+        int modified[] = answerDAO.insert(answers.keySet().iterator());
         return Response.seeOther(getWorkerAnswersURI(uriInfo, worker)).entity(modified).build();
     }
 
