@@ -178,7 +178,7 @@ public class WorkerResource {
     @PATCH
     @Path("{worker}/answers")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-    public Response postAnswers(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("worker") Integer id, @FormParam("type") @DefaultValue("answer") String type, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
+    public Response postAnswers(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("worker") Integer id, @FormParam("type") @DefaultValue(AnswerDAO.ANSWER_TYPE_DEFAULT) String type, @FormParam("tags") List<String> tags, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
         final Timestamp datetime = (datetimeParam == null) ? DefaultDateTime.get() : Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(id);
         final Map<String, List<String>> nested = ParamsUtils.nested(params, "answers");
@@ -189,6 +189,7 @@ public class WorkerResource {
 
             final Answer answer = new Answer.Builder().
                     setProcess(process.getId()).
+                    addAllTags(tags).
                     setType(type).
                     setTaskId(task.getId()).
                     setWorkerId(worker.getId()).
