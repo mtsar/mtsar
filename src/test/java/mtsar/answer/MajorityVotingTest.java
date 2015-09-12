@@ -32,7 +32,6 @@ import java.util.Optional;
 
 import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -45,48 +44,39 @@ public class MajorityVotingTest {
 
     @Before
     public void setup() {
+        reset(answerDAO);
         when(process.getId()).thenReturn("1");
     }
 
     @Test
     public void testBasicCase() {
-        reset(answerDAO);
-        when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
-                new Answer.Builder().addAnswers("1").buildPartial(),
-                new Answer.Builder().addAnswers("1").buildPartial(),
-                new Answer.Builder().addAnswers("2").buildPartial(),
-                new Answer.Builder().addAnswers("3").buildPartial()
+        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial(),
+                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial(),
+                new Answer.Builder().setTaskId(task.getId()).addAnswers("2").buildPartial()
         ));
-        assertThatThrownBy(() -> {
-            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-            assertThat(winner.isPresent()).isTrue();
-            assertThat(winner.get().getAnswers()).hasSize(1);
-            assertThat(winner.get().getAnswers().get(0)).isEqualTo("1");
-        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+        assertThat(winner.isPresent()).isTrue();
+        assertThat(winner.get().getAnswers()).hasSize(1);
+        assertThat(winner.get().getAnswers().get(0)).isEqualTo("1");
     }
 
     @Test
     public void testAmbiguousCase() {
-        reset(answerDAO);
-        when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
-                new Answer.Builder().addAnswers("2").buildPartial(),
-                new Answer.Builder().addAnswers("1").buildPartial()
+        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+                new Answer.Builder().setTaskId(task.getId()).addAnswers("2").buildPartial(),
+                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial()
         ));
-        assertThatThrownBy(() -> {
-            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-            assertThat(winner.isPresent()).isTrue();
-            assertThat(winner.get().getAnswers()).hasSize(1);
-            assertThat(winner.get().getAnswers().get(0)).isIn("1", "2");
-        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+        assertThat(winner.isPresent()).isTrue();
+        assertThat(winner.get().getAnswers()).hasSize(1);
+        assertThat(winner.get().getAnswers().get(0)).isIn("1", "2");
     }
 
     @Test
     public void testEmptyCase() {
-        reset(answerDAO);
         when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Collections.emptyList());
-        assertThatThrownBy(() -> {
-            final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
-            assertThat(winner.isPresent()).isFalse();
-        }).isInstanceOf(UnsupportedOperationException.class).hasMessageContaining("Not Implemented Yet");
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+        assertThat(winner.isPresent()).isFalse();
     }
 }
