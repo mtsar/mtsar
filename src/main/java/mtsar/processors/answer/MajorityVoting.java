@@ -64,7 +64,7 @@ public class MajorityVoting implements AnswerAggregator {
         final Map<Integer, Task> taskMap = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
 
         final Map<Integer, List<String>> answerMap = answers.stream().
-                filter(answer -> taskMap.containsKey(answer.getTaskId())).
+                filter(answer -> taskMap.containsKey(answer.getTaskId())).filter(VALID_ANSWER).
                 collect(Collectors.groupingBy(
                                 Answer::getTaskId,
                                 mapping(answer -> answer.getAnswer().get(), Collectors.toList()))
