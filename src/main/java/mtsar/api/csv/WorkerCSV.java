@@ -30,15 +30,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 public final class WorkerCSV {
+    public static final Comparator<Worker> ID_ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
+
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Worker> parse(Process process, CSVParser csv) {
@@ -65,7 +64,7 @@ public final class WorkerCSV {
 
     public static void write(Collection<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            final Iterable<String[]> iterable = () -> workers.stream().map(worker -> new String[]{
+            final Iterable<String[]> iterable = () -> workers.stream().sorted(ID_ORDER).map(worker -> new String[]{
                     Integer.toString(worker.getId()),                                 // id
                     worker.getProcess(),                                              // process
                     Long.toString(worker.getDateTime().toInstant().getEpochSecond()), // datetime

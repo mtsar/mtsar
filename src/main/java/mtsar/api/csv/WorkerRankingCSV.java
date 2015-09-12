@@ -25,15 +25,18 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Comparator;
 
 public class WorkerRankingCSV {
+    public static final Comparator<WorkerRanking> WORKER_ORDER = (r1, r2) -> r1.getWorker().getId().compareTo(r2.getWorker().getId());
+
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static final String[] HEADER = {"process", "worker_id", "reputation"};
 
     public static void write(Collection<WorkerRanking> rankings, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            final Iterable<String[]> iterable = () -> rankings.stream().map(aggregation -> new String[]{
+            final Iterable<String[]> iterable = () -> rankings.stream().sorted(WORKER_ORDER).map(aggregation -> new String[]{
                     aggregation.getWorker().getProcess(),              // process
                     Integer.toString(aggregation.getWorker().getId()), // worker_id
                     Double.toString(aggregation.getReputation())       // reputation

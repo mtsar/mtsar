@@ -31,15 +31,14 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 public final class AnswerCSV {
+    public static final Comparator<Answer> TIMESTAMP_ORDER = (a1, a2) -> a1.getDateTime().compareTo(a2.getDateTime());
+
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
 
     public static Iterator<Answer> parse(Process process, CSVParser csv) {
@@ -74,7 +73,7 @@ public final class AnswerCSV {
 
     public static void write(Collection<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            final Iterable<String[]> iterable = () -> answers.stream().map(answer -> new String[]{
+            final Iterable<String[]> iterable = () -> answers.stream().sorted(TIMESTAMP_ORDER).map(answer -> new String[]{
                     Integer.toString(answer.getId()),                                 // id
                     answer.getProcess(),                                              // process
                     Long.toString(answer.getDateTime().toInstant().getEpochSecond()), // datetime
