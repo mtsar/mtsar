@@ -146,22 +146,22 @@ public class WorkerResource {
     }
 
     @GET
-    @Path("{worker}/task/{task}")
-    public TaskAllocation getWorkerTaskAgain(@PathParam("worker") Integer id, @PathParam("task") Integer taskId) {
+    @Path("{worker}/tasks")
+    public TaskAllocation getWorkerTaskAgain(@PathParam("worker") Integer id, @QueryParam("task_id") List<Integer> taskIds) {
         final Worker worker = fetchWorker(id);
-        final Task task = fetchTask(taskId);
+        final List<Task> tasks = taskIds.stream().map(taskId -> fetchTask(taskId)).collect(Collectors.toList());
         final Optional<TaskAllocation> optional = process.getTaskAllocator().allocate(worker);
 
         if (optional.isPresent()) {
             return new TaskAllocation.Builder().
                     mergeFrom(optional.get()).
                     clearTasks().
-                    addTasks(task).
+                    addAllTasks(tasks).
                     build();
         } else {
             return new TaskAllocation.Builder().
                     setWorker(worker).
-                    addTasks(task).
+                    addAllTasks(tasks).
                     setTaskRemaining(1).
                     setTaskCount(taskDAO.count(process.getId())).
                     build();
