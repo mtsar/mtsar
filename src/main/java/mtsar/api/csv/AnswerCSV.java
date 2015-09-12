@@ -37,9 +37,10 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public final class AnswerCSV {
-    public static final Comparator<Answer> TIMESTAMP_ORDER = (a1, a2) -> a1.getDateTime().compareTo(a2.getDateTime());
-
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
+    public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "task_id", "worker_id", "answers"};
+    public static final Comparator<Answer> TASK_ID_ORDER = (a1, a2) -> a1.getTaskId().compareTo(a2.getTaskId());
+    public static final Comparator<Answer> ORDER = TASK_ID_ORDER.thenComparing((a1, a2) -> a1.getId().compareTo(a2.getId()));
 
     public static Iterator<Answer> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
@@ -69,11 +70,9 @@ public final class AnswerCSV {
         }).iterator();
     }
 
-    public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "task_id", "worker_id", "answers"};
-
     public static void write(Collection<Answer> answers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            final Iterable<String[]> iterable = () -> answers.stream().sorted(TIMESTAMP_ORDER).map(answer -> new String[]{
+            final Iterable<String[]> iterable = () -> answers.stream().sorted(ORDER).map(answer -> new String[]{
                     Integer.toString(answer.getId()),                                 // id
                     answer.getProcess(),                                              // process
                     Long.toString(answer.getDateTime().toInstant().getEpochSecond()), // datetime

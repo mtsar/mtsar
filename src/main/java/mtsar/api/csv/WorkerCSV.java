@@ -36,9 +36,9 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public final class WorkerCSV {
-    public static final Comparator<Worker> ID_ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
-
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
+    public static final String[] HEADER = {"id", "process", "datetime", "tags"};
+    public static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
 
     public static Iterator<Worker> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
@@ -60,11 +60,9 @@ public final class WorkerCSV {
         }).iterator();
     }
 
-    public static final String[] HEADER = {"id", "process", "datetime", "tags"};
-
     public static void write(Collection<Worker> workers, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
-            final Iterable<String[]> iterable = () -> workers.stream().sorted(ID_ORDER).map(worker -> new String[]{
+            final Iterable<String[]> iterable = () -> workers.stream().sorted(ORDER).map(worker -> new String[]{
                     Integer.toString(worker.getId()),                                 // id
                     worker.getProcess(),                                              // process
                     Long.toString(worker.getDateTime().toInstant().getEpochSecond()), // datetime
