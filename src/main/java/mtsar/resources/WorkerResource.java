@@ -79,13 +79,6 @@ public class WorkerResource {
     }
 
     @GET
-    @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getCSV() {
-        final List<Worker> workers = workerDAO.listForProcess(process.getId());
-        return output -> WorkerCSV.write(workers, output);
-    }
-
-    @GET
     @Path("rankings.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getWorkerRankingsCSV() {

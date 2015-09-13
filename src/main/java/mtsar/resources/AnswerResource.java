@@ -67,13 +67,6 @@ public class AnswerResource {
         return answerDAO.listForProcess(process.getId());
     }
 
-    @GET
-    @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getCSV() {
-        final List<Answer> answers = answerDAO.listForProcess(process.getId());
-        return output -> AnswerCSV.write(answers, output);
-    }
-
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response postAnswersCSV(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {

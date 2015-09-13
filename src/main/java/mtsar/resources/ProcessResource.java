@@ -16,7 +16,13 @@
 
 package mtsar.resources;
 
+import mtsar.api.Answer;
 import mtsar.api.Process;
+import mtsar.api.Task;
+import mtsar.api.Worker;
+import mtsar.api.csv.AnswerCSV;
+import mtsar.api.csv.TaskCSV;
+import mtsar.api.csv.WorkerCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -31,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
@@ -79,14 +86,12 @@ public class ProcessResource {
         return new WorkerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /*
-     * TODO: how to implement this route correctly?
-     */
     @GET
     @Path("{process}/workers.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getWorkersCSV(@PathParam("process") String id) {
-        return getWorkers(id).getCSV();
+        final List<Task> tasks = taskDAO.listForProcess(fetchProcess(id).getId());
+        return output -> TaskCSV.write(tasks, output);
     }
 
     @Path("{process}/tasks")
@@ -94,14 +99,12 @@ public class ProcessResource {
         return new TaskResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /*
-     * TODO: how to implement this route correctly?
-     */
     @GET
     @Path("{process}/tasks.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getTasksCSV(@PathParam("process") String id) {
-        return getTasks(id).getCSV();
+        final List<Worker> workers = workerDAO.listForProcess(fetchProcess(id).getId());
+        return output -> WorkerCSV.write(workers, output);
     }
 
     @Path("{process}/answers")
@@ -109,14 +112,12 @@ public class ProcessResource {
         return new AnswerResource(fetchProcess(id), taskDAO, workerDAO, answerDAO);
     }
 
-    /*
-     * TODO: how to implement this route correctly?
-     */
     @GET
     @Path("{process}/answers.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getAnswersCSV(@PathParam("process") String id) {
-        return getAnswers(id).getCSV();
+        final List<Answer> answers = answerDAO.listForProcess(fetchProcess(id).getId());
+        return output -> AnswerCSV.write(answers, output);
     }
 
     protected Process fetchProcess(String id) {

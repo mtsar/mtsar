@@ -66,13 +66,6 @@ public class TaskResource {
         return taskDAO.listForProcess(process.getId());
     }
 
-    @GET
-    @Produces(mtsar.MediaType.TEXT_CSV)
-    public StreamingOutput getCSV() {
-        final List<Task> tasks = taskDAO.listForProcess(process.getId());
-        return output -> TaskCSV.write(tasks, output);
-    }
-
     @POST
     public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("description") String description, MultivaluedMap<String, String> params) {
         final List<String> tags = ParamsUtils.extract(params, "tags");
