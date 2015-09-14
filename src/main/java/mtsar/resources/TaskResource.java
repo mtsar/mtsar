@@ -56,14 +56,14 @@ public class TaskResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
-    public TasksView getTasksView(@Context UriInfo uriInfo) {
-        return new TasksView(uriInfo, process, taskDAO);
+    public List<Task> getTasks(@QueryParam("page") @DefaultValue("0") int page) {
+        return taskDAO.listForProcess(process.getId());
     }
 
     @GET
-    public List<Task> getTasks(@QueryParam("page") @DefaultValue("0") int page) {
-        return taskDAO.listForProcess(process.getId());
+    @Produces(MediaType.TEXT_HTML)
+    public TasksView getTasksView(@Context UriInfo uriInfo) {
+        return new TasksView(uriInfo, process, taskDAO);
     }
 
     @POST

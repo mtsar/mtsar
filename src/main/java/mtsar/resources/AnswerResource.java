@@ -57,14 +57,14 @@ public class AnswerResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
-    public AnswersView getAnswersView(@Context UriInfo uriInfo) {
-        return new AnswersView(uriInfo, process, answerDAO);
+    public List<Answer> getAnswers() {
+        return answerDAO.listForProcess(process.getId());
     }
 
     @GET
-    public List<Answer> getAnswers() {
-        return answerDAO.listForProcess(process.getId());
+    @Produces(MediaType.TEXT_HTML)
+    public AnswersView getAnswersView(@Context UriInfo uriInfo) {
+        return new AnswersView(uriInfo, process, answerDAO);
     }
 
     @POST

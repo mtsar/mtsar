@@ -68,14 +68,14 @@ public class WorkerResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_HTML)
-    public WorkersView getWorkersView(@Context UriInfo uriInfo) {
-        return new WorkersView(uriInfo, process, workerDAO);
+    public List<Worker> getWorkers() {
+        return workerDAO.listForProcess(process.getId());
     }
 
     @GET
-    public List<Worker> getWorkers() {
-        return workerDAO.listForProcess(process.getId());
+    @Produces(MediaType.TEXT_HTML)
+    public WorkersView getWorkersView(@Context UriInfo uriInfo) {
+        return new WorkersView(uriInfo, process, workerDAO);
     }
 
     @GET
