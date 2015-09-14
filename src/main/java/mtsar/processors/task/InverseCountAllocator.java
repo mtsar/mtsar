@@ -22,6 +22,7 @@ import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
@@ -39,6 +40,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class InverseCountAllocator implements TaskAllocator {
+    public static final Comparator<Triple<Integer, Integer, Double>> INVERSE_COUNT = Comparator.comparing(Triple<Integer, Integer, Double>::getMiddle).thenComparing(Triple::getRight);
     protected final Provider<Process> process;
     protected final DBI dbi;
     protected final TaskDAO taskDAO;
@@ -82,10 +84,11 @@ public class InverseCountAllocator implements TaskAllocator {
     }
 
     protected List<Integer> filterTasks(Map<Integer, Integer> counts) {
-        final List<Integer> ids = new ArrayList<>(counts.keySet());
-        Collections.shuffle(ids);
-        ids.sort((id1, id2) -> counts.get(id1).compareTo(counts.get(id2)));
-        return ids;
+        return counts.entrySet().stream().
+                map(entry -> Triple.of(entry.getKey(), entry.getValue(), Math.random())).
+                sorted(INVERSE_COUNT).
+                map(Triple::getLeft).
+                collect(Collectors.toList());
     }
 
     @RegisterMapper(CountDAO.Mapper.class)

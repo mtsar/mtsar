@@ -19,11 +19,11 @@ package mtsar.processors.task;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
+import org.apache.commons.lang3.tuple.Triple;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,12 +41,12 @@ public class FixedNumberAllocator extends InverseCountAllocator {
     @Override
     protected List<Integer> filterTasks(Map<Integer, Integer> counts) {
         checkAnswersPerTask();
-        final List<Integer> ids = counts.entrySet().stream().
+        return counts.entrySet().stream().
                 filter(entry -> entry.getValue() < answersPerTask).
-                map(Map.Entry::getKey).collect(Collectors.toList());
-        Collections.shuffle(ids);
-        ids.sort((id1, id2) -> counts.get(id1).compareTo(counts.get(id2)));
-        return ids;
+                map(entry -> Triple.of(entry.getKey(), entry.getValue(), Math.random())).
+                sorted(INVERSE_COUNT).
+                map(Triple::getLeft).
+                collect(Collectors.toList());
     }
 
     private void checkAnswersPerTask() {
