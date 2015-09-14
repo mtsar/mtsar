@@ -90,8 +90,8 @@ public class ProcessResource {
     @Path("{process}/workers.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getWorkersCSV(@PathParam("process") String id) {
-        final List<Task> tasks = taskDAO.listForProcess(fetchProcess(id).getId());
-        return output -> TaskCSV.write(tasks, output);
+        final List<Worker> workers = workerDAO.listForProcess(fetchProcess(id).getId());
+        return output -> WorkerCSV.write(workers, output);
     }
 
     @Path("{process}/tasks")
@@ -103,8 +103,8 @@ public class ProcessResource {
     @Path("{process}/tasks.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getTasksCSV(@PathParam("process") String id) {
-        final List<Worker> workers = workerDAO.listForProcess(fetchProcess(id).getId());
-        return output -> WorkerCSV.write(workers, output);
+        final List<Task> tasks = taskDAO.listForProcess(fetchProcess(id).getId());
+        return output -> TaskCSV.write(tasks, output);
     }
 
     @Path("{process}/answers")
