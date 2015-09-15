@@ -59,7 +59,7 @@ public class MetaResource {
 
     @GET
     @Path("version")
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces({MediaType.TEXT_PLAIN, mtsar.MediaType.APPLICATION_JSON})
     public String getVersion() {
         return version.getVersion();
     }
