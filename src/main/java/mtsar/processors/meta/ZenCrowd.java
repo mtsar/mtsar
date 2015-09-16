@@ -74,7 +74,7 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
         final Map<Integer, Worker> workerIds = workers.stream().collect(Collectors.toMap(Worker::getId, Function.identity()));
         final ZenCrowdEM<Integer, Integer, String> zenCrowd = compute(getTaskMap());
         try {
-            final Map<Integer, Double> reliability = (Map<Integer, Double>) FieldUtils.readField(zenCrowd, "workerReliabilityMap", true);
+            @SuppressWarnings("unchecked") final Map<Integer, Double> reliability = (Map<Integer, Double>) FieldUtils.readField(zenCrowd, "workerReliabilityMap", true);
             final Map<Worker, WorkerRanking> rankings = reliability.entrySet().stream().
                     filter(entry -> workerIds.containsKey(entry.getKey())).
                     collect(Collectors.toMap(
@@ -91,7 +91,7 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
         return taskDAO.listForProcess(process.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 
-    protected ZenCrowdEM compute(Map<Integer, Task> taskMap) {
+    protected ZenCrowdEM<Integer, Integer, String> compute(Map<Integer, Task> taskMap) {
         final Models<Integer, Integer, String> models = new Models<>();
 
         final Set<String> categories = taskMap.values().stream().flatMap(t -> t.getAnswers().stream()).collect(Collectors.toSet());
