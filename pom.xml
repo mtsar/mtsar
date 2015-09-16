@@ -196,6 +196,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.github.dustalov</groupId>
+            <artifactId>square</artifactId>
+            <version>bb43180933</version>
+        </dependency>
+        <dependency>
             <groupId>org.inferred</groupId>
             <artifactId>freebuilder</artifactId>
             <version>1.0.1</version>
