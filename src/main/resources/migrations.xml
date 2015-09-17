@@ -218,4 +218,15 @@
         <createView viewName="answers_answers">select id as answer_id, process, unnest(answers) as answer from answers
         </createView>
     </changeSet>
+
+    <changeSet id="5" author="dustalov">
+        <sql splitStatements="true">
+            <![CDATA[
+                ALTER TABLE processes ADD CONSTRAINT ensure_options_is_object CHECK (jsonb_typeof(options) = 'object');
+                ALTER TABLE workers ADD CONSTRAINT ensure_metadata_is_object CHECK (jsonb_typeof(metadata) = 'object');
+                ALTER TABLE tasks ADD CONSTRAINT ensure_metadata_is_object CHECK (jsonb_typeof(metadata) = 'object');
+                ALTER TABLE answers ADD CONSTRAINT ensure_metadata_is_object CHECK (jsonb_typeof(metadata) = 'object');
+            ]]>
+        </sql>
+    </changeSet>
 </databaseChangeLog>
