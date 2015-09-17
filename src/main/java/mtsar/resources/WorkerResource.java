@@ -202,7 +202,7 @@ public class WorkerResource {
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
 
         int modified[] = answerDAO.insert(answers.keySet().iterator());
-        return Response.seeOther(getWorkerAnswersURI(uriInfo, worker)).entity(modified).build();
+        return Response.ok(modified).build();
     }
 
     @PATCH
@@ -249,14 +249,6 @@ public class WorkerResource {
         return uriInfo.getBaseUriBuilder().
                 path("processes").path(process.getId()).
                 path("workers").path(worker.getId().toString()).
-                build();
-    }
-
-    private URI getWorkerAnswersURI(UriInfo uriInfo, Worker worker) {
-        return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
-                path("workers").path(worker.getId().toString()).
-                path("answers").
                 build();
     }
 }
