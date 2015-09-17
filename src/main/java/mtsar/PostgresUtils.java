@@ -16,12 +16,20 @@
 
 package mtsar;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.postgresql.jdbc2.AbstractJdbc2Array;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 public class PostgresUtils {
+    public final static TypeReference<Map<String, String>> MAP_STRING_TO_STRING = new TypeReference<Map<String, String>>() {
+    };
+
     public static String buildArrayString(@Nonnull Collection<String> elements) {
         return buildArrayString(elements.toArray(new String[elements.size()]));
     }
@@ -38,5 +46,21 @@ public class PostgresUtils {
             }
         }
         return sb.append('}').toString();
+    }
+
+    public static String buildJSONString(@Nonnull Map<String, String> elements) {
+        try {
+            return new ObjectMapper().writeValueAsString(elements);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Map<String, String> parseJSONString(@Nonnull String json) {
+        try {
+            return new ObjectMapper().readValue(json, MAP_STRING_TO_STRING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

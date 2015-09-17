@@ -18,15 +18,12 @@ package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import mtsar.PostgresUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -60,26 +57,14 @@ public interface ProcessDefinition {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends ProcessDefinition_Builder {
-        public Builder setOptions(String optionsJSON) {
-            try {
-                return putAllOptions(new ObjectMapper().readValue(optionsJSON, MAP_STRING_TO_STRING));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        public Builder setOptions(String json) {
+            return putAllOptions(PostgresUtils.parseJSONString(json));
         }
 
         @Override
         public ProcessDefinition build() {
-            try {
-                setOptionsJSON(new ObjectMapper().writeValueAsString(getOptions()));
-            } catch (JsonProcessingException e) {
-                setOptionsJSON("{}");
-                throw new RuntimeException(e);
-            }
+            setOptionsJSON(PostgresUtils.buildJSONString(getOptions()));
             return super.build();
         }
     }
-
-    TypeReference<Map<String, String>> MAP_STRING_TO_STRING = new TypeReference<Map<String, String>>() {
-    };
 }
