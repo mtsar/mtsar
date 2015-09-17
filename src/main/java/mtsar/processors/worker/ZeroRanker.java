@@ -23,15 +23,13 @@ import mtsar.processors.WorkerRanker;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ZeroRanker implements WorkerRanker {
     @Override
     @Nonnull
-    public Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
-        return workers.stream().collect(Collectors.toMap(
-                Function.identity(),
+    public Map<Integer, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
+        return workers.stream().collect(Collectors.toMap(Worker::getId,
                 worker -> new WorkerRanking.Builder().setWorker(worker).build()
         ));
     }

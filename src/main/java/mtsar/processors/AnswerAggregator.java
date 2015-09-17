@@ -33,7 +33,7 @@ public interface AnswerAggregator {
      * @return Aggregated answers.
      */
     @Nonnull
-    Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks);
+    Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks);
 
     /**
      * Given a task, an aggregator returns either an aggregated answer, or nothing.
@@ -44,8 +44,8 @@ public interface AnswerAggregator {
      */
     @Nonnull
     default Optional<AnswerAggregation> aggregate(@Nonnull Task task) {
-        final Map<Task, AnswerAggregation> aggregations = aggregate(Lists.newArrayList(task));
+        final Map<Integer, AnswerAggregation> aggregations = aggregate(Lists.newArrayList(task));
         if (aggregations.isEmpty()) return Optional.empty();
-        return Optional.of(aggregations.get(task));
+        return Optional.of(aggregations.get(task.getId()));
     }
 }

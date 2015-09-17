@@ -54,7 +54,7 @@ public class MajorityVoting implements AnswerAggregator {
 
     @Override
     @Nonnull
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         checkArgument(tasks.stream().allMatch(SINGLE_TYPE), "tasks should be of the type single");
         if (tasks.isEmpty()) return Collections.emptyMap();
 
@@ -70,8 +70,8 @@ public class MajorityVoting implements AnswerAggregator {
                                 mapping(answer -> answer.getAnswer().get(), Collectors.toList()))
                 );
 
-        final Map<Task, AnswerAggregation> result = taskMap.entrySet().stream().collect(Collectors.toMap(
-                Map.Entry::getValue, entry -> {
+        final Map<Integer, AnswerAggregation> result = taskMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                entry -> {
                     final List<String> answerList = answerMap.get(entry.getKey());
                     final String majorityVote = answerList.stream().reduce(
                             BinaryOperator.maxBy((o1, o2) -> Collections.frequency(answerList, o1) - Collections.frequency(answerList, o2))

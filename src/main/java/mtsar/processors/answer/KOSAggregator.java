@@ -65,7 +65,7 @@ public class KOSAggregator implements AnswerAggregator {
 
     @Override
     @Nonnull
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         checkArgument(tasks.stream().allMatch(SINGLE_BINARY_TYPE), "tasks should be of the type single and have only two possible answers");
         if (tasks.isEmpty()) return Collections.emptyMap();
 
@@ -93,8 +93,7 @@ public class KOSAggregator implements AnswerAggregator {
         }
 
         final Map<Integer, Double> estimations = converge(graph, 10);
-        return estimations.entrySet().stream().collect(Collectors.toMap(
-                estimation -> taskMap.get(estimation.getKey()),
+        return estimations.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
                 estimation -> {
                     final String answer = answerIndex.get(estimation.getKey()).inverse().get(estimation.getValue() < 0 ? (short) -1 : (short) +1);
                     return new AnswerAggregation.Builder().setTask(taskMap.get(estimation.getKey())).addAnswers(answer).build();

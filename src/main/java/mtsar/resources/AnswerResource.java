@@ -84,7 +84,7 @@ public class AnswerResource {
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getAnswerAggregationsCSV() {
         final List<Task> tasks = taskDAO.listForProcess(process.getId());
-        final Map<Task, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
+        final Map<Integer, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
         return output -> AnswerAggregationCSV.write(aggregations.values(), output);
     }
 

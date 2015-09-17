@@ -83,7 +83,7 @@ public class WorkerResource {
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getWorkerRankingsCSV() {
         final List<Worker> workers = workerDAO.listForProcess(process.getId());
-        final Map<Worker, WorkerRanking> rankings = process.getWorkerRanker().rank(workers);
+        final Map<Integer, WorkerRanking> rankings = process.getWorkerRanker().rank(workers);
         return output -> WorkerRankingCSV.write(rankings.values(), output);
     }
 

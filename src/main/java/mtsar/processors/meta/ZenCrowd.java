@@ -54,14 +54,13 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
 
     @Nonnull
     @Override
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
         final ZenCrowdEM<Integer, Integer, String> zenCrowd = compute(getTaskMap());
-        final Map<Task, AnswerAggregation> aggregations = zenCrowd.getCurrentModel().getCombinedEstLabels().entrySet().stream().
+        final Map<Integer, AnswerAggregation> aggregations = zenCrowd.getCurrentModel().getCombinedEstLabels().entrySet().stream().
                 filter(entry -> taskIds.containsKey(entry.getKey())).
-                collect(Collectors.toMap(
-                        entry -> taskIds.get(entry.getKey()),
+                collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> new AnswerAggregation.Builder().setTask(taskIds.get(entry.getKey())).addAnswers(entry.getValue().getFirst()).build()
                 ));
         return aggregations;
@@ -69,16 +68,15 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
 
     @Nonnull
     @Override
-    public Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
+    public Map<Integer, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
         if (workers.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Worker> workerIds = workers.stream().collect(Collectors.toMap(Worker::getId, Function.identity()));
         final ZenCrowdEM<Integer, Integer, String> zenCrowd = compute(getTaskMap());
         try {
             @SuppressWarnings("unchecked") final Map<Integer, Double> reliability = (Map<Integer, Double>) FieldUtils.readField(zenCrowd, "workerReliabilityMap", true);
-            final Map<Worker, WorkerRanking> rankings = reliability.entrySet().stream().
+            final Map<Integer, WorkerRanking> rankings = reliability.entrySet().stream().
                     filter(entry -> workerIds.containsKey(entry.getKey())).
-                    collect(Collectors.toMap(
-                            entry -> workerIds.get(entry.getKey()),
+                    collect(Collectors.toMap(Map.Entry::getKey,
                             entry -> new WorkerRanking.Builder().setWorker(workerIds.get(entry.getKey())).setReputation(entry.getValue()).build()
                     ));
             return rankings;

@@ -33,7 +33,7 @@ public interface WorkerRanker {
      * @return Worker rankings.
      */
     @Nonnull
-    Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers);
+    Map<Integer, WorkerRanking> rank(@Nonnull Collection<Worker> workers);
 
     /**
      * Given a worker, a ranker returns either a worker ranking, or nothing.
@@ -44,8 +44,8 @@ public interface WorkerRanker {
      */
     @Nonnull
     default Optional<WorkerRanking> rank(@Nonnull Worker worker) {
-        final Map<Worker, WorkerRanking> rankings = rank(Lists.newArrayList(worker));
+        final Map<Integer, WorkerRanking> rankings = rank(Lists.newArrayList(worker));
         if (rankings.isEmpty()) return Optional.empty();
-        return Optional.of(rankings.get(worker));
+        return Optional.of(rankings.get(worker.getId()));
     }
 }

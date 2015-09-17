@@ -60,12 +60,12 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
 
     @Override
     @Nonnull
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
-        final Map<Task, AnswerAggregation> results = ds.getObjects().values().stream().collect(Collectors.toMap(
-                datum -> taskMap.get(Integer.valueOf(datum.getName())),
+        final Map<Integer, AnswerAggregation> results = ds.getObjects().values().stream().collect(Collectors.toMap(
+                datum -> Integer.valueOf(datum.getName()),
                 datum -> {
                     final Task task = taskMap.get(Integer.valueOf(datum.getName()));
                     final Map<String, Double> probabilities = datum.getProbabilityVector(Datum.ClassificationMethod.DS_Soft);
@@ -79,12 +79,11 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
 
     @Override
     @Nonnull
-    public Map<Worker, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
+    public Map<Integer, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
         ds.evaluateWorkers();
-        final Map<Worker, WorkerRanking> rankings = workers.stream().collect(Collectors.toMap(
-                Function.identity(),
+        final Map<Integer, WorkerRanking> rankings = workers.stream().collect(Collectors.toMap(Worker::getId,
                 worker -> {
                     final com.ipeirotis.gal.core.Worker dsWorker = ds.getWorkers().get(worker.getId().toString());
                     final double reputation = dsWorker == null ? Double.NaN : dsWorker.getWorkerQuality(ds.getCategories(), com.ipeirotis.gal.core.Worker.ClassificationMethod.DS_MaxLikelihood_Estm);

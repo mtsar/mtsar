@@ -28,7 +28,7 @@ import java.util.Map;
 public class EmptyAggregator implements AnswerAggregator {
     @Override
     @Nonnull
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         return Collections.emptyMap();
     }
 }

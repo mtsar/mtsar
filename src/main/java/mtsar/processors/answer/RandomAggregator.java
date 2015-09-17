@@ -40,13 +40,13 @@ public class RandomAggregator implements AnswerAggregator {
 
     @Override
     @Nonnull
-    public Map<Task, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        final Map<Task, AnswerAggregation> aggregations = new HashMap<>();
+    public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+        final Map<Integer, AnswerAggregation> aggregations = new HashMap<>();
         for (final Task task : tasks) {
             final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
             if (answers.isEmpty()) continue;
             Collections.shuffle(answers);
-            aggregations.put(task, new AnswerAggregation.Builder().setTask(task).addAllAnswers(answers.get(0).getAnswers()).build());
+            aggregations.put(task.getId(), new AnswerAggregation.Builder().setTask(task).addAllAnswers(answers.get(0).getAnswers()).build());
         }
         return aggregations;
     }

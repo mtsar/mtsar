@@ -64,12 +64,12 @@ public class ZenCrowdTest {
         assertThat(aggregation.get().getAnswers()).hasSize(1);
         assertThat(aggregation.get().getAnswers().get(0)).isEqualTo("1");
 
-        final Map<Task, AnswerAggregation> aggregations = processor.aggregate(Lists.newArrayList(task1, task2));
+        final Map<Integer, AnswerAggregation> aggregations = processor.aggregate(Lists.newArrayList(task1, task2));
         assertThat(aggregations).hasSize(2);
-        assertThat(aggregations.get(task1).getAnswers()).hasSize(1);
-        assertThat(aggregations.get(task1).getAnswers()).contains("1");
-        assertThat(aggregations.get(task2).getAnswers()).hasSize(1);
-        assertThat(aggregations.get(task2).getAnswers()).contains("1");
+        assertThat(aggregations.get(task1.getId()).getAnswers()).hasSize(1);
+        assertThat(aggregations.get(task1.getId()).getAnswers()).contains("1");
+        assertThat(aggregations.get(task2.getId()).getAnswers()).hasSize(1);
+        assertThat(aggregations.get(task2.getId()).getAnswers()).contains("1");
     }
 
     @Test
@@ -78,10 +78,10 @@ public class ZenCrowdTest {
         assertThat(ranking.isPresent()).isTrue();
         assertThat(ranking.get().getReputation()).isEqualTo(1.0);
 
-        final Map<Worker, WorkerRanking> rankings = processor.rank(Lists.newArrayList(worker1, worker2));
+        final Map<Integer, WorkerRanking> rankings = processor.rank(Lists.newArrayList(worker1, worker2));
         assertThat(rankings).hasSize(2);
-        assertThat(rankings.get(worker1).getReputation()).isEqualTo(1.0);
-        assertThat(rankings.get(worker2).getReputation()).isEqualTo(1.0);
+        assertThat(rankings.get(worker1.getId()).getReputation()).isEqualTo(1.0);
+        assertThat(rankings.get(worker2.getId()).getReputation()).isEqualTo(1.0);
     }
 
     @Test
