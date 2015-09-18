@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 @FreeBuilder
 @XmlRootElement
@@ -47,7 +48,13 @@ public interface Worker {
     List<String> getTags();
 
     @JsonIgnore
+    Map<String, String> getMetadata();
+
+    @JsonIgnore
     String getTagsTextArray();
+
+    @JsonIgnore
+    String getMetadataJSON();
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends Worker_Builder {
@@ -55,8 +62,13 @@ public interface Worker {
             setDateTime(DefaultDateTime.get());
         }
 
+        public Builder setMetadata(String json) {
+            return setMetadataJSON(json).putAllMetadata(PostgresUtils.parseJSONString(json));
+        }
+
         public Worker build() {
             setTagsTextArray(PostgresUtils.buildArrayString(getTags()));
+            setMetadataJSON(PostgresUtils.buildJSONString(getMetadata()));
             return super.build();
         }
     }

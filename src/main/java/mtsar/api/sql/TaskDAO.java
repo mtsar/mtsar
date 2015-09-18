@@ -93,6 +93,7 @@ public interface TaskDAO {
                     setProcess(r.getString("process")).
                     setDateTime(r.getTimestamp("datetime")).
                     addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
+                    setMetadata(r.getString("metadata")).
                     setType(r.getString("type")).
                     setDescription(r.getString("description")).
                     addAllAnswers(Arrays.asList((String[]) r.getArray("answers").getArray())).

@@ -77,6 +77,7 @@ public interface WorkerDAO {
                     setProcess(r.getString("process")).
                     setDateTime(r.getTimestamp("datetime")).
                     addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
+                    setMetadata(r.getString("metadata")).
                     build();
         }
     }

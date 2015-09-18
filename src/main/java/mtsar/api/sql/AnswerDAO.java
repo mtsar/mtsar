@@ -85,6 +85,7 @@ public interface AnswerDAO {
                     setProcess(r.getString("process")).
                     setDateTime(r.getTimestamp("datetime")).
                     addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
+                    setMetadata(r.getString("metadata")).
                     setType(r.getString("type")).
                     setWorkerId(r.getInt("worker_id")).
                     setTaskId(r.getInt("task_id")).

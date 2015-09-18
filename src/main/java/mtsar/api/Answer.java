@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @FreeBuilder
@@ -47,6 +48,9 @@ public interface Answer {
 
     @JsonProperty
     List<String> getTags();
+
+    @JsonIgnore
+    Map<String, String> getMetadata();
 
     @JsonProperty
     String getType();
@@ -70,6 +74,9 @@ public interface Answer {
     String getTagsTextArray();
 
     @JsonIgnore
+    String getMetadataJSON();
+
+    @JsonIgnore
     String getAnswersTextArray();
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
@@ -79,8 +86,13 @@ public interface Answer {
             setType(AnswerDAO.ANSWER_TYPE_DEFAULT);
         }
 
+        public Builder setMetadata(String json) {
+            return setMetadataJSON(json).putAllMetadata(PostgresUtils.parseJSONString(json));
+        }
+
         public Answer build() {
             setTagsTextArray(PostgresUtils.buildArrayString(getTags()));
+            setMetadataJSON(PostgresUtils.buildJSONString(getMetadata()));
             setAnswersTextArray(PostgresUtils.buildArrayString(getAnswers()));
             return super.build();
         }
