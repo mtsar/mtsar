@@ -229,4 +229,30 @@
             ]]>
         </sql>
     </changeSet>
+
+    <changeSet id="6" author="dustalov">
+        <dropForeignKeyConstraint baseTableName="workers" constraintName="fk_workers_process"/>
+        <addForeignKeyConstraint baseTableName="workers"
+                                 baseColumnNames="process"
+                                 constraintName="fk_workers_process"
+                                 onUpdate="CASCADE"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+
+        <dropForeignKeyConstraint baseTableName="tasks" constraintName="fk_tasks_process"/>
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="process"
+                                 constraintName="fk_tasks_process"
+                                 onUpdate="CASCADE"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+
+        <dropForeignKeyConstraint baseTableName="answers" constraintName="fk_answers_process"/>
+        <addForeignKeyConstraint baseTableName="answers"
+                                 baseColumnNames="process"
+                                 constraintName="fk_answers_process"
+                                 onUpdate="CASCADE"
+                                 referencedTableName="processes"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
