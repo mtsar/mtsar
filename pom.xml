@@ -201,6 +201,11 @@
             <version>bb43180933</version>
         </dependency>
         <dependency>
+            <groupId>de.tudarmstadt.ukp.dkpro.statistics</groupId>
+            <artifactId>dkpro-statistics-agreement</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.inferred</groupId>
             <artifactId>freebuilder</artifactId>
             <version>1.0.1</version>

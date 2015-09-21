@@ -17,10 +17,8 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.api.Answer;
-import mtsar.api.AnswerAggregation;
+import mtsar.api.*;
 import mtsar.api.Process;
-import mtsar.api.Task;
 import mtsar.api.csv.AnswerAggregationCSV;
 import mtsar.api.csv.AnswerCSV;
 import mtsar.api.sql.AnswerDAO;
@@ -86,6 +84,12 @@ public class AnswerResource {
         final List<Task> tasks = taskDAO.listForProcess(process.getId());
         final Map<Integer, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
         return output -> AnswerAggregationCSV.write(aggregations.values(), output);
+    }
+
+    @GET
+    @Path("reliability")
+    public Object getAnswerReliability() {
+        return new AgreementReport.Builder().compute(process, answerDAO).build();
     }
 
     @GET
