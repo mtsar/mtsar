@@ -87,8 +87,8 @@ public class AnswerResource {
     }
 
     @GET
-    @Path("reliability")
-    public Object getAnswerReliability() {
+    @Path("agreement")
+    public AgreementReport getAgreement() {
         return new AgreementReport.Builder().compute(process, answerDAO).build();
     }
 
