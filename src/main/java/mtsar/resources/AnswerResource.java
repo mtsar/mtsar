@@ -79,7 +79,6 @@ public class AnswerResource {
 
     @GET
     @Path("aggregations")
-    @Produces(mtsar.MediaType.TEXT_CSV)
     public Map<Integer, AnswerAggregation> getAnswerAggregations() {
         final List<Task> tasks = taskDAO.listForProcess(process.getId());
         final Map<Integer, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
