@@ -41,10 +41,10 @@ public class Process {
     protected final AnswerAggregator answerAggregator;
 
     @Inject
-    public Process(@Named("id") String id, @Named("description") String description, @Named("options") Map<String, String> options, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator, Logger logger) {
-        this.id = id;
-        this.description = description;
-        this.options = options;
+    public Process(ProcessDefinition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator, Logger logger) {
+        this.id = definition.getId();
+        this.description = definition.getDescription();
+        this.options = definition.getOptions();
         this.workerRanker = workerRanker;
         this.taskAllocator = taskAllocator;
         this.answerAggregator = answerAggregator;
