@@ -51,9 +51,9 @@ public class MajorityVotingTest {
     @Test
     public void testBasicCase() {
         when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
-                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial(),
-                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial(),
-                new Answer.Builder().setTaskId(task.getId()).addAnswers("2").buildPartial()
+                new Answer.Builder().setWorkerId(1).setTaskId(task.getId()).addAnswers("1").buildPartial(),
+                new Answer.Builder().setWorkerId(2).setTaskId(task.getId()).addAnswers("1").buildPartial(),
+                new Answer.Builder().setWorkerId(3).setTaskId(task.getId()).addAnswers("2").buildPartial()
         ));
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
@@ -64,8 +64,8 @@ public class MajorityVotingTest {
     @Test
     public void testAmbiguousCase() {
         when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
-                new Answer.Builder().setTaskId(task.getId()).addAnswers("2").buildPartial(),
-                new Answer.Builder().setTaskId(task.getId()).addAnswers("1").buildPartial()
+                new Answer.Builder().setWorkerId(1).setTaskId(task.getId()).addAnswers("2").buildPartial(),
+                new Answer.Builder().setWorkerId(2).setTaskId(task.getId()).addAnswers("1").buildPartial()
         ));
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
         assertThat(winner.isPresent()).isTrue();
