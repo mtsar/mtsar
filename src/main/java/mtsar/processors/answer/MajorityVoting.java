@@ -23,25 +23,22 @@ import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
+import org.square.qa.algorithms.MajorityVoteGeneralized;
+import org.square.qa.utilities.constructs.Models;
+import org.square.qa.utilities.constructs.workersDataStruct;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BinaryOperator;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.stream.Collectors.mapping;
 
 public class MajorityVoting implements AnswerAggregator {
     public final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
-    public final static Predicate<Answer> VALID_ANSWER = answer -> answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER) && answer.getAnswer().isPresent();
 
     protected final Provider<Process> process;
     protected final AnswerDAO answerDAO;
@@ -52,44 +49,41 @@ public class MajorityVoting implements AnswerAggregator {
         this.answerDAO = answerDAO;
     }
 
-    @Override
     @Nonnull
+    @Override
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
         checkArgument(tasks.stream().allMatch(SINGLE_TYPE), "tasks should be of the type single");
         if (tasks.isEmpty()) return Collections.emptyMap();
+        final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
+        final MajorityVoteGeneralized<Integer, Integer, String> majorityVoting = compute(taskIds);
+        final Map<Integer, AnswerAggregation> aggregations = majorityVoting.getCurrentModel().getCombinedEstLabels().entrySet().stream().
+                filter(entry -> taskIds.containsKey(entry.getKey())).
+                collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> new AnswerAggregation.Builder().setTask(taskIds.get(entry.getKey())).addAnswers(entry.getValue().getFirst()).build()
+                ));
+        return aggregations;
+    }
 
+    protected MajorityVoteGeneralized<Integer, Integer, String> compute(Map<Integer, Task> taskMap) {
+        final Models<Integer, Integer, String> models = new Models<>();
+
+        final Set<String> categories = taskMap.values().stream().flatMap(t -> t.getAnswers().stream()).collect(Collectors.toSet());
+        models.setResponseCategories(new TreeSet<>(categories));
+
+        final Map<Integer, workersDataStruct<Integer, String>> workers = new HashMap<>();
         final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
-        if (answers.isEmpty()) return Collections.emptyMap();
+        for (final Answer answer : answers) {
+            if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;
+            if (answer.getAnswers().isEmpty()) continue;
+            if (!workers.containsKey(answer.getWorkerId()))
+                workers.put(answer.getWorkerId(), new workersDataStruct<>());
+            final workersDataStruct<Integer, String> datum = workers.get(answer.getWorkerId());
+            datum.insertWorkerResponse(answer.getTaskId(), answer.getAnswer().get());
+        }
+        models.setWorkersMap(workers);
 
-        final Map<Integer, Task> taskMap = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
-
-        final Map<Integer, List<String>> answerMap = answers.stream().
-                filter(answer -> taskMap.containsKey(answer.getTaskId())).filter(VALID_ANSWER).
-                collect(Collectors.groupingBy(
-                                Answer::getTaskId,
-                                mapping(answer -> answer.getAnswer().get(), Collectors.toList()))
-                );
-
-        final Map<Integer, AnswerAggregation> result = taskMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                entry -> {
-                    final List<String> answerList = answerMap.get(entry.getKey());
-                    if (answerList != null) {
-                        final String majorityVote = answerList == null ? null : answerList.stream().reduce(
-                                BinaryOperator.maxBy((o1, o2) -> Collections.frequency(answerList, o1) - Collections.frequency(answerList, o2))
-                        ).orElse(null);
-                        return new AnswerAggregation.Builder().
-                                setTask(entry.getValue()).
-                                addAnswers(majorityVote).
-                                build();
-                    } else {
-                        return new AnswerAggregation.Builder().
-                                setTask(entry.getValue()).
-                                setType(AnswerAggregation.TYPE_EMPTY).
-                                build();
-                    }
-                }
-        ));
-
-        return result;
+        final MajorityVoteGeneralized<Integer, Integer, String> majorityVoting = new MajorityVoteGeneralized<>(models.getMajorityModel());
+        majorityVoting.computeLabelEstimates();
+        return majorityVoting;
     }
 }
