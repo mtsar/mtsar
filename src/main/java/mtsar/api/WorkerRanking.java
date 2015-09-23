@@ -36,14 +36,13 @@ public interface WorkerRanking {
     Double getReputation();
 
     @JsonProperty
-    default String getType() {
-        return TYPE_DEFAULT;
-    }
+    String getType();
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends WorkerRanking_Builder {
         public Builder() {
             setReputation(0.0);
+            setType(TYPE_DEFAULT);
         }
     }
 }

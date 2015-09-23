@@ -45,9 +45,7 @@ public interface TaskAllocation {
     int getTaskCount();
 
     @JsonProperty
-    default String getType() {
-        return TYPE_DEFAULT;
-    }
+    String getType();
 
     @JsonIgnore
     default Optional<Task> getTask() {
@@ -57,5 +55,8 @@ public interface TaskAllocation {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends TaskAllocation_Builder {
+        public Builder() {
+            setType(TYPE_DEFAULT);
+        }
     }
 }
