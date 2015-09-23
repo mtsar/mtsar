@@ -73,13 +73,20 @@ public class MajorityVoting implements AnswerAggregator {
         final Map<Integer, AnswerAggregation> result = taskMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
                 entry -> {
                     final List<String> answerList = answerMap.get(entry.getKey());
-                    final String majorityVote = answerList.stream().reduce(
-                            BinaryOperator.maxBy((o1, o2) -> Collections.frequency(answerList, o1) - Collections.frequency(answerList, o2))
-                    ).orElse(null);
-                    return new AnswerAggregation.Builder().
-                            setTask(entry.getValue()).
-                            addAnswers(majorityVote).
-                            build();
+                    if (answerList != null) {
+                        final String majorityVote = answerList == null ? null : answerList.stream().reduce(
+                                BinaryOperator.maxBy((o1, o2) -> Collections.frequency(answerList, o1) - Collections.frequency(answerList, o2))
+                        ).orElse(null);
+                        return new AnswerAggregation.Builder().
+                                setTask(entry.getValue()).
+                                addAnswers(majorityVote).
+                                build();
+                    } else {
+                        return new AnswerAggregation.Builder().
+                                setTask(entry.getValue()).
+                                setType(AnswerAggregation.TYPE_EMPTY).
+                                build();
+                    }
                 }
         ));
 

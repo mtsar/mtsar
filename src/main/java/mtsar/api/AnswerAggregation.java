@@ -29,6 +29,7 @@ import java.util.List;
 @JsonDeserialize(builder = AnswerAggregation.Builder.class)
 public interface AnswerAggregation {
     String TYPE_DEFAULT = "aggregation";
+    String TYPE_EMPTY = "empty";
 
     @JsonProperty
     Task getTask();
@@ -37,11 +38,12 @@ public interface AnswerAggregation {
     List<String> getAnswers();
 
     @JsonProperty
-    default String getType() {
-        return TYPE_DEFAULT;
-    }
+    String getType();
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends AnswerAggregation_Builder {
+        public Builder() {
+            setType(TYPE_DEFAULT);
+        }
     }
 }
