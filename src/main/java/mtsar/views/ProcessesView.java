@@ -27,6 +27,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ProcessesView extends View {
     private final Map<String, Process> processes;
     private final TaskDAO taskDAO;
@@ -36,28 +38,33 @@ public class ProcessesView extends View {
     @Inject
     public ProcessesView(Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("processes.mustache");
-        this.processes = processes;
-        this.taskDAO = taskDAO;
-        this.workerDAO = workerDAO;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.processes = processes);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.workerDAO = workerDAO);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return "Processes";
     }
 
+    @SuppressWarnings("unused")
     public Collection<Process> getProcesses() {
         return processes.values();
     }
 
+    @SuppressWarnings("unused")
     public Function<String, Integer> getWorkerCount() {
         return id -> workerDAO.count(id);
     }
 
+    @SuppressWarnings("unused")
     public Function<String, Integer> getTaskCount() {
         return id -> taskDAO.count(id);
     }
 
+    @SuppressWarnings("unused")
     public Function<String, Integer> getAnswerCount() {
         return id -> answerDAO.count(id);
     }

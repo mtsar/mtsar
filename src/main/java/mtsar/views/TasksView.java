@@ -23,6 +23,8 @@ import mtsar.api.sql.TaskDAO;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class TasksView extends View {
     private final UriInfo uriInfo;
     private final Process process;
@@ -31,23 +33,27 @@ public class TasksView extends View {
     @Inject
     public TasksView(UriInfo uriInfo, Process process, TaskDAO taskDAO) {
         super("tasks.mustache");
-        this.uriInfo = uriInfo;
-        this.process = process;
-        this.taskDAO = taskDAO;
+        checkNotNull(this.uriInfo = uriInfo);
+        checkNotNull(this.process = process);
+        checkNotNull(this.taskDAO = taskDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return String.format("Tasks of \"%s\"", process.getId());
     }
 
+    @SuppressWarnings("unused")
     public Process getProcess() {
         return process;
     }
 
+    @SuppressWarnings("unused")
     public int getTaskCount() {
         return taskDAO.count(process.getId());
     }
 
+    @SuppressWarnings("unused")
     public String getProcessPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
@@ -55,6 +61,7 @@ public class TasksView extends View {
                 toString();
     }
 
+    @SuppressWarnings("unused")
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").

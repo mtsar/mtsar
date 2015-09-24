@@ -36,8 +36,8 @@ public class RandomAggregator implements AnswerAggregator {
 
     @Inject
     public RandomAggregator(Provider<Process> processProvider, AnswerDAO answerDAO) {
-        this.process = processProvider;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.process = processProvider);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
     @Override

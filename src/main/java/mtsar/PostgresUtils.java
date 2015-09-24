@@ -26,15 +26,19 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class PostgresUtils {
     public final static TypeReference<Map<String, String>> MAP_STRING_TO_STRING = new TypeReference<Map<String, String>>() {
     };
 
     public static String buildArrayString(@Nonnull Collection<String> elements) {
+        checkNotNull(elements);
         return buildArrayString(elements.toArray(new String[elements.size()]));
     }
 
     public static String buildArrayString(@Nonnull String[] elements) {
+        checkNotNull(elements);
         final StringBuilder sb = new StringBuilder("{");
         for (int i = 0, len = elements.length; i < len; i++) {
             if (i > 0) sb.append(',');
@@ -49,6 +53,7 @@ public class PostgresUtils {
     }
 
     public static String buildJSONString(@Nonnull Map<String, String> elements) {
+        checkNotNull(elements);
         try {
             return new ObjectMapper().writeValueAsString(elements);
         } catch (JsonProcessingException e) {
@@ -57,6 +62,7 @@ public class PostgresUtils {
     }
 
     public static Map<String, String> parseJSONString(@Nonnull String json) {
+        checkNotNull(json);
         try {
             return new ObjectMapper().readValue(json, MAP_STRING_TO_STRING);
         } catch (IOException e) {

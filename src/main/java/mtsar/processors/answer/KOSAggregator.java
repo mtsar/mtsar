@@ -59,9 +59,9 @@ public class KOSAggregator implements AnswerAggregator {
 
     @Inject
     public KOSAggregator(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.process = process;
-        this.taskDAO = taskDAO;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.process = process);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
     @Override

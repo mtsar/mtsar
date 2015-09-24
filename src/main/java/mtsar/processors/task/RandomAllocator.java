@@ -40,8 +40,8 @@ public class RandomAllocator implements TaskAllocator {
 
     @Inject
     public RandomAllocator(Provider<Process> processProvider, TaskDAO taskDAO) {
-        this.process = processProvider;
-        this.taskDAO = taskDAO;
+        checkNotNull(this.process = processProvider);
+        checkNotNull(this.taskDAO = taskDAO);
     }
 
     @Override

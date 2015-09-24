@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class ProcessView extends View {
     private final Process process;
     private final TaskDAO taskDAO;
@@ -35,16 +37,18 @@ public class ProcessView extends View {
     @Inject
     public ProcessView(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("process.mustache");
-        this.process = process;
-        this.taskDAO = taskDAO;
-        this.workerDAO = workerDAO;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.process = process);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.workerDAO = workerDAO);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return String.format("Process \"%s\"", process.getId());
     }
 
+    @SuppressWarnings("unused")
     public Process getProcess() {
         return process;
     }
@@ -55,18 +59,22 @@ public class ProcessView extends View {
      *
      * @return process options
      */
+    @SuppressWarnings("unused")
     public Collection<Map.Entry<String, String>> getOptions() {
         return process.getOptions().entrySet();
     }
 
+    @SuppressWarnings("unused")
     public int getWorkerCount() {
         return workerDAO.count(process.getId());
     }
 
+    @SuppressWarnings("unused")
     public int getTaskCount() {
         return taskDAO.count(process.getId());
     }
 
+    @SuppressWarnings("unused")
     public int getAnswerCount() {
         return answerDAO.count(process.getId());
     }

@@ -46,8 +46,8 @@ public class MajorityVoting implements AnswerAggregator {
 
     @Inject
     public MajorityVoting(Provider<Process> processProvider, AnswerDAO answerDAO) {
-        this.process = processProvider;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.process = processProvider);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
     @Nonnull

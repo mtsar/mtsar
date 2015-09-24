@@ -23,6 +23,8 @@ import mtsar.api.sql.AnswerDAO;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class AnswersView extends View {
     private final UriInfo uriInfo;
     private final Process process;
@@ -31,23 +33,27 @@ public class AnswersView extends View {
     @Inject
     public AnswersView(UriInfo uriInfo, Process process, AnswerDAO answerDAO) {
         super("answers.mustache");
-        this.uriInfo = uriInfo;
-        this.process = process;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.uriInfo = uriInfo);
+        checkNotNull(this.process = process);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return String.format("Answers of \"%s\"", process.getId());
     }
 
+    @SuppressWarnings("unused")
     public Process getProcess() {
         return process;
     }
 
+    @SuppressWarnings("unused")
     public int getAnswerCount() {
         return answerDAO.count(process.getId());
     }
 
+    @SuppressWarnings("unused")
     public String getProcessPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
@@ -55,6 +61,7 @@ public class AnswersView extends View {
                 toString();
     }
 
+    @SuppressWarnings("unused")
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").

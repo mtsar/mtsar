@@ -51,11 +51,11 @@ public class InverseCountAllocator implements TaskAllocator {
 
     @Inject
     public InverseCountAllocator(Provider<Process> processProvider, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.process = processProvider;
-        this.dbi = dbi;
-        this.taskDAO = taskDAO;
-        this.answerDAO = answerDAO;
-        this.countDAO = dbi.onDemand(CountDAO.class);
+        checkNotNull(this.process = processProvider);
+        checkNotNull(this.dbi = dbi);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.answerDAO = answerDAO);
+        checkNotNull(this.countDAO = dbi.onDemand(CountDAO.class));
     }
 
     @Override

@@ -23,6 +23,8 @@ import mtsar.api.sql.WorkerDAO;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class WorkersView extends View {
     private final UriInfo uriInfo;
     private final Process process;
@@ -31,23 +33,27 @@ public class WorkersView extends View {
     @Inject
     public WorkersView(UriInfo uriInfo, Process process, WorkerDAO workerDAO) {
         super("workers.mustache");
-        this.uriInfo = uriInfo;
-        this.process = process;
-        this.workerDAO = workerDAO;
+        checkNotNull(this.uriInfo = uriInfo);
+        checkNotNull(this.process = process);
+        checkNotNull(this.workerDAO = workerDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return String.format("Workers of \"%s\"", process.getId());
     }
 
+    @SuppressWarnings("unused")
     public Process getProcess() {
         return process;
     }
 
+    @SuppressWarnings("unused")
     public int getWorkerCount() {
         return workerDAO.count(process.getId());
     }
 
+    @SuppressWarnings("unused")
     public String getProcessPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
@@ -55,6 +61,7 @@ public class WorkersView extends View {
                 toString();
     }
 
+    @SuppressWarnings("unused")
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").

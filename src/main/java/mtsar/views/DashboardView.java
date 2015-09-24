@@ -26,6 +26,8 @@ import mtsar.api.sql.WorkerDAO;
 import javax.inject.Inject;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class DashboardView extends View {
     private final MechanicalTsarVersion version;
     private final Map<String, Process> processes;
@@ -36,41 +38,48 @@ public class DashboardView extends View {
     @Inject
     public DashboardView(MechanicalTsarVersion version, Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("dashboard.mustache");
-        this.version = version;
-        this.processes = processes;
-        this.taskDAO = taskDAO;
-        this.workerDAO = workerDAO;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.version = version);
+        checkNotNull(this.processes = processes);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.workerDAO = workerDAO);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
+    @SuppressWarnings("unused")
     public String getTitle() {
         return "Dashboard";
     }
 
+    @SuppressWarnings("unused")
     public String getVersion() {
         return version.getVersion();
     }
 
+    @SuppressWarnings("unused")
     public String getJvm() {
         return System.getProperty("java.runtime.version");
     }
 
+    @SuppressWarnings("unused")
     public int getProcessCount() {
         return processes.size();
     }
 
+    @SuppressWarnings("unused")
     public int getWorkerCount() {
         return processes.values().stream().
                 map(process -> workerDAO.count(process.getId())).
                 reduce(0, (r, e) -> r + e);
     }
 
+    @SuppressWarnings("unused")
     public int getTaskCount() {
         return processes.values().stream().
                 map(process -> taskDAO.count(process.getId())).
                 reduce(0, (r, e) -> r + e);
     }
 
+    @SuppressWarnings("unused")
     public int getAnswerCount() {
         return processes.values().stream().
                 map(process -> answerDAO.count(process.getId())).

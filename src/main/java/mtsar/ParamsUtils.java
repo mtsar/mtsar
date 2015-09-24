@@ -29,6 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 @ParametersAreNonnullByDefault
 public final class ParamsUtils {
     @Nullable
@@ -38,6 +40,8 @@ public final class ParamsUtils {
 
     @Nonnull
     public static Map<String, List<String>> nested(MultivaluedMap<String, String> params, String prefix) {
+        checkNotNull(params);
+        checkNotNull(prefix);
         final Pattern pattern = Pattern.compile("^(" + Pattern.quote(prefix) + "\\[(\\w+?)\\])(\\[\\d+\\]|)$");
 
         final Map<String, Matcher> prefixes = params.keySet().stream().
@@ -53,6 +57,8 @@ public final class ParamsUtils {
 
     @Nonnull
     public static List<String> extract(MultivaluedMap<String, String> params, String prefix) {
+        checkNotNull(params);
+        checkNotNull(prefix);
         final String regexp = "^" + Pattern.quote(prefix) + "(\\[\\d+\\]|)$";
 
         final List<String> values = params.entrySet().stream().
@@ -64,12 +70,14 @@ public final class ParamsUtils {
     }
 
     public static Set<ConstraintViolation<Object>> violate(Validator validator, Object... objects) {
+        checkNotNull(validator);
         final Set<ConstraintViolation<Object>> violations = new HashSet<>();
         for (final Object object : objects) violations.addAll(validator.validate(object));
         return violations;
     }
 
     public static void validate(Validator validator, Object... objects) throws ConstraintViolationException {
+        checkNotNull(validator);
         final Set<ConstraintViolation<Object>> violations = violate(validator, objects);
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }

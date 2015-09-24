@@ -49,9 +49,9 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
 
     @Inject
     public ZenCrowd(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.process = process;
-        this.taskDAO = taskDAO;
-        this.answerDAO = answerDAO;
+        checkNotNull(this.process = process);
+        checkNotNull(this.taskDAO = taskDAO);
+        checkNotNull(this.answerDAO = answerDAO);
     }
 
     @Nonnull
