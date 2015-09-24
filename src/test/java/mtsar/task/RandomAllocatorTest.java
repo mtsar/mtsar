@@ -16,7 +16,6 @@
 
 package mtsar.task;
 
-import com.google.common.collect.Lists;
 import mtsar.api.Process;
 import mtsar.api.Task;
 import mtsar.api.TaskAllocation;
@@ -27,6 +26,7 @@ import mtsar.processors.task.RandomAllocator;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class RandomAllocatorTest {
     private static final Worker worker = fixture("worker1.json", Worker.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
-    private static final List<Task> tasks = Lists.newArrayList(task1, task2);
+    private static final List<Task> tasks = Arrays.asList(task1, task2);
     private static final TaskAllocator allocator = new RandomAllocator(() -> process, taskDAO);
 
     @Before

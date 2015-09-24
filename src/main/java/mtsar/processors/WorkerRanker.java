@@ -16,12 +16,12 @@
 
 package mtsar.processors;
 
-import com.google.common.collect.Lists;
 import mtsar.api.Worker;
 import mtsar.api.WorkerRanking;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,7 +44,7 @@ public interface WorkerRanker {
      */
     @Nonnull
     default Optional<WorkerRanking> rank(@Nonnull Worker worker) {
-        final Map<Integer, WorkerRanking> rankings = rank(Lists.newArrayList(worker));
+        final Map<Integer, WorkerRanking> rankings = rank(Collections.singletonList(worker));
         if (rankings.isEmpty()) return Optional.empty();
         return Optional.of(rankings.get(worker.getId()));
     }

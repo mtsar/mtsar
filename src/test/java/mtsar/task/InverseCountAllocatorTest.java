@@ -16,7 +16,6 @@
 
 package mtsar.task;
 
-import com.google.common.collect.Lists;
 import mtsar.api.*;
 import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
@@ -28,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +44,12 @@ public class InverseCountAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
-    private static final List<Task> tasks = Lists.newArrayList(task1, task2);
+    private static final List<Task> tasks = Arrays.asList(task1, task2);
 
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Answer answer1 = mock(Answer.class), answer2 = mock(Answer.class), answer3 = mock(Answer.class);
-    private static final List<Answer> answers1 = Lists.newArrayList(answer1);
-    private static final List<Answer> answers2 = Lists.newArrayList(answer2, answer3);
+    private static final List<Answer> answers1 = Arrays.asList(answer1);
+    private static final List<Answer> answers2 = Arrays.asList(answer2, answer3);
 
     private static final DBI dbi = mock(DBI.class);
     private static final InverseCountAllocator.CountDAO countDAO = mock(InverseCountAllocator.CountDAO.class);
@@ -59,8 +59,8 @@ public class InverseCountAllocatorTest {
         reset(taskDAO);
         reset(answerDAO);
         reset(countDAO);
-        when(taskDAO.select(eq(Lists.newArrayList(1)), anyString())).thenReturn(Lists.newArrayList(task1));
-        when(taskDAO.select(eq(Lists.newArrayList(2)), anyString())).thenReturn(Lists.newArrayList(task2));
+        when(taskDAO.select(eq(Collections.singletonList(1)), anyString())).thenReturn(Arrays.asList(task1));
+        when(taskDAO.select(eq(Collections.singletonList(2)), anyString())).thenReturn(Arrays.asList(task2));
         when(taskDAO.count(anyString())).thenReturn(tasks.size());
         when(answerDAO.listForWorker(anyInt(), anyString())).thenReturn(Collections.emptyList());
         when(dbi.onDemand(any())).thenReturn(countDAO);
@@ -72,7 +72,7 @@ public class InverseCountAllocatorTest {
 
     @Test
     public void testUnequalAllocation() {
-        when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 1), Pair.of(2, 0)));
+        when(countDAO.getCountsSQL(anyString())).thenReturn(Arrays.asList(Pair.of(1, 1), Pair.of(2, 0)));
         final TaskAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
@@ -86,7 +86,7 @@ public class InverseCountAllocatorTest {
 
     @Test
     public void testEqualAllocation() {
-        when(countDAO.getCountsSQL(anyString())).thenReturn(Lists.newArrayList(Pair.of(1, 0), Pair.of(2, 0)));
+        when(countDAO.getCountsSQL(anyString())).thenReturn(Arrays.asList(Pair.of(1, 0), Pair.of(2, 0)));
         final TaskAllocator allocator = new InverseCountAllocator(() -> process, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);

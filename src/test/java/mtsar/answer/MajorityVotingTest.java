@@ -16,7 +16,6 @@
 
 package mtsar.answer;
 
-import com.google.common.collect.Lists;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
@@ -27,6 +26,7 @@ import mtsar.processors.answer.MajorityVoting;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ public class MajorityVotingTest {
 
     @Test
     public void testBasicCase() {
-        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(task.getId()).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(task.getId()).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(3).setTaskId(task.getId()).addAnswers("2").buildPartial()
@@ -63,7 +63,7 @@ public class MajorityVotingTest {
 
     @Test
     public void testAmbiguousCase() {
-        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(task.getId()).addAnswers("2").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(task.getId()).addAnswers("1").buildPartial()
         ));

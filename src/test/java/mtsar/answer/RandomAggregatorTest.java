@@ -16,7 +16,6 @@
 
 package mtsar.answer;
 
-import com.google.common.collect.Lists;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
@@ -27,6 +26,7 @@ import mtsar.processors.answer.RandomAggregator;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -50,7 +50,7 @@ public class RandomAggregatorTest {
 
     @Test
     public void testBasicCase() {
-        when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Lists.newArrayList(
+        when(answerDAO.listForTask(eq(1), anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().addAnswers("1").buildPartial(),
                 new Answer.Builder().addAnswers("2").buildPartial(),
                 new Answer.Builder().addAnswers("3").buildPartial()

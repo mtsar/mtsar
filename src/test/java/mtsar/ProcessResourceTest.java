@@ -62,7 +62,6 @@ public class ProcessResourceTest {
         });
         assertThat(processes).hasSize(1);
         final Map representation = processes.iterator().next();
-        assertThat(representation).isNotNull();
         assertThat(representation.get("id")).isEqualTo(process.getId());
     }
 }

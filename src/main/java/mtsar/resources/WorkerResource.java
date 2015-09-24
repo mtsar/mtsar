@@ -16,7 +16,6 @@
 
 package mtsar.resources;
 
-import com.google.common.collect.Lists;
 import io.dropwizard.jersey.PATCH;
 import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
@@ -46,10 +45,7 @@ import java.io.Reader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Path("/workers")
@@ -120,7 +116,7 @@ public class WorkerResource {
     @GET
     @Path("tagged/{tag}")
     public Worker getWorkerByTag(@PathParam("tag") String tag) {
-        final Worker worker = workerDAO.findByTags(process.getId(), Lists.newArrayList(tag));
+        final Worker worker = workerDAO.findByTags(process.getId(), Collections.singletonList(tag));
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }

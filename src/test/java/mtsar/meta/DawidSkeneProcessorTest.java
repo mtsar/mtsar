@@ -16,7 +16,6 @@
 
 package mtsar.meta;
 
-import com.google.common.collect.Lists;
 import mtsar.api.*;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -24,6 +23,7 @@ import mtsar.processors.meta.DawidSkeneProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -51,8 +51,8 @@ public class DawidSkeneProcessorTest {
 
     @Test
     public void testTwoTasks() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(task1, task2));
-        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+        when(taskDAO.listForProcess(anyString())).thenReturn(Arrays.asList(task1, task2));
+        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("1").buildPartial(),

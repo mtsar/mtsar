@@ -16,7 +16,6 @@
 
 package mtsar.meta;
 
-import com.google.common.collect.Lists;
 import mtsar.api.*;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -24,6 +23,7 @@ import mtsar.processors.meta.ZenCrowd;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -48,8 +48,8 @@ public class ZenCrowdTest {
         reset(taskDAO);
         reset(answerDAO);
         when(process.getId()).thenReturn("1");
-        when(taskDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(task1, task2));
-        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+        when(taskDAO.listForProcess(anyString())).thenReturn(Arrays.asList(task1, task2));
+        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("1").buildPartial(),
@@ -64,7 +64,7 @@ public class ZenCrowdTest {
         assertThat(aggregation.get().getAnswers()).hasSize(1);
         assertThat(aggregation.get().getAnswers().get(0)).isEqualTo("1");
 
-        final Map<Integer, AnswerAggregation> aggregations = processor.aggregate(Lists.newArrayList(task1, task2));
+        final Map<Integer, AnswerAggregation> aggregations = processor.aggregate(Arrays.asList(task1, task2));
         assertThat(aggregations).hasSize(2);
         assertThat(aggregations.get(task1.getId()).getAnswers()).hasSize(1);
         assertThat(aggregations.get(task1.getId()).getAnswers()).contains("1");
@@ -78,7 +78,7 @@ public class ZenCrowdTest {
         assertThat(ranking.isPresent()).isTrue();
         assertThat(ranking.get().getReputation()).isEqualTo(1.0);
 
-        final Map<Integer, WorkerRanking> rankings = processor.rank(Lists.newArrayList(worker1, worker2));
+        final Map<Integer, WorkerRanking> rankings = processor.rank(Arrays.asList(worker1, worker2));
         assertThat(rankings).hasSize(2);
         assertThat(rankings.get(worker1.getId()).getReputation()).isEqualTo(1.0);
         assertThat(rankings.get(worker2.getId()).getReputation()).isEqualTo(1.0);

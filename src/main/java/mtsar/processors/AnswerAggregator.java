@@ -16,12 +16,12 @@
 
 package mtsar.processors;
 
-import com.google.common.collect.Lists;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Task;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -44,7 +44,7 @@ public interface AnswerAggregator {
      */
     @Nonnull
     default Optional<AnswerAggregation> aggregate(@Nonnull Task task) {
-        final Map<Integer, AnswerAggregation> aggregations = aggregate(Lists.newArrayList(task));
+        final Map<Integer, AnswerAggregation> aggregations = aggregate(Collections.singletonList(task));
         if (aggregations.isEmpty()) return Optional.empty();
         return Optional.of(aggregations.get(task.getId()));
     }

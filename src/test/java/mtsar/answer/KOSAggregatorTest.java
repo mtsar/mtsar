@@ -16,7 +16,6 @@
 
 package mtsar.answer;
 
-import com.google.common.collect.Lists;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Process;
@@ -28,6 +27,7 @@ import mtsar.processors.answer.KOSAggregator;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -52,8 +52,8 @@ public class KOSAggregatorTest {
 
     @Test
     public void testTwoTasks() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(task1, task2));
-        when(answerDAO.listForProcess(anyString())).thenReturn(Lists.newArrayList(
+        when(taskDAO.listForProcess(anyString())).thenReturn(Arrays.asList(task1, task2));
+        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(3).setTaskId(1).addAnswers("2").buildPartial(),
