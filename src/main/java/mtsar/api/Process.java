@@ -78,18 +78,18 @@ public class Process {
     @JsonProperty("workerRanker")
     @SuppressWarnings("unused")
     public String getWorkerRankerName() {
-        return workerRanker == null ? null : workerRanker.getClass().getName();
+        return definition.getWorkerRanker();
     }
 
     @JsonProperty("taskAllocator")
     @SuppressWarnings("unused")
     public String getTaskAllocatorName() {
-        return taskAllocator == null ? null : taskAllocator.getClass().getName();
+        return definition.getTaskAllocator();
     }
 
     @JsonProperty("answerAggregator")
     @SuppressWarnings("unused")
     public String getAnswerAggregatorName() {
-        return answerAggregator == null ? null : answerAggregator.getClass().getName();
+        return definition.getAnswerAggregator();
     }
 }
