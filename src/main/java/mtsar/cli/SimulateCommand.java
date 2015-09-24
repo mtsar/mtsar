@@ -33,6 +33,6 @@ public class SimulateCommand extends EnvironmentCommand<MechanicalTsarConfigurat
     }
 
     protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) {
-        final ProcessDAO processDAO = application.getInjector().getInstance(ProcessDAO.class);
+        final ProcessDAO processDAO = application.getLocator().getService(ProcessDAO.class);
     }
 }

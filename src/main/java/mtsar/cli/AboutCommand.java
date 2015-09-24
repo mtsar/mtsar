@@ -36,7 +36,7 @@ public class AboutCommand extends EnvironmentCommand<MechanicalTsarConfiguration
     }
 
     protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) throws IOException {
-        final MechanicalTsarVersion version = application.getInjector().getInstance(MechanicalTsarVersion.class);
+        final MechanicalTsarVersion version = application.getLocator().getService(MechanicalTsarVersion.class);
         System.out.format("Mechanical Tsar version %s%n", version.toString());
         System.out.format("Java version %s%n", System.getProperty("java.runtime.version"));
         System.out.println();

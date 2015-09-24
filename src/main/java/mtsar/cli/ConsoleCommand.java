@@ -87,12 +87,12 @@ public class ConsoleCommand extends EnvironmentCommand<MechanicalTsarConfigurati
         final ScriptEngine engine = new ScriptEngineManager().getEngineByName("js");
         final Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
 
-        bindings.put("version", application.getInjector().getInstance(MechanicalTsarVersion.class));
+        bindings.put("version", application.getLocator().getService(MechanicalTsarVersion.class));
         bindings.put("processes", application.getProcesses());
-        bindings.put("processDAO", application.getInjector().getInstance(ProcessDAO.class));
-        bindings.put("workerDAO", application.getInjector().getInstance(WorkerDAO.class));
-        bindings.put("taskDAO", application.getInjector().getInstance(TaskDAO.class));
-        bindings.put("answerDAO", application.getInjector().getInstance(AnswerDAO.class));
+        bindings.put("processDAO", application.getLocator().getService(ProcessDAO.class));
+        bindings.put("workerDAO", application.getLocator().getService(WorkerDAO.class));
+        bindings.put("taskDAO", application.getLocator().getService(TaskDAO.class));
+        bindings.put("answerDAO", application.getLocator().getService(AnswerDAO.class));
 
         return engine;
     }

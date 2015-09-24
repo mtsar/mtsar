@@ -23,47 +23,41 @@ import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Collections;
 import java.util.Map;
-import java.util.logging.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 @Singleton
 @XmlRootElement
 public class Process {
-    protected String id, description;
-    protected Map<String, String> options = Collections.emptyMap();
-
+    protected final ProcessDefinition definition;
     protected final WorkerRanker workerRanker;
     protected final TaskAllocator taskAllocator;
     protected final AnswerAggregator answerAggregator;
 
     @Inject
-    public Process(ProcessDefinition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator, Logger logger) {
-        this.id = definition.getId();
-        this.description = definition.getDescription();
-        this.options = definition.getOptions();
-        this.workerRanker = workerRanker;
-        this.taskAllocator = taskAllocator;
-        this.answerAggregator = answerAggregator;
-        logger.info(String.format("Allocated a process called \"%s\" with %d option(s)", id, options.size()));
+    public Process(ProcessDefinition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
+        checkNotNull(this.definition = definition);
+        checkNotNull(this.workerRanker = workerRanker);
+        checkNotNull(this.taskAllocator = taskAllocator);
+        checkNotNull(this.answerAggregator = answerAggregator);
     }
 
     @JsonProperty
     public String getId() {
-        return id;
+        return definition.getId();
     }
 
     @JsonProperty
     public String getDescription() {
-        return description;
+        return definition.getDescription();
     }
 
     @JsonProperty
     public Map<String, String> getOptions() {
-        return options;
+        return definition.getOptions();
     }
 
     @JsonIgnore

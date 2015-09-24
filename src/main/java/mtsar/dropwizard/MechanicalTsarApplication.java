@@ -16,8 +16,6 @@
 
 package mtsar.dropwizard;
 
-import com.google.inject.Injector;
-import com.hubspot.dropwizard.guice.GuiceBundle;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
@@ -34,34 +32,36 @@ import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
-import mtsar.dropwizard.guice.BundleModule;
-import mtsar.dropwizard.guice.DatabaseModule;
-import mtsar.dropwizard.guice.ProcessModule;
+import mtsar.dropwizard.hk2.ApplicationModule;
+import mtsar.dropwizard.hk2.ProcessModule;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
 import mtsar.resources.MetaResource;
 import mtsar.resources.ProcessResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.Injections;
 import org.glassfish.jersey.server.ServerProperties;
 import org.skife.jdbi.v2.DBI;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import javax.validation.Validator;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
-    private final Map<String, Process> processes = new HashMap<>();
+    private final Map<String, Process> processes = new ConcurrentHashMap<>();
 
-    private GuiceBundle<MechanicalTsarConfiguration> guiceBundle;
     private DBI jdbi;
-    private Injector injector;
+    private ServiceLocator locator;
 
     public static void main(String[] args) throws Exception {
         new MechanicalTsarApplication().run(args);
@@ -72,8 +72,8 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         return "Mechanical Tsar";
     }
 
-    public Injector getInjector() {
-        return injector;
+    public ServiceLocator getLocator() {
+        return locator;
     }
 
     public Map<String, Process> getProcesses() {
@@ -82,11 +82,6 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
-        guiceBundle = GuiceBundle.<MechanicalTsarConfiguration>newBuilder()
-                .addModule(new BundleModule(processes))
-                .setConfigClass(MechanicalTsarConfiguration.class)
-                .build();
-
         bootstrap.addBundle(new MigrationsBundle<MechanicalTsarConfiguration>() {
             @Override
             public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
@@ -94,7 +89,6 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             }
         });
 
-        bootstrap.addBundle(guiceBundle);
         bootstrap.addBundle(new MultiPartBundle());
         bootstrap.addBundle(new AssetsBundle("/mtsar/stylesheets", "/stylesheets", null, "stylesheets"));
         bootstrap.addBundle(new AssetsBundle("/mtsar/javascripts", "/javascripts", null, "javascripts"));
@@ -114,23 +108,19 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         if (jdbi == null)
             jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
 
-        if (injector == null)
-            injector = guiceBundle.getInjector().createChildInjector(new DatabaseModule(jdbi));
+        if (locator == null)
+            locator = Injections.createLocator(new ApplicationModule(jdbi, processes));
 
-        final ProcessDAO processDAO = injector.getInstance(ProcessDAO.class);
+        final ProcessDAO processDAO = locator.getService(ProcessDAO.class);
         final List<ProcessDefinition> definitions = processDAO.select();
         processes.clear();
 
         for (final ProcessDefinition definition : definitions) {
-            final Class<? extends WorkerRanker> workerRanker = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
-            final Class<? extends TaskAllocator> taskAllocator = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
-            final Class<? extends AnswerAggregator> answerAggregator = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
-
-            final Injector processInjector = injector.createChildInjector(
-                    new ProcessModule(definition, workerRanker, taskAllocator, answerAggregator)
-            );
-
-            final Process process = processInjector.getInstance(mtsar.api.Process.class);
+            final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
+            final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
+            final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
+            final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessModule(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
+            final Process process = processLocator.getService(Process.class);
             processes.put(definition.getId(), process);
         }
     }
@@ -149,9 +139,15 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
-        environment.jersey().register(injector.getInstance(MetaResource.class));
-        environment.jersey().register(injector.getInstance(ProcessResource.class));
+        environment.jersey().register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                bind(environment.getValidator()).to(Validator.class);
+            }
+        });
+        environment.jersey().register(locator.getService(MetaResource.class));
+        environment.jersey().register(locator.getService(ProcessResource.class));
 
-        environment.healthChecks().register("version", injector.getInstance(MechanicalTsarVersionHealthCheck.class));
+        environment.healthChecks().register("version", locator.getService(MechanicalTsarVersionHealthCheck.class));
     }
 }

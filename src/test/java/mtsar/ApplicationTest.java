@@ -16,13 +16,11 @@
 
 package mtsar;
 
-import com.squarespace.jersey2.guice.BootstrapUtils;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import mtsar.dropwizard.MechanicalTsarApplication;
 import mtsar.dropwizard.MechanicalTsarConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -37,11 +35,6 @@ public class ApplicationTest {
 
     @ClassRule
     public static final DropwizardAppRule<MechanicalTsarConfiguration> RULE = new DropwizardAppRule<>(MechanicalTsarApplication.class, StringUtils.defaultString(System.getenv(TEST_YAML_ENV), TEST_YAML));
-
-    @Before
-    public void setup() {
-        BootstrapUtils.reset();
-    }
 
     @Test
     public void testInitialization() {

@@ -17,4 +17,4 @@
 /**
  * This package contains Guice modules.
  */
-package mtsar.dropwizard.guice;
+package mtsar.dropwizard.hk2;
