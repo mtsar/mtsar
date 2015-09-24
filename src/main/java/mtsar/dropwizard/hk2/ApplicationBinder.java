@@ -54,13 +54,10 @@ public class ApplicationBinder extends AbstractBinder {
         bind(jdbi.onDemand(AnswerDAO.class)).to(AnswerDAO.class);
         bind(processes).to(STRING_PROCESS_MAP).named("processes");
 
-        bind(MetaResource.class).to(MetaResource.class).in(Singleton.class);
-        bind(ProcessResource.class).to(ProcessResource.class);
-        bind(WorkerResource.class).to(WorkerResource.class);
-        bind(TaskResource.class).to(TaskResource.class);
-        bind(AnswerResource.class).to(AnswerResource.class);
+        bindAsContract(MetaResource.class).in(Singleton.class);
+        bindAsContract(ProcessResource.class).in(Singleton.class);
 
-        bind(MechanicalTsarVersion.class).to(MechanicalTsarVersion.class).in(Singleton.class);
-        bind(MechanicalTsarVersionHealthCheck.class).to(MechanicalTsarVersionHealthCheck.class).in(Singleton.class);
+        bindAsContract(MechanicalTsarVersion.class).in(Singleton.class);
+        bindAsContract(MechanicalTsarVersionHealthCheck.class).in(Singleton.class);
     }
 }

@@ -46,6 +46,6 @@ public class ProcessBinder extends AbstractBinder {
         bind(workerRankerClass).to(WorkerRanker.class).in(Singleton.class);
         bind(taskAllocatorClass).to(TaskAllocator.class).in(Singleton.class);
         bind(answerAggregatorClass).to(AnswerAggregator.class).in(Singleton.class);
-        bind(Process.class).to(Process.class).in(Singleton.class);
+        bindAsContract(Process.class).in(Singleton.class);
     }
 }

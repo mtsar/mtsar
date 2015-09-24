@@ -54,6 +54,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
@@ -111,7 +113,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         if (locator == null)
             locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
-        final ProcessDAO processDAO = locator.getService(ProcessDAO.class);
+        final ProcessDAO processDAO = checkNotNull(locator.getService(ProcessDAO.class));
         final List<ProcessDefinition> definitions = processDAO.select();
         processes.clear();
 
@@ -120,7 +122,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
             final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
             final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
-            final Process process = processLocator.getService(Process.class);
+            final Process process = checkNotNull(processLocator.getService(Process.class));
             processes.put(definition.getId(), process);
         }
     }
@@ -129,7 +131,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     public void run(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
         bootstrap(configuration, environment);
 
-        FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
+        final FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
         filter.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET,PUT,POST,PATCH,DELETE,OPTIONS");
         filter.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
