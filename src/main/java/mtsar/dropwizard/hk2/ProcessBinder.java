@@ -27,13 +27,13 @@ import javax.inject.Singleton;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ProcessModule extends AbstractBinder {
+public class ProcessBinder extends AbstractBinder {
     private final ProcessDefinition definition;
     private final Class<? extends WorkerRanker> workerRankerClass;
     private final Class<? extends TaskAllocator> taskAllocatorClass;
     private final Class<? extends AnswerAggregator> answerAggregatorClass;
 
-    public ProcessModule(ProcessDefinition definition, Class<? extends WorkerRanker> workerRankerClass, Class<? extends TaskAllocator> taskAllocatorClass, Class<? extends AnswerAggregator> answerAggregatorClass) {
+    public ProcessBinder(ProcessDefinition definition, Class<? extends WorkerRanker> workerRankerClass, Class<? extends TaskAllocator> taskAllocatorClass, Class<? extends AnswerAggregator> answerAggregatorClass) {
         checkNotNull(this.definition = definition);
         checkNotNull(this.workerRankerClass = workerRankerClass);
         checkNotNull(this.taskAllocatorClass = taskAllocatorClass);

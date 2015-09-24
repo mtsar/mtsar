@@ -33,14 +33,14 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class ApplicationModule extends AbstractBinder {
+public class ApplicationBinder extends AbstractBinder {
     public final static TypeLiteral<Map<String, Process>> STRING_PROCESS_MAP = new TypeLiteral<Map<String, Process>>() {
     };
 
     private final DBI jdbi;
     private final Map<String, Process> processes;
 
-    public ApplicationModule(DBI jdbi, Map<String, Process> processes) {
+    public ApplicationBinder(DBI jdbi, Map<String, Process> processes) {
         checkNotNull(this.jdbi = jdbi);
         checkNotNull(this.processes = processes);
     }

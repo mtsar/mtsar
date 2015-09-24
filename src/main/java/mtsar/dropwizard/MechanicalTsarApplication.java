@@ -32,8 +32,8 @@ import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
-import mtsar.dropwizard.hk2.ApplicationModule;
-import mtsar.dropwizard.hk2.ProcessModule;
+import mtsar.dropwizard.hk2.ApplicationBinder;
+import mtsar.dropwizard.hk2.ProcessBinder;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
@@ -109,7 +109,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
 
         if (locator == null)
-            locator = Injections.createLocator(new ApplicationModule(jdbi, processes));
+            locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
         final ProcessDAO processDAO = locator.getService(ProcessDAO.class);
         final List<ProcessDefinition> definitions = processDAO.select();
@@ -119,7 +119,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
             final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
             final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
-            final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessModule(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
+            final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
             final Process process = processLocator.getService(Process.class);
             processes.put(definition.getId(), process);
         }

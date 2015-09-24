@@ -15,6 +15,7 @@
  */
 
 /**
- * This package contains HK2 binders.
+ * This package contains processors that may combine functionality of several ones,
+ * e.g. worker ranker with task allocator.
  */
-package mtsar.dropwizard.hk2;
+package mtsar.processors.meta;
