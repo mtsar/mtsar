@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class RandomAllocator implements TaskAllocator {
     protected final Provider<Process> process;
     protected final TaskDAO taskDAO;
@@ -45,6 +47,7 @@ public class RandomAllocator implements TaskAllocator {
     @Override
     @Nonnull
     public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
+        checkNotNull(process.get(), "the process provider should not provide null");
         final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
 
         if (tasks.isEmpty()) return Optional.empty();

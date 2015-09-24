@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import java.util.*;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class RandomAggregator implements AnswerAggregator {
     protected final Provider<Process> process;
     protected final AnswerDAO answerDAO;
@@ -41,6 +43,7 @@ public class RandomAggregator implements AnswerAggregator {
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+        checkNotNull(process.get(), "the process provider should not provide null");
         final Map<Integer, AnswerAggregation> aggregations = new HashMap<>();
         for (final Task task : tasks) {
             final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());

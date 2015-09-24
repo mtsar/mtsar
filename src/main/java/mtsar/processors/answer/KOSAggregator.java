@@ -39,6 +39,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Implementation of the answer aggregation algorithm proposed by Karger, Oh &amp; Shah for binary tasks.
@@ -66,6 +67,7 @@ public class KOSAggregator implements AnswerAggregator {
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
+        checkNotNull(process.get(), "the process provider should not provide null");
         checkArgument(tasks.stream().allMatch(SINGLE_BINARY_TYPE), "tasks should be of the type single and have only two possible answers");
         if (tasks.isEmpty()) return Collections.emptyMap();
 
