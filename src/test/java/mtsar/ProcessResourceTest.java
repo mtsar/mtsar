@@ -19,6 +19,10 @@ package mtsar;
 import com.google.common.collect.Maps;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import mtsar.api.Process;
+import mtsar.api.ProcessDefinition;
+import mtsar.processors.AnswerAggregator;
+import mtsar.processors.TaskAllocator;
+import mtsar.processors.WorkerRanker;
 import mtsar.resources.ProcessResource;
 import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
 import org.junit.Before;
@@ -35,7 +39,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ProcessResourceTest {
-    private static final mtsar.api.Process process = mock(Process.class);
+    private static final ProcessDefinition definition = mock(ProcessDefinition.class);
+    private static final WorkerRanker workerRanker = mock(WorkerRanker.class);
+    private static final TaskAllocator taskAllocator = mock(TaskAllocator.class);
+    private static final AnswerAggregator answerAggregator = mock(AnswerAggregator.class);
+    private static final Process process = new Process(definition, workerRanker, taskAllocator, answerAggregator);
 
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
@@ -54,6 +62,7 @@ public class ProcessResourceTest {
         });
         assertThat(processes).hasSize(1);
         final Map representation = processes.iterator().next();
+        assertThat(representation).isNotNull();
         assertThat(representation.get("id")).isEqualTo(process.getId());
     }
 }
