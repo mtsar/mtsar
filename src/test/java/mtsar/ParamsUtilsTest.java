@@ -24,9 +24,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class UtilsTest {
+public class ParamsUtilsTest {
     @Test
-    public void testParamsUtilsSingle() {
+    public void testExtractSingle() {
         final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.putSingle("foo", "bar");
         final List<String> values = ParamsUtils.extract(params, "foo");
@@ -35,7 +35,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void testParamsUtilsMultiple() {
+    public void testExtractMultiple() {
         final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.putSingle("foo[0]", "bar");
         params.putSingle("foo[1]", "baz");
@@ -46,7 +46,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void testParamsUtilsEmpty() {
+    public void testExtractEmpty() {
         final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         params.putSingle("f00", "loh");
         final List<String> values = ParamsUtils.extract(params, "foo");
