@@ -32,13 +32,13 @@ public interface AnswerAggregation {
     String TYPE_EMPTY = "empty";
 
     @JsonProperty
+    String getType();
+
+    @JsonProperty
     Task getTask();
 
     @JsonProperty
     List<String> getAnswers();
-
-    @JsonProperty
-    String getType();
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends AnswerAggregation_Builder {

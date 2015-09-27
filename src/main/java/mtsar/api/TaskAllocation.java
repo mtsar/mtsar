@@ -33,6 +33,9 @@ public interface TaskAllocation {
     String TYPE_DEFAULT = "allocation";
 
     @JsonProperty
+    String getType();
+
+    @JsonProperty
     Worker getWorker();
 
     @JsonProperty
@@ -43,9 +46,6 @@ public interface TaskAllocation {
 
     @JsonProperty
     int getTaskCount();
-
-    @JsonProperty
-    String getType();
 
     @JsonIgnore
     default Optional<Task> getTask() {
