@@ -46,4 +46,8 @@ public interface AnswerAggregation {
             setType(TYPE_DEFAULT);
         }
     }
+
+    static AnswerAggregation empty(Task task) {
+        return new Builder().setType(TYPE_EMPTY).setTask(task).build();
+    }
 }
