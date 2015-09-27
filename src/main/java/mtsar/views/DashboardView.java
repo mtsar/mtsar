@@ -26,7 +26,7 @@ import mtsar.api.sql.WorkerDAO;
 import javax.inject.Inject;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class DashboardView extends View {
     private final MechanicalTsarVersion version;
@@ -38,11 +38,11 @@ public class DashboardView extends View {
     @Inject
     public DashboardView(MechanicalTsarVersion version, Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("dashboard.mustache");
-        checkNotNull(this.version = version);
-        checkNotNull(this.processes = processes);
-        checkNotNull(this.taskDAO = taskDAO);
-        checkNotNull(this.workerDAO = workerDAO);
-        checkNotNull(this.answerDAO = answerDAO);
+        this.version = requireNonNull(version);
+        this.processes = requireNonNull(processes);
+        this.taskDAO = requireNonNull(taskDAO);
+        this.workerDAO = requireNonNull(workerDAO);
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
     @SuppressWarnings("unused")

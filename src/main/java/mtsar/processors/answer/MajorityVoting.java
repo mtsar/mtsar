@@ -36,7 +36,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class MajorityVoting implements AnswerAggregator {
     public final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
@@ -46,14 +46,14 @@ public class MajorityVoting implements AnswerAggregator {
 
     @Inject
     public MajorityVoting(Provider<Process> processProvider, AnswerDAO answerDAO) {
-        checkNotNull(this.process = processProvider);
-        checkNotNull(this.answerDAO = answerDAO);
+        this.process = requireNonNull(processProvider);
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Nonnull
     @Override
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        checkNotNull(process.get(), "the process provider should not provide null");
+        requireNonNull(process.get(), "the process provider should not provide null");
         checkArgument(tasks.stream().allMatch(SINGLE_TYPE), "tasks should be of the type single");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));

@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 @Singleton
 @XmlRootElement
@@ -39,10 +39,10 @@ public class Process {
 
     @Inject
     public Process(ProcessDefinition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
-        checkNotNull(this.definition = definition);
-        checkNotNull(this.workerRanker = workerRanker);
-        checkNotNull(this.taskAllocator = taskAllocator);
-        checkNotNull(this.answerAggregator = answerAggregator);
+        this.definition = requireNonNull(definition);
+        this.workerRanker = requireNonNull(workerRanker);
+        this.taskAllocator = requireNonNull(taskAllocator);
+        this.answerAggregator = requireNonNull(answerAggregator);
     }
 
     @JsonProperty

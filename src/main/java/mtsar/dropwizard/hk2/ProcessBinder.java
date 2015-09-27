@@ -25,7 +25,7 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class ProcessBinder extends AbstractBinder {
     private final ProcessDefinition definition;
@@ -34,10 +34,10 @@ public class ProcessBinder extends AbstractBinder {
     private final Class<? extends AnswerAggregator> answerAggregatorClass;
 
     public ProcessBinder(ProcessDefinition definition, Class<? extends WorkerRanker> workerRankerClass, Class<? extends TaskAllocator> taskAllocatorClass, Class<? extends AnswerAggregator> answerAggregatorClass) {
-        checkNotNull(this.definition = definition);
-        checkNotNull(this.workerRankerClass = workerRankerClass);
-        checkNotNull(this.taskAllocatorClass = taskAllocatorClass);
-        checkNotNull(this.answerAggregatorClass = answerAggregatorClass);
+        this.definition = requireNonNull(definition);
+        this.workerRankerClass = requireNonNull(workerRankerClass);
+        this.taskAllocatorClass = requireNonNull(taskAllocatorClass);
+        this.answerAggregatorClass = requireNonNull(answerAggregatorClass);
     }
 
     @Override

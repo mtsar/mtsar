@@ -32,7 +32,7 @@ import org.skife.jdbi.v2.DBI;
 import javax.inject.Singleton;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class ApplicationBinder extends AbstractBinder {
     public final static TypeLiteral<Map<String, Process>> STRING_PROCESS_MAP = new TypeLiteral<Map<String, Process>>() {
@@ -42,8 +42,8 @@ public class ApplicationBinder extends AbstractBinder {
     private final Map<String, Process> processes;
 
     public ApplicationBinder(DBI jdbi, Map<String, Process> processes) {
-        checkNotNull(this.jdbi = jdbi);
-        checkNotNull(this.processes = processes);
+        this.jdbi = requireNonNull(jdbi);
+        this.processes = requireNonNull(processes);
     }
 
     @Override

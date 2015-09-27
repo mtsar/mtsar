@@ -39,7 +39,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class InverseCountAllocator implements TaskAllocator {
     public static final Comparator<Triple<Integer, Integer, Double>> INVERSE_COUNT = Comparator.comparing(Triple<Integer, Integer, Double>::getMiddle).thenComparing(Triple::getRight);
@@ -51,17 +51,17 @@ public class InverseCountAllocator implements TaskAllocator {
 
     @Inject
     public InverseCountAllocator(Provider<Process> processProvider, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        checkNotNull(this.process = processProvider);
-        checkNotNull(this.dbi = dbi);
-        checkNotNull(this.taskDAO = taskDAO);
-        checkNotNull(this.answerDAO = answerDAO);
-        checkNotNull(this.countDAO = dbi.onDemand(CountDAO.class));
+        this.process = requireNonNull(processProvider);
+        this.dbi = requireNonNull(dbi);
+        this.taskDAO = requireNonNull(taskDAO);
+        this.answerDAO = requireNonNull(answerDAO);
+        this.countDAO = requireNonNull(dbi.onDemand(CountDAO.class));
     }
 
     @Override
     @Nonnull
     public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
-        checkNotNull(process.get(), "the process provider should not provide null");
+        requireNonNull(process.get(), "the process provider should not provide null");
         final Set<Integer> answered = answerDAO.listForWorker(worker.getId(), process.get().getId()).stream().
                 map(Answer::getTaskId).collect(Collectors.toSet());
 

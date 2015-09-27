@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class ProcessView extends View {
     private final Process process;
@@ -37,10 +37,10 @@ public class ProcessView extends View {
     @Inject
     public ProcessView(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("process.mustache");
-        checkNotNull(this.process = process);
-        checkNotNull(this.taskDAO = taskDAO);
-        checkNotNull(this.workerDAO = workerDAO);
-        checkNotNull(this.answerDAO = answerDAO);
+        this.process = requireNonNull(process);
+        this.taskDAO = requireNonNull(taskDAO);
+        this.workerDAO = requireNonNull(workerDAO);
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
     @SuppressWarnings("unused")

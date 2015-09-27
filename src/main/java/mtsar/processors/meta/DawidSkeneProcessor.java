@@ -35,7 +35,7 @@ import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A classical Dawid-Skene inference algorithm has been proposed far back in 1979.
@@ -55,15 +55,15 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
 
     @Inject
     public DawidSkeneProcessor(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        checkNotNull(this.process = process);
-        checkNotNull(this.taskDAO = taskDAO);
-        checkNotNull(this.answerDAO = answerDAO);
+        this.process = requireNonNull(process);
+        this.taskDAO = requireNonNull(taskDAO);
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        checkNotNull(process.get(), "the process provider should not provide null");
+        requireNonNull(process.get(), "the process provider should not provide null");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);

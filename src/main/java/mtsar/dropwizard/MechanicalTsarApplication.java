@@ -54,7 +54,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Mechanical Tsar is an engine for mechanized labor workflows.
@@ -128,7 +128,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         if (locator == null)
             locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
-        final ProcessDAO processDAO = checkNotNull(locator.getService(ProcessDAO.class));
+        final ProcessDAO processDAO = requireNonNull(locator.getService(ProcessDAO.class));
         final List<ProcessDefinition> definitions = processDAO.select();
         processes.clear();
 
@@ -137,7 +137,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
             final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
             final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
-            final Process process = checkNotNull(processLocator.getService(Process.class));
+            final Process process = requireNonNull(processLocator.getService(Process.class));
             processes.put(definition.getId(), process);
         }
     }

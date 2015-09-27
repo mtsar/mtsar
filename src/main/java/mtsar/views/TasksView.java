@@ -23,7 +23,7 @@ import mtsar.api.sql.TaskDAO;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class TasksView extends View {
     private final UriInfo uriInfo;
@@ -33,9 +33,9 @@ public class TasksView extends View {
     @Inject
     public TasksView(UriInfo uriInfo, Process process, TaskDAO taskDAO) {
         super("tasks.mustache");
-        checkNotNull(this.uriInfo = uriInfo);
-        checkNotNull(this.process = process);
-        checkNotNull(this.taskDAO = taskDAO);
+        this.uriInfo = requireNonNull(uriInfo);
+        this.process = requireNonNull(process);
+        this.taskDAO = requireNonNull(taskDAO);
     }
 
     @SuppressWarnings("unused")

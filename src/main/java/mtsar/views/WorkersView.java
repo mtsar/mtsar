@@ -23,7 +23,7 @@ import mtsar.api.sql.WorkerDAO;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class WorkersView extends View {
     private final UriInfo uriInfo;
@@ -33,9 +33,9 @@ public class WorkersView extends View {
     @Inject
     public WorkersView(UriInfo uriInfo, Process process, WorkerDAO workerDAO) {
         super("workers.mustache");
-        checkNotNull(this.uriInfo = uriInfo);
-        checkNotNull(this.process = process);
-        checkNotNull(this.workerDAO = workerDAO);
+        this.uriInfo = requireNonNull(uriInfo);
+        this.process = requireNonNull(process);
+        this.workerDAO = requireNonNull(workerDAO);
     }
 
     @SuppressWarnings("unused")

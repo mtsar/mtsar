@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 @ParametersAreNonnullByDefault
 public final class ParamsUtils {
@@ -40,8 +39,8 @@ public final class ParamsUtils {
 
     @Nonnull
     public static Map<String, List<String>> nested(MultivaluedMap<String, String> params, String prefix) {
-        checkNotNull(params);
-        checkNotNull(prefix);
+        requireNonNull(params);
+        requireNonNull(prefix);
         final Pattern pattern = Pattern.compile("^(" + Pattern.quote(prefix) + "\\[(\\w+?)\\])(\\[\\d+\\]|)$");
 
         final Map<String, Matcher> prefixes = params.keySet().stream().
@@ -57,8 +56,8 @@ public final class ParamsUtils {
 
     @Nonnull
     public static List<String> extract(MultivaluedMap<String, String> params, String prefix) {
-        checkNotNull(params);
-        checkNotNull(prefix);
+        requireNonNull(params);
+        requireNonNull(prefix);
         final String regexp = "^" + Pattern.quote(prefix) + "(\\[\\d+\\]|)$";
 
         final List<String> values = params.entrySet().stream().
@@ -70,7 +69,7 @@ public final class ParamsUtils {
     }
 
     public static Set<ConstraintViolation<Object>> validate(Validator validator, Object... objects) {
-        checkNotNull(validator);
+        requireNonNull(validator);
         final Set<ConstraintViolation<Object>> violations = new HashSet<>();
         for (final Object object : objects) violations.addAll(validator.validate(object));
         return violations;
