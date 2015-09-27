@@ -29,9 +29,8 @@ import java.util.Comparator;
 
 public final class AnswerAggregationCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-
-    public static final String[] HEADER = {"task_id", "answers"};
-    public static final Comparator<AnswerAggregation> ORDER = (a1, a2) -> a1.getTask().getId().compareTo(a2.getTask().getId());
+    static final String[] HEADER = {"task_id", "answers"};
+    static final Comparator<AnswerAggregation> ORDER = (a1, a2) -> a1.getTask().getId().compareTo(a2.getTask().getId());
 
     public static void write(Collection<AnswerAggregation> aggregations, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {

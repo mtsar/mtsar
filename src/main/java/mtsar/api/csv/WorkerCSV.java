@@ -37,8 +37,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class WorkerCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    public static final String[] HEADER = {"id", "process", "datetime", "tags"};
-    public static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
+    static final String[] HEADER = {"id", "process", "datetime", "tags"};
+    static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
 
     public static Iterator<Worker> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
@@ -55,7 +55,7 @@ public final class WorkerCSV {
                     setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
                     setProcess(process.getId()).
                     addAllTags(Arrays.asList(tags)).
-                    setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
+                    setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
                     build();
         }).iterator();
     }

@@ -60,6 +60,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
+    static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {
+        @Override
+        public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
+            return configuration.getDataSourceFactory();
+        }
+    }
+
+    static class ValidatorBinder extends AbstractBinder {
+        private final Environment environment;
+
+        public ValidatorBinder(Environment environment) {
+            this.environment = environment;
+        }
+
+        @Override
+        protected void configure() {
+            bind(environment.getValidator()).to(Validator.class);
+        }
+    }
+
     private final Map<String, Process> processes = new ConcurrentHashMap<>();
 
     private DBI jdbi;
@@ -84,12 +104,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
-        bootstrap.addBundle(new MigrationsBundle<MechanicalTsarConfiguration>() {
-            @Override
-            public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
-                return configuration.getDataSourceFactory();
-            }
-        });
+        bootstrap.addBundle(new MechanicalTsarMigrationsBundle());
 
         bootstrap.addBundle(new MultiPartBundle());
         bootstrap.addBundle(new AssetsBundle("/mtsar/stylesheets", "/stylesheets", null, "stylesheets"));
@@ -141,12 +156,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         filter.setInitParameter(CrossOriginFilter.ALLOW_CREDENTIALS_PARAM, "true");
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
-        environment.jersey().register(new AbstractBinder() {
-            @Override
-            protected void configure() {
-                bind(environment.getValidator()).to(Validator.class);
-            }
-        });
+        environment.jersey().register(new ValidatorBinder(environment));
         environment.jersey().register(locator.getService(MetaResource.class));
         environment.jersey().register(locator.getService(ProcessResource.class));
 

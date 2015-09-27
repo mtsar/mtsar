@@ -47,7 +47,7 @@ public class ConsoleCommand extends EnvironmentCommand<MechanicalTsarConfigurati
 
     protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) {
         final ScriptEngine engine = getScriptEngine();
-        final Scanner input = new Scanner(System.in);
+        final Scanner input = new Scanner(System.in, "UTF-8");
         final PrintStream output = System.out;
         final StringBuilder builder = new StringBuilder();
 

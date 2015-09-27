@@ -38,9 +38,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class AnswerCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    public static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "task_id", "worker_id", "answers"};
-    public static final Comparator<Answer> TASK_ID_ORDER = (a1, a2) -> a1.getTaskId().compareTo(a2.getTaskId());
-    public static final Comparator<Answer> ORDER = TASK_ID_ORDER.thenComparing((a1, a2) -> a1.getId().compareTo(a2.getId()));
+    static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "task_id", "worker_id", "answers"};
+    static final Comparator<Answer> TASK_ID_ORDER = (a1, a2) -> a1.getTaskId().compareTo(a2.getTaskId());
+    static final Comparator<Answer> ORDER = TASK_ID_ORDER.thenComparing((a1, a2) -> a1.getId().compareTo(a2.getId()));
 
     public static Iterator<Answer> parse(Process process, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
@@ -61,7 +61,7 @@ public final class AnswerCSV {
                     setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
                     setProcess(process.getId()).
                     addAllTags(Arrays.asList(tags)).
-                    setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.valueOf(datetime) * 1000L)).
+                    setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
                     setType(StringUtils.defaultIfEmpty(type, AnswerDAO.ANSWER_TYPE_DEFAULT)).
                     setWorkerId(Integer.valueOf(workerId)).
                     setTaskId(Integer.valueOf(taskId)).
