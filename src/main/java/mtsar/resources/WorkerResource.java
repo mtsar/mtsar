@@ -186,7 +186,7 @@ public class WorkerResource {
                     setDateTime(datetime).
                     build();
 
-            final Set<ConstraintViolation<Object>> violations = ParamsUtils.violate(validator,
+            final Set<ConstraintViolation<Object>> violations = ParamsUtils.validate(validator,
                     new TaskAnswerValidation.Builder().setTask(task).setAnswer(answer).build(),
                     new AnswerValidation.Builder().setAnswer(answer).setAnswerDAO(answerDAO).build()
             );

@@ -69,16 +69,10 @@ public final class ParamsUtils {
         return values;
     }
 
-    public static Set<ConstraintViolation<Object>> violate(Validator validator, Object... objects) {
+    public static Set<ConstraintViolation<Object>> validate(Validator validator, Object... objects) {
         checkNotNull(validator);
         final Set<ConstraintViolation<Object>> violations = new HashSet<>();
         for (final Object object : objects) violations.addAll(validator.validate(object));
         return violations;
-    }
-
-    public static void validate(Validator validator, Object... objects) throws ConstraintViolationException {
-        checkNotNull(validator);
-        final Set<ConstraintViolation<Object>> violations = violate(validator, objects);
-        if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }
 }
