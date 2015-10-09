@@ -32,7 +32,7 @@ database:
   validationQuery: "/* Mechanical Tsar Health Check */ SELECT 1"
   minSize: 8
   maxSize: 32
-  checkConnectionWhileIdle: false
+  checkConnectionWhileIdle: true
   evictionInterval: 10s
   minIdleTime: 1 minute
 logging:
