@@ -49,9 +49,9 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.validation.Validator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Objects.requireNonNull;
 
@@ -79,7 +79,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         }
     }
 
-    private final Map<String, Process> processes = new ConcurrentHashMap<>();
+    private final Map<String, Process> processes = new HashMap<>();
 
     private DBI jdbi;
     private ServiceLocator locator;
@@ -120,24 +120,26 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new AboutCommand(this));
     }
 
-    public synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        if (jdbi == null)
-            jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
+    public void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
+        synchronized (processes) {
+            if (jdbi == null)
+                jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
 
-        if (locator == null)
-            locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
+            if (locator == null)
+                locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
-        final ProcessDAO processDAO = requireNonNull(locator.getService(ProcessDAO.class));
-        final List<Process.Definition> definitions = processDAO.select();
-        processes.clear();
+            final ProcessDAO processDAO = requireNonNull(locator.getService(ProcessDAO.class));
+            final List<Process.Definition> definitions = processDAO.select();
+            processes.clear();
 
-        for (final Process.Definition definition : definitions) {
-            final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
-            final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
-            final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
-            final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
-            final Process process = requireNonNull(processLocator.getService(Process.class));
-            processes.put(definition.getId(), process);
+            for (final Process.Definition definition : definitions) {
+                final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
+                final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
+                final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
+                final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
+                final Process process = requireNonNull(processLocator.getService(Process.class));
+                processes.put(definition.getId(), process);
+            }
         }
     }
 
@@ -156,9 +158,9 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
         environment.jersey().register(new ValidatorBinder(environment));
-        environment.jersey().register(locator.getService(MetaResource.class));
-        environment.jersey().register(locator.getService(ProcessResource.class));
+        environment.jersey().register(requireNonNull(locator.getService(MetaResource.class)));
+        environment.jersey().register(requireNonNull(locator.getService(ProcessResource.class)));
 
-        environment.healthChecks().register("version", locator.getService(MechanicalTsarVersionHealthCheck.class));
+        environment.healthChecks().register("version", requireNonNull(locator.getService(MechanicalTsarVersionHealthCheck.class)));
     }
 }
