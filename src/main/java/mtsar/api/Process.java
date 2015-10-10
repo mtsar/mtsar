@@ -18,13 +18,18 @@ package mtsar.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import mtsar.PostgresUtils;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
+import org.inferred.freebuilder.FreeBuilder;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.sql.Timestamp;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -32,13 +37,13 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 @XmlRootElement
 public class Process {
-    protected final ProcessDefinition definition;
+    protected final Definition definition;
     protected final WorkerRanker workerRanker;
     protected final TaskAllocator taskAllocator;
     protected final AnswerAggregator answerAggregator;
 
     @Inject
-    public Process(ProcessDefinition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
+    public Process(Definition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
         this.definition = requireNonNull(definition);
         this.workerRanker = requireNonNull(workerRanker);
         this.taskAllocator = requireNonNull(taskAllocator);
@@ -91,5 +96,47 @@ public class Process {
     @SuppressWarnings("unused")
     public String getAnswerAggregatorName() {
         return definition.getAnswerAggregator();
+    }
+
+    @FreeBuilder
+    @XmlRootElement
+    @JsonDeserialize(builder = Definition.Builder.class)
+    public interface Definition {
+        @JsonProperty
+        String getId();
+
+        @JsonProperty
+        Timestamp getDateTime();
+
+        @JsonProperty
+        String getDescription();
+
+        @JsonProperty()
+        String getWorkerRanker();
+
+        @JsonProperty()
+        String getTaskAllocator();
+
+        @JsonProperty()
+        String getAnswerAggregator();
+
+        @JsonProperty
+        Map<String, String> getOptions();
+
+        @JsonIgnore
+        String getOptionsJSON();
+
+        @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+        class Builder extends Process_Definition_Builder {
+            public Builder setOptions(String json) {
+                return putAllOptions(PostgresUtils.parseJSONString(json));
+            }
+
+            @Override
+            public Definition build() {
+                setOptionsJSON(PostgresUtils.buildJSONString(getOptions()));
+                return super.build();
+            }
+        }
     }
 }

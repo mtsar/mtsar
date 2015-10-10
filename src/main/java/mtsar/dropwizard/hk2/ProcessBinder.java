@@ -17,7 +17,6 @@
 package mtsar.dropwizard.hk2;
 
 import mtsar.api.Process;
-import mtsar.api.ProcessDefinition;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
@@ -28,12 +27,12 @@ import javax.inject.Singleton;
 import static java.util.Objects.requireNonNull;
 
 public class ProcessBinder extends AbstractBinder {
-    private final ProcessDefinition definition;
+    private final Process.Definition definition;
     private final Class<? extends WorkerRanker> workerRankerClass;
     private final Class<? extends TaskAllocator> taskAllocatorClass;
     private final Class<? extends AnswerAggregator> answerAggregatorClass;
 
-    public ProcessBinder(ProcessDefinition definition, Class<? extends WorkerRanker> workerRankerClass, Class<? extends TaskAllocator> taskAllocatorClass, Class<? extends AnswerAggregator> answerAggregatorClass) {
+    public ProcessBinder(Process.Definition definition, Class<? extends WorkerRanker> workerRankerClass, Class<? extends TaskAllocator> taskAllocatorClass, Class<? extends AnswerAggregator> answerAggregatorClass) {
         this.definition = requireNonNull(definition);
         this.workerRankerClass = requireNonNull(workerRankerClass);
         this.taskAllocatorClass = requireNonNull(taskAllocatorClass);
@@ -42,7 +41,7 @@ public class ProcessBinder extends AbstractBinder {
 
     @Override
     protected void configure() {
-        bind(definition).to(ProcessDefinition.class);
+        bind(definition).to(Process.Definition.class);
         bind(workerRankerClass).to(WorkerRanker.class).in(Singleton.class);
         bind(taskAllocatorClass).to(TaskAllocator.class).in(Singleton.class);
         bind(answerAggregatorClass).to(AnswerAggregator.class).in(Singleton.class);

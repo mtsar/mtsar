@@ -16,7 +16,7 @@
 
 package mtsar.api.sql;
 
-import mtsar.api.ProcessDefinition;
+import mtsar.api.Process;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
@@ -32,16 +32,16 @@ import java.util.List;
 @RegisterMapper(ProcessDAO.Mapper.class)
 public interface ProcessDAO {
     @SqlQuery("select * from processes order by datetime")
-    List<ProcessDefinition> select();
+    List<Process.Definition> select();
 
     @SqlQuery("select * from processes where name = :name limit 1")
-    ProcessDefinition find(@Bind("name") String name);
+    Process.Definition find(@Bind("name") String name);
 
     @SqlQuery("select count(*) from processes")
     int count();
 
     @SqlQuery("insert into processes (id, description, worker_ranker, task_allocator, answer_aggregator, options, datetime) values (:id, :description, :workerRanker, :taskAllocator, :answerAggregator, cast(:optionsJSON as jsonb), coalesce(:dateTime, localtimestamp)) returning id")
-    String insert(@BindBean ProcessDefinition t);
+    String insert(@BindBean Process.Definition t);
 
     @SqlUpdate("delete from processes where id = :id")
     void delete(@Bind("id") String id);
@@ -51,10 +51,10 @@ public interface ProcessDAO {
 
     void close();
 
-    class Mapper implements ResultSetMapper<ProcessDefinition> {
+    class Mapper implements ResultSetMapper<Process.Definition> {
         @Override
-        public ProcessDefinition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            final ProcessDefinition.Builder builder = new ProcessDefinition.Builder().
+        public Process.Definition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+            final Process.Definition.Builder builder = new Process.Definition.Builder().
                     setId(r.getString("id")).
                     setDescription(r.getString("description")).
                     setWorkerRanker(r.getString("worker_ranker")).

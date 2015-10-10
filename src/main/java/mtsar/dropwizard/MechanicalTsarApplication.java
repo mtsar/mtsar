@@ -26,7 +26,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import mtsar.api.Process;
-import mtsar.api.ProcessDefinition;
 import mtsar.api.sql.ProcessDAO;
 import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
@@ -129,10 +128,10 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
         final ProcessDAO processDAO = requireNonNull(locator.getService(ProcessDAO.class));
-        final List<ProcessDefinition> definitions = processDAO.select();
+        final List<Process.Definition> definitions = processDAO.select();
         processes.clear();
 
-        for (final ProcessDefinition definition : definitions) {
+        for (final Process.Definition definition : definitions) {
             final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
             final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
             final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
