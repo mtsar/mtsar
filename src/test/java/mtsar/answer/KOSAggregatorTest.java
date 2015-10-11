@@ -18,7 +18,7 @@ package mtsar.answer;
 
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -38,22 +38,22 @@ import static org.mockito.Mockito.*;
 public class KOSAggregatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
-    private static final mtsar.api.Process process = mock(Process.class);
+    private static final Stage stage = mock(Stage.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
-    private static final AnswerAggregator aggregator = new KOSAggregator(() -> process, taskDAO, answerDAO);
+    private static final AnswerAggregator aggregator = new KOSAggregator(() -> stage, taskDAO, answerDAO);
 
     @Before
     public void setup() {
         reset(taskDAO);
         reset(answerDAO);
-        when(process.getId()).thenReturn("1");
+        when(stage.getId()).thenReturn("1");
     }
 
     @Test
     public void testTwoTasks() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(Arrays.asList(task1, task2));
-        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
+        when(taskDAO.listForStage(anyString())).thenReturn(Arrays.asList(task1, task2));
+        when(answerDAO.listForStage(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(3).setTaskId(1).addAnswers("2").buildPartial(),
@@ -77,7 +77,7 @@ public class KOSAggregatorTest {
 
     @Test
     public void testEmptyCase() {
-        when(answerDAO.listForProcess(anyString())).thenReturn(Collections.emptyList());
+        when(answerDAO.listForStage(anyString())).thenReturn(Collections.emptyList());
         final Optional<AnswerAggregation> winner = aggregator.aggregate(task1);
         assertThat(winner.isPresent()).isFalse();
     }

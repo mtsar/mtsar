@@ -16,7 +16,7 @@
 
 package mtsar.task;
 
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
@@ -38,23 +38,23 @@ import static org.mockito.Mockito.*;
 
 public class RandomAllocatorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
-    private static final Process process = mock(Process.class);
+    private static final Stage stage = mock(Stage.class);
     private static final Worker worker = fixture("worker1.json", Worker.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
     private static final List<Task> tasks = Arrays.asList(task1, task2);
-    private static final TaskAllocator allocator = new RandomAllocator(() -> process, taskDAO);
+    private static final TaskAllocator allocator = new RandomAllocator(() -> stage, taskDAO);
 
     @Before
     public void setup() {
         reset(taskDAO);
-        when(process.getId()).thenReturn("1");
+        when(stage.getId()).thenReturn("1");
         Collections.shuffle(tasks);
     }
 
     @Test
     public void testAllocation() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(tasks);
+        when(taskDAO.listForStage(anyString())).thenReturn(tasks);
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isTrue();
         assertThat(allocation.get().getTask().get()).isIn(tasks);
@@ -62,7 +62,7 @@ public class RandomAllocatorTest {
 
     @Test
     public void testEmpty() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(Collections.emptyList());
+        when(taskDAO.listForStage(anyString())).thenReturn(Collections.emptyList());
         final Optional<TaskAllocation> allocation = allocator.allocate(worker);
         assertThat(allocation.isPresent()).isFalse();
     }

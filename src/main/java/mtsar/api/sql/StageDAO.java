@@ -16,7 +16,7 @@
 
 package mtsar.api.sql;
 
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
@@ -29,19 +29,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@RegisterMapper(ProcessDAO.Mapper.class)
-public interface ProcessDAO {
+@RegisterMapper(StageDAO.Mapper.class)
+public interface StageDAO {
     @SqlQuery("select * from processes order by datetime")
-    List<Process.Definition> select();
-
-    @SqlQuery("select * from processes where name = :name limit 1")
-    Process.Definition find(@Bind("name") String name);
+    List<Stage.Definition> select();
 
     @SqlQuery("select count(*) from processes")
     int count();
 
     @SqlQuery("insert into processes (id, description, worker_ranker, task_allocator, answer_aggregator, options, datetime) values (:id, :description, :workerRanker, :taskAllocator, :answerAggregator, cast(:optionsJSON as jsonb), coalesce(:dateTime, localtimestamp)) returning id")
-    String insert(@BindBean Process.Definition t);
+    String insert(@BindBean Stage.Definition t);
 
     @SqlUpdate("delete from processes where id = :id")
     void delete(@Bind("id") String id);
@@ -51,10 +48,10 @@ public interface ProcessDAO {
 
     void close();
 
-    class Mapper implements ResultSetMapper<Process.Definition> {
+    class Mapper implements ResultSetMapper<Stage.Definition> {
         @Override
-        public Process.Definition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-            final Process.Definition.Builder builder = new Process.Definition.Builder().
+        public Stage.Definition map(int index, ResultSet r, StatementContext ctx) throws SQLException {
+            final Stage.Definition.Builder builder = new Stage.Definition.Builder().
                     setId(r.getString("id")).
                     setDescription(r.getString("description")).
                     setWorkerRanker(r.getString("worker_ranker")).

@@ -18,7 +18,7 @@ package mtsar.views;
 
 import io.dropwizard.views.View;
 import mtsar.MechanicalTsarVersion;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -30,16 +30,16 @@ import static java.util.Objects.requireNonNull;
 
 public class DashboardView extends View {
     private final MechanicalTsarVersion version;
-    private final Map<String, Process> processes;
+    private final Map<String, Stage> stages;
     private final TaskDAO taskDAO;
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public DashboardView(MechanicalTsarVersion version, Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public DashboardView(MechanicalTsarVersion version, Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("dashboard.mustache");
         this.version = requireNonNull(version);
-        this.processes = requireNonNull(processes);
+        this.stages = requireNonNull(stages);
         this.taskDAO = requireNonNull(taskDAO);
         this.workerDAO = requireNonNull(workerDAO);
         this.answerDAO = requireNonNull(answerDAO);
@@ -61,28 +61,28 @@ public class DashboardView extends View {
     }
 
     @SuppressWarnings("unused")
-    public int getProcessCount() {
-        return processes.size();
+    public int getStageCount() {
+        return stages.size();
     }
 
     @SuppressWarnings("unused")
     public int getWorkerCount() {
-        return processes.values().stream().
-                map(process -> workerDAO.count(process.getId())).
+        return stages.values().stream().
+                map(stage -> workerDAO.count(stage.getId())).
                 reduce(0, (r, e) -> r + e);
     }
 
     @SuppressWarnings("unused")
     public int getTaskCount() {
-        return processes.values().stream().
-                map(process -> taskDAO.count(process.getId())).
+        return stages.values().stream().
+                map(stage -> taskDAO.count(stage.getId())).
                 reduce(0, (r, e) -> r + e);
     }
 
     @SuppressWarnings("unused")
     public int getAnswerCount() {
-        return processes.values().stream().
-                map(process -> answerDAO.count(process.getId())).
+        return stages.values().stream().
+                map(stage -> answerDAO.count(stage.getId())).
                 reduce(0, (r, e) -> r + e);
     }
 }

@@ -56,8 +56,8 @@ public interface AgreementReport {
 
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends AgreementReport_Builder {
-        public Builder compute(Process process, AnswerDAO answerDAO) {
-            final List<Answer> answers = answerDAO.listForProcess(process.getId());
+        public Builder compute(Stage stage, AnswerDAO answerDAO) {
+            final List<Answer> answers = answerDAO.listForStage(stage.getId());
 
             final Map<Integer, List<Answer>> answerTasks = answers.stream().
                     filter(answer -> answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)).

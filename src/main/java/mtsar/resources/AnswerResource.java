@@ -18,7 +18,6 @@ package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
 import mtsar.api.*;
-import mtsar.api.Process;
 import mtsar.api.csv.AnswerAggregationCSV;
 import mtsar.api.csv.AnswerCSV;
 import mtsar.api.sql.AnswerDAO;
@@ -42,13 +41,13 @@ import java.util.Map;
 @Path("/answers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class AnswerResource {
-    protected final Process process;
+    protected final Stage stage;
     protected final TaskDAO taskDAO;
     protected final WorkerDAO workerDAO;
     protected final AnswerDAO answerDAO;
 
-    public AnswerResource(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
-        this.process = process;
+    public AnswerResource(Stage stage, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        this.stage = stage;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -56,13 +55,13 @@ public class AnswerResource {
 
     @GET
     public List<Answer> getAnswers() {
-        return answerDAO.listForProcess(process.getId());
+        return answerDAO.listForStage(stage.getId());
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public AnswersView getAnswersView(@Context UriInfo uriInfo) {
-        return new AnswersView(uriInfo, process, answerDAO);
+        return new AnswersView(uriInfo, stage, answerDAO);
     }
 
     @POST
@@ -70,7 +69,7 @@ public class AnswerResource {
     public Response postAnswersCSV(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, AnswerCSV.FORMAT)) {
-                answerDAO.insert(AnswerCSV.parse(process, csv));
+                answerDAO.insert(AnswerCSV.parse(stage, csv));
             }
         }
         answerDAO.resetSequence();
@@ -80,8 +79,8 @@ public class AnswerResource {
     @GET
     @Path("aggregations")
     public Map<Integer, AnswerAggregation> getAnswerAggregations() {
-        final List<Task> tasks = taskDAO.listForProcess(process.getId());
-        final Map<Integer, AnswerAggregation> aggregations = process.getAnswerAggregator().aggregate(tasks);
+        final List<Task> tasks = taskDAO.listForStage(stage.getId());
+        final Map<Integer, AnswerAggregation> aggregations = stage.getAnswerAggregator().aggregate(tasks);
         return aggregations;
     }
 
@@ -96,7 +95,7 @@ public class AnswerResource {
     @GET
     @Path("agreement")
     public AgreementReport getAgreement() {
-        return new AgreementReport.Builder().compute(process, answerDAO).build();
+        return new AgreementReport.Builder().compute(stage, answerDAO).build();
     }
 
     @GET
@@ -116,25 +115,25 @@ public class AnswerResource {
     @Path("{answer}")
     public Answer deleteAnswer(@PathParam("answer") Integer id) {
         final Answer answer = fetchAnswer(id);
-        answerDAO.delete(id, process.getId());
+        answerDAO.delete(id, stage.getId());
         return answer;
     }
 
     @DELETE
     public void deleteAnswers() {
-        answerDAO.deleteAll(process.getId());
+        answerDAO.deleteAll(stage.getId());
         answerDAO.resetSequence();
     }
 
     private Answer fetchAnswer(Integer id) {
-        final Answer answer = answerDAO.find(id, process.getId());
+        final Answer answer = answerDAO.find(id, stage.getId());
         if (answer == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return answer;
     }
 
     private URI getAnswersURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
+                path("processes").path(stage.getId()).
                 path("answers").
                 build();
     }

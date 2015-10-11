@@ -25,19 +25,19 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import mtsar.api.Process;
-import mtsar.api.sql.ProcessDAO;
+import mtsar.api.Stage;
+import mtsar.api.sql.StageDAO;
 import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.hk2.ApplicationBinder;
-import mtsar.dropwizard.hk2.ProcessBinder;
+import mtsar.dropwizard.hk2.StageBinder;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
 import mtsar.resources.MetaResource;
-import mtsar.resources.ProcessResource;
+import mtsar.resources.StageResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -79,7 +79,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         }
     }
 
-    private final Map<String, Process> processes = new HashMap<>();
+    private final Map<String, Stage> processes = new HashMap<>();
 
     private DBI jdbi;
     private ServiceLocator locator;
@@ -97,7 +97,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         return locator;
     }
 
-    public Map<String, Process> getProcesses() {
+    public Map<String, Stage> getStages() {
         return processes;
     }
 
@@ -128,17 +128,17 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
             if (locator == null)
                 locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
 
-            final ProcessDAO processDAO = requireNonNull(locator.getService(ProcessDAO.class));
-            final List<Process.Definition> definitions = processDAO.select();
+            final StageDAO stageDAO = requireNonNull(locator.getService(StageDAO.class));
+            final List<Stage.Definition> definitions = stageDAO.select();
             processes.clear();
 
-            for (final Process.Definition definition : definitions) {
+            for (final Stage.Definition definition : definitions) {
                 final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
                 final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
                 final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
-                final ServiceLocator processLocator = Injections.createLocator(locator, new ProcessBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
-                final Process process = requireNonNull(processLocator.getService(Process.class));
-                processes.put(definition.getId(), process);
+                final ServiceLocator processLocator = Injections.createLocator(locator, new StageBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
+                final Stage stage = requireNonNull(processLocator.getService(Stage.class));
+                processes.put(definition.getId(), stage);
             }
         }
     }
@@ -159,7 +159,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
         environment.jersey().register(new ValidatorBinder(environment));
         environment.jersey().register(requireNonNull(locator.getService(MetaResource.class)));
-        environment.jersey().register(requireNonNull(locator.getService(ProcessResource.class)));
+        environment.jersey().register(requireNonNull(locator.getService(StageResource.class)));
 
         environment.healthChecks().register("version", requireNonNull(locator.getService(MechanicalTsarVersionHealthCheck.class)));
     }

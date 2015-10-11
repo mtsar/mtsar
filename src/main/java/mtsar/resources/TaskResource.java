@@ -19,7 +19,6 @@ package mtsar.resources;
 import io.dropwizard.jersey.PATCH;
 import mtsar.ParamsUtils;
 import mtsar.api.*;
-import mtsar.api.Process;
 import mtsar.api.csv.TaskCSV;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -43,13 +42,13 @@ import java.util.Optional;
 @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class TaskResource {
-    protected final Process process;
+    protected final Stage stage;
     protected final TaskDAO taskDAO;
     protected final WorkerDAO workerDAO;
     protected final AnswerDAO answerDAO;
 
-    public TaskResource(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
-        this.process = process;
+    public TaskResource(Stage stage, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        this.stage = stage;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -57,13 +56,13 @@ public class TaskResource {
 
     @GET
     public List<Task> getTasks(@QueryParam("page") @DefaultValue("0") int page) {
-        return taskDAO.listForProcess(process.getId());
+        return taskDAO.listForStage(stage.getId());
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public TasksView getTasksView(@Context UriInfo uriInfo) {
-        return new TasksView(uriInfo, process, taskDAO);
+        return new TasksView(uriInfo, stage, taskDAO);
     }
 
     @POST
@@ -76,9 +75,9 @@ public class TaskResource {
                 setType(type).
                 setDescription(description).
                 addAllAnswers(answers).
-                setProcess(process.getId()).
+                setStage(stage.getId()).
                 build());
-        final Task task = taskDAO.find(taskId, process.getId());
+        final Task task = taskDAO.find(taskId, stage.getId());
         return Response.created(getTaskURI(uriInfo, task)).entity(task).build();
     }
 
@@ -87,7 +86,7 @@ public class TaskResource {
     public Response postTasksCSV(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, TaskCSV.FORMAT)) {
-                taskDAO.insert(TaskCSV.parse(process, csv));
+                taskDAO.insert(TaskCSV.parse(stage, csv));
             }
         }
         taskDAO.resetSequence();
@@ -103,14 +102,14 @@ public class TaskResource {
     @GET
     @Path("{task}/answers")
     public List<Answer> getTaskAnswers(@PathParam("task") Integer id) {
-        return answerDAO.listForTask(id, process.getId());
+        return answerDAO.listForTask(id, stage.getId());
     }
 
     @GET
     @Path("{task}/answer")
     public AnswerAggregation getTaskAnswer(@PathParam("task") Integer id) {
         final Task task = fetchTask(id);
-        final Optional<AnswerAggregation> aggregation = process.getAnswerAggregator().aggregate(task);
+        final Optional<AnswerAggregation> aggregation = stage.getAnswerAggregator().aggregate(task);
         return aggregation.isPresent() ? aggregation.get() : null;
     }
 
@@ -125,46 +124,33 @@ public class TaskResource {
     @Path("{task}")
     public Task deleteTask(@PathParam("task") Integer id) {
         final Task task = fetchTask(id);
-        taskDAO.delete(id, process.getId());
+        taskDAO.delete(id, stage.getId());
         return task;
     }
 
     @DELETE
     public void deleteTasks() {
-        taskDAO.deleteAll(process.getId());
+        taskDAO.deleteAll(stage.getId());
         taskDAO.resetSequence();
     }
 
-    private Worker fetchWorker(Integer id) {
-        final Worker worker = workerDAO.find(id, process.getId());
-        if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
-        return worker;
-    }
-
     private Task fetchTask(Integer id) {
-        final Task task = taskDAO.find(id, process.getId());
+        final Task task = taskDAO.find(id, stage.getId());
         if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return task;
     }
 
     private URI getTasksURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
+                path("processes").path(stage.getId()).
                 path("tasks").
                 build();
     }
 
     private URI getTaskURI(UriInfo uriInfo, Task task) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
+                path("processes").path(stage.getId()).
                 path("tasks").path(task.getId().toString()).
-                build();
-    }
-
-    private URI getAnswerURI(UriInfo uriInfo, Answer answer) {
-        return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
-                path("answers").path(answer.getId().toString()).
                 build();
     }
 }

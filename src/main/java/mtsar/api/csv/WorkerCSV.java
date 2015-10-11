@@ -17,7 +17,7 @@
 package mtsar.api.csv;
 
 import com.google.common.collect.Sets;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Worker;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -40,7 +40,7 @@ public final class WorkerCSV {
     static final String[] HEADER = {"id", "process", "datetime", "tags"};
     static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
 
-    public static Iterator<Worker> parse(Process process, CSVParser csv) {
+    public static Iterator<Worker> parse(Stage stage, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
         checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
@@ -53,7 +53,7 @@ public final class WorkerCSV {
 
             return new Worker.Builder().
                     setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
-                    setProcess(process.getId()).
+                    setStage(stage.getId()).
                     addAllTags(Arrays.asList(tags)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
                     build();
@@ -64,7 +64,7 @@ public final class WorkerCSV {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> workers.stream().sorted(ORDER).map(worker -> new String[]{
                     Integer.toString(worker.getId()),                                 // id
-                    worker.getProcess(),                                              // process
+                    worker.getStage(),                                                // process
                     Long.toString(worker.getDateTime().toInstant().getEpochSecond()), // datetime
                     String.join("|", worker.getTags()),                               // tags
             }).iterator();

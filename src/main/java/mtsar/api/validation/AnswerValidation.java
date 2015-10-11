@@ -29,7 +29,7 @@ public interface AnswerValidation {
 
     @ValidationMethod(message = "#answer-duplicate: worker has already completed this task")
     default boolean isAnswerUnique() {
-        return getAnswerDAO().findByWorkerAndTask(getAnswer().getProcess(), getAnswer().getWorkerId(), getAnswer().getTaskId()) == null;
+        return getAnswerDAO().findByWorkerAndTask(getAnswer().getStage(), getAnswer().getWorkerId(), getAnswer().getTaskId()) == null;
     }
 
     class Builder extends AnswerValidation_Builder {

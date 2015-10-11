@@ -36,39 +36,39 @@ public interface AnswerDAO {
     String ANSWER_TYPE_ANSWER = "answer";
     String ANSWER_TYPE_DEFAULT = ANSWER_TYPE_ANSWER;
 
-    @SqlQuery("select * from answers where process = :process")
-    List<Answer> listForProcess(@Bind("process") String process);
+    @SqlQuery("select * from answers where process = :stage")
+    List<Answer> listForStage(@Bind("stage") String stage);
 
-    @SqlQuery("select * from answers where task_id = :taskId and process = :process")
-    List<Answer> listForTask(@Bind("taskId") Integer taskId, @Bind("process") String process);
+    @SqlQuery("select * from answers where task_id = :taskId and process = :stage")
+    List<Answer> listForTask(@Bind("taskId") Integer taskId, @Bind("stage") String stage);
 
-    @SqlQuery("select * from answers where worker_id = :workerId and process = :process")
-    List<Answer> listForWorker(@Bind("workerId") Integer workerId, @Bind("process") String process);
+    @SqlQuery("select * from answers where worker_id = :workerId and process = :stage")
+    List<Answer> listForWorker(@Bind("workerId") Integer workerId, @Bind("stage") String stage);
 
-    @SqlQuery("select * from answers where id = :id and process = :process limit 1")
-    Answer find(@Bind("id") Integer id, @Bind("process") String process);
+    @SqlQuery("select * from answers where id = :id and process = :stage limit 1")
+    Answer find(@Bind("id") Integer id, @Bind("stage") String stage);
 
-    @SqlQuery("select * from answers where process = :process and worker_id = :worker_id and task_id = :task_id limit 1")
-    Answer findByWorkerAndTask(@Bind("process") String process, @Bind("worker_id") Integer workerId, @Bind("task_id") Integer taskId);
+    @SqlQuery("select * from answers where process = :stage and worker_id = :worker_id and task_id = :task_id limit 1")
+    Answer findByWorkerAndTask(@Bind("stage") String stage, @Bind("worker_id") Integer workerId, @Bind("task_id") Integer taskId);
 
-    @SqlQuery("insert into answers (process, datetime, tags, type, worker_id, task_id, answers) values (:process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[])) returning id")
+    @SqlQuery("insert into answers (process, datetime, tags, type, worker_id, task_id, answers) values (:stage, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[])) returning id")
     int insert(@BindBean Answer a);
 
-    @SqlBatch("insert into answers (id, process, datetime, tags, type, worker_id, task_id, answers) values (coalesce(:id, nextval('answers_id_seq')), :process, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[]))")
+    @SqlBatch("insert into answers (id, process, datetime, tags, type, worker_id, task_id, answers) values (coalesce(:id, nextval('answers_id_seq')), :stage, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[]))")
     @BatchChunkSize(1000)
     int[] insert(@BindBean Iterator<Answer> tasks);
 
     @SqlQuery("select count(*) from answers")
     int count();
 
-    @SqlQuery("select count(*) from answers where process = :process")
-    int count(@Bind("process") String process);
+    @SqlQuery("select count(*) from answers where process = :stage")
+    int count(@Bind("stage") String stage);
 
-    @SqlUpdate("delete from answers where id = :id and process = :process")
-    void delete(@Bind("id") Integer id, @Bind("process") String process);
+    @SqlUpdate("delete from answers where id = :id and process = :stage")
+    void delete(@Bind("id") Integer id, @Bind("stage") String stage);
 
-    @SqlUpdate("delete from answers where process = :process")
-    void deleteAll(@Bind("process") String process);
+    @SqlUpdate("delete from answers where process = :stage")
+    void deleteAll(@Bind("stage") String stage);
 
     @SqlUpdate("delete from answers")
     void deleteAll();
@@ -82,7 +82,7 @@ public interface AnswerDAO {
         public Answer map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             return new Answer.Builder().
                     setId(r.getInt("id")).
-                    setProcess(r.getString("process")).
+                    setStage(r.getString("process")).
                     setDateTime(r.getTimestamp("datetime")).
                     addAllTags(Arrays.asList((String[]) r.getArray("tags").getArray())).
                     setMetadata(r.getString("metadata")).

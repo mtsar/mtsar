@@ -17,7 +17,7 @@
 package mtsar.api.csv;
 
 import com.google.common.collect.Sets;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -40,7 +40,7 @@ public final class TaskCSV {
     static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "description", "answers"};
     static final Comparator<Task> ORDER = (t1, t2) -> t1.getId().compareTo(t2.getId());
 
-    public static Iterator<Task> parse(Process process, CSVParser csv) {
+    public static Iterator<Task> parse(Stage stage, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
         checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
@@ -56,7 +56,7 @@ public final class TaskCSV {
 
             return new Task.Builder().
                     setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
-                    setProcess(process.getId()).
+                    setStage(stage.getId()).
                     addAllTags(Arrays.asList(tags)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
                     setType(StringUtils.defaultIfEmpty(type, null)).
@@ -70,7 +70,7 @@ public final class TaskCSV {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> tasks.stream().sorted(ORDER).map(task -> new String[]{
                     Integer.toString(task.getId()),                                 // id
-                    task.getProcess(),                                              // process
+                    task.getStage(),                                                // process
                     Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
                     String.join("|", task.getTags()),                               // tags
                     task.getType(),                                                 // type

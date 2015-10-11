@@ -35,24 +35,24 @@ import static org.mockito.Mockito.*;
 public class DawidSkeneProcessorTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
-    private static final mtsar.api.Process process = mock(mtsar.api.Process.class);
+    private static final Stage stage = mock(Stage.class);
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
     private static final Worker worker1 = fixture("worker1.json", Worker.class);
     private static final Worker worker2 = fixture("worker2.json", Worker.class);
-    private static final DawidSkeneProcessor processor = new DawidSkeneProcessor(() -> process, taskDAO, answerDAO);
+    private static final DawidSkeneProcessor processor = new DawidSkeneProcessor(() -> stage, taskDAO, answerDAO);
 
     @Before
     public void setup() {
         reset(taskDAO);
         reset(answerDAO);
-        when(process.getId()).thenReturn("1");
+        when(stage.getId()).thenReturn("1");
     }
 
     @Test
     public void testTwoTasks() {
-        when(taskDAO.listForProcess(anyString())).thenReturn(Arrays.asList(task1, task2));
-        when(answerDAO.listForProcess(anyString())).thenReturn(Arrays.asList(
+        when(taskDAO.listForStage(anyString())).thenReturn(Arrays.asList(task1, task2));
+        when(answerDAO.listForStage(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("1").buildPartial(),
@@ -84,7 +84,7 @@ public class DawidSkeneProcessorTest {
 
     @Test
     public void testEmptyCase() {
-        when(answerDAO.listForProcess(anyString())).thenReturn(Collections.emptyList());
+        when(answerDAO.listForStage(anyString())).thenReturn(Collections.emptyList());
         final Optional<AnswerAggregation> winner = processor.aggregate(task1);
         assertThat(winner.isPresent()).isFalse();
     }

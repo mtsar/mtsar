@@ -41,7 +41,7 @@ public interface Answer {
     Integer getId();
 
     @JsonProperty
-    String getProcess();
+    String getStage();
 
     @JsonProperty
     Timestamp getDateTime();

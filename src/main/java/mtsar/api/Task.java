@@ -39,7 +39,7 @@ public interface Task {
     Integer getId();
 
     @JsonProperty
-    String getProcess();
+    String getStage();
 
     @JsonProperty
     Timestamp getDateTime();

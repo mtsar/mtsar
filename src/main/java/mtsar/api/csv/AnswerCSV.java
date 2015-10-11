@@ -18,7 +18,7 @@ package mtsar.api.csv;
 
 import com.google.common.collect.Sets;
 import mtsar.api.Answer;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -42,7 +42,7 @@ public final class AnswerCSV {
     static final Comparator<Answer> TASK_ID_ORDER = (a1, a2) -> a1.getTaskId().compareTo(a2.getTaskId());
     static final Comparator<Answer> ORDER = TASK_ID_ORDER.thenComparing((a1, a2) -> a1.getId().compareTo(a2.getId()));
 
-    public static Iterator<Answer> parse(Process process, CSVParser csv) {
+    public static Iterator<Answer> parse(Stage stage, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();
         checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
@@ -59,7 +59,7 @@ public final class AnswerCSV {
 
             return new Answer.Builder().
                     setId(StringUtils.isEmpty(id) ? null : Integer.valueOf(id)).
-                    setProcess(process.getId()).
+                    setStage(stage.getId()).
                     addAllTags(Arrays.asList(tags)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
                     setType(StringUtils.defaultIfEmpty(type, AnswerDAO.ANSWER_TYPE_DEFAULT)).
@@ -74,7 +74,7 @@ public final class AnswerCSV {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> answers.stream().sorted(ORDER).map(answer -> new String[]{
                     Integer.toString(answer.getId()),                                 // id
-                    answer.getProcess(),                                              // process
+                    answer.getStage(),                                                // process
                     Long.toString(answer.getDateTime().toInstant().getEpochSecond()), // datetime
                     String.join("|", answer.getTags()),                               // tags
                     answer.getType(),                                                 // type

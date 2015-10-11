@@ -16,7 +16,7 @@
 
 package mtsar.processors.task;
 
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
@@ -35,20 +35,20 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class RandomAllocator implements TaskAllocator {
-    protected final Provider<Process> process;
+    protected final Provider<Stage> stage;
     protected final TaskDAO taskDAO;
 
     @Inject
-    public RandomAllocator(Provider<Process> processProvider, TaskDAO taskDAO) {
-        this.process = requireNonNull(processProvider);
+    public RandomAllocator(Provider<Stage> processProvider, TaskDAO taskDAO) {
+        this.stage = requireNonNull(processProvider);
         this.taskDAO = requireNonNull(taskDAO);
     }
 
     @Override
     @Nonnull
     public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
-        requireNonNull(process.get(), "the process provider should not provide null");
-        final List<Task> tasks = taskDAO.listForProcess(process.get().getId());
+        requireNonNull(stage.get(), "the stage provider should not provide null");
+        final List<Task> tasks = taskDAO.listForStage(stage.get().getId());
 
         if (tasks.isEmpty()) return Optional.empty();
         Collections.shuffle(tasks);

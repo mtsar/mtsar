@@ -18,7 +18,7 @@ package mtsar.answer;
 
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.AnswerAggregator;
@@ -38,14 +38,14 @@ import static org.mockito.Mockito.*;
 
 public class RandomAggregatorTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
-    private static final Process process = mock(Process.class);
+    private static final Stage stage = mock(Stage.class);
     private static final Task task = fixture("task1.json", Task.class);
-    private static final AnswerAggregator aggregator = new RandomAggregator(() -> process, answerDAO);
+    private static final AnswerAggregator aggregator = new RandomAggregator(() -> stage, answerDAO);
 
     @Before
     public void setup() {
         reset(answerDAO);
-        when(process.getId()).thenReturn("1");
+        when(stage.getId()).thenReturn("1");
     }
 
     @Test

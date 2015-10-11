@@ -19,7 +19,7 @@ package mtsar.cli;
 import io.dropwizard.Application;
 import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.setup.Environment;
-import mtsar.api.sql.ProcessDAO;
+import mtsar.api.sql.StageDAO;
 import mtsar.dropwizard.MechanicalTsarApplication;
 import mtsar.dropwizard.MechanicalTsarConfiguration;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -33,6 +33,6 @@ public class SimulateCommand extends EnvironmentCommand<MechanicalTsarConfigurat
     }
 
     protected void run(Environment environment, Namespace namespace, MechanicalTsarConfiguration configuration) {
-        final ProcessDAO processDAO = application.getLocator().getService(ProcessDAO.class);
+        final StageDAO stageDAO = application.getLocator().getService(StageDAO.class);
     }
 }

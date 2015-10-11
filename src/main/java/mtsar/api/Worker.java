@@ -39,7 +39,7 @@ public interface Worker {
     Integer getId();
 
     @JsonProperty
-    String getProcess();
+    String getStage();
 
     @JsonProperty
     Timestamp getDateTime();

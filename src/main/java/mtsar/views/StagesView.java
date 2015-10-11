@@ -16,8 +16,9 @@
 
 package mtsar.views;
 
+import com.google.common.base.Function;
 import io.dropwizard.views.View;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -28,16 +29,16 @@ import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-public class ProcessView extends View {
-    private final Process process;
+public class StagesView extends View {
+    private final Map<String, Stage> stages;
     private final TaskDAO taskDAO;
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public ProcessView(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
-        super("process.mustache");
-        this.process = requireNonNull(process);
+    public StagesView(Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        super("stages.mustache");
+        this.stages = requireNonNull(stages);
         this.taskDAO = requireNonNull(taskDAO);
         this.workerDAO = requireNonNull(workerDAO);
         this.answerDAO = requireNonNull(answerDAO);
@@ -45,37 +46,26 @@ public class ProcessView extends View {
 
     @SuppressWarnings("unused")
     public String getTitle() {
-        return String.format("Process \"%s\"", process.getId());
+        return "Stages";
     }
 
     @SuppressWarnings("unused")
-    public Process getProcess() {
-        return process;
-    }
-
-    /**
-     * By some strange reason, mustache can not access the options map,
-     * but the present method works just fine.
-     *
-     * @return process options
-     */
-    @SuppressWarnings("unused")
-    public Collection<Map.Entry<String, String>> getOptions() {
-        return process.getOptions().entrySet();
+    public Collection<Stage> getStages() {
+        return stages.values();
     }
 
     @SuppressWarnings("unused")
-    public int getWorkerCount() {
-        return workerDAO.count(process.getId());
+    public Function<String, Integer> getWorkerCount() {
+        return id -> workerDAO.count(id);
     }
 
     @SuppressWarnings("unused")
-    public int getTaskCount() {
-        return taskDAO.count(process.getId());
+    public Function<String, Integer> getTaskCount() {
+        return id -> taskDAO.count(id);
     }
 
     @SuppressWarnings("unused")
-    public int getAnswerCount() {
-        return answerDAO.count(process.getId());
+    public Function<String, Integer> getAnswerCount() {
+        return id -> answerDAO.count(id);
     }
 }

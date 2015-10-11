@@ -20,7 +20,6 @@ import io.dropwizard.jersey.PATCH;
 import mtsar.DefaultDateTime;
 import mtsar.ParamsUtils;
 import mtsar.api.*;
-import mtsar.api.Process;
 import mtsar.api.csv.WorkerCSV;
 import mtsar.api.csv.WorkerRankingCSV;
 import mtsar.api.sql.AnswerDAO;
@@ -51,13 +50,13 @@ import java.util.stream.Collectors;
 @Path("/workers")
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class WorkerResource {
-    protected final mtsar.api.Process process;
+    protected final Stage stage;
     protected final TaskDAO taskDAO;
     protected final WorkerDAO workerDAO;
     protected final AnswerDAO answerDAO;
 
-    public WorkerResource(Process process, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
-        this.process = process;
+    public WorkerResource(Stage stage, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        this.stage = stage;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -65,21 +64,21 @@ public class WorkerResource {
 
     @GET
     public List<Worker> getWorkers() {
-        return workerDAO.listForProcess(process.getId());
+        return workerDAO.listForStage(stage.getId());
     }
 
     @GET
     @Produces(MediaType.TEXT_HTML)
     public WorkersView getWorkersView(@Context UriInfo uriInfo) {
-        return new WorkersView(uriInfo, process, workerDAO);
+        return new WorkersView(uriInfo, stage, workerDAO);
     }
 
     @GET
     @Path("rankings.csv")
     @Produces(mtsar.MediaType.TEXT_CSV)
     public StreamingOutput getWorkerRankingsCSV() {
-        final List<Worker> workers = workerDAO.listForProcess(process.getId());
-        final Map<Integer, WorkerRanking> rankings = process.getWorkerRanker().rank(workers);
+        final List<Worker> workers = workerDAO.listForStage(stage.getId());
+        final Map<Integer, WorkerRanking> rankings = stage.getWorkerRanker().rank(workers);
         return output -> WorkerRankingCSV.write(rankings.values(), output);
     }
 
@@ -88,7 +87,7 @@ public class WorkerResource {
     public Response postWorkersCSV(@Context UriInfo uriInfo, @FormDataParam("file") InputStream stream) throws IOException {
         try (final Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
             try (final CSVParser csv = new CSVParser(reader, WorkerCSV.FORMAT)) {
-                workerDAO.insert(WorkerCSV.parse(process, csv));
+                workerDAO.insert(WorkerCSV.parse(stage, csv));
             }
         }
         workerDAO.resetSequence();
@@ -100,10 +99,10 @@ public class WorkerResource {
         final List<String> tags = ParamsUtils.extract(params, "tags");
 
         int workerId = workerDAO.insert(new Worker.Builder().
-                setProcess(process.getId()).
+                setStage(stage.getId()).
                 addAllTags(tags).
                 build());
-        final Worker worker = workerDAO.find(workerId, process.getId());
+        final Worker worker = workerDAO.find(workerId, stage.getId());
         return Response.created(getWorkerURI(uriInfo, worker)).entity(worker).build();
     }
 
@@ -116,7 +115,7 @@ public class WorkerResource {
     @GET
     @Path("tagged/{tag}")
     public Worker getWorkerByTag(@PathParam("tag") String tag) {
-        final Worker worker = workerDAO.findByTags(process.getId(), Collections.singletonList(tag));
+        final Worker worker = workerDAO.findByTags(stage.getId(), Collections.singletonList(tag));
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }
@@ -131,7 +130,7 @@ public class WorkerResource {
     @Path("{worker}/tasks/{n}")
     public TaskAllocation getWorkerTasks(@PathParam("worker") Integer id, @PathParam("n") Integer n) {
         final Worker worker = fetchWorker(id);
-        return ParamsUtils.optional(process.getTaskAllocator().allocate(worker, n));
+        return ParamsUtils.optional(stage.getTaskAllocator().allocate(worker, n));
     }
 
     @GET
@@ -139,7 +138,7 @@ public class WorkerResource {
     public TaskAllocation getWorkerTaskAgain(@PathParam("worker") Integer id, @QueryParam("task_id") List<Integer> taskIds) {
         final Worker worker = fetchWorker(id);
         final List<Task> tasks = taskIds.stream().map(taskId -> fetchTask(taskId)).collect(Collectors.toList());
-        final Optional<TaskAllocation> optional = process.getTaskAllocator().allocate(worker);
+        final Optional<TaskAllocation> optional = stage.getTaskAllocator().allocate(worker);
 
         if (optional.isPresent()) {
             return new TaskAllocation.Builder().
@@ -152,7 +151,7 @@ public class WorkerResource {
                     setWorker(worker).
                     addAllTasks(tasks).
                     setTaskRemaining(1).
-                    setTaskCount(taskDAO.count(process.getId())).
+                    setTaskCount(taskDAO.count(stage.getId())).
                     build();
         }
     }
@@ -161,7 +160,7 @@ public class WorkerResource {
     @Path("{worker}/answers")
     public List<Answer> getWorkerAnswers(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);
-        return answerDAO.listForWorker(worker.getId(), process.getId());
+        return answerDAO.listForWorker(worker.getId(), stage.getId());
     }
 
     @PATCH
@@ -177,7 +176,7 @@ public class WorkerResource {
             final Task task = fetchTask(taskId);
 
             final Answer answer = new Answer.Builder().
-                    setProcess(process.getId()).
+                    setStage(stage.getId()).
                     addAllTags(tags).
                     setType(type).
                     setTaskId(task.getId()).
@@ -212,38 +211,38 @@ public class WorkerResource {
     @Path("{worker}")
     public Worker deleteWorker(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);
-        workerDAO.delete(id, process.getId());
+        workerDAO.delete(id, stage.getId());
         return worker;
     }
 
     @DELETE
     public void deleteTasks() {
-        workerDAO.deleteAll(process.getId());
+        workerDAO.deleteAll(stage.getId());
         workerDAO.resetSequence();
     }
 
     private Worker fetchWorker(Integer id) {
-        final Worker worker = workerDAO.find(id, process.getId());
+        final Worker worker = workerDAO.find(id, stage.getId());
         if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }
 
     private Task fetchTask(Integer id) {
-        final Task task = taskDAO.find(id, process.getId());
+        final Task task = taskDAO.find(id, stage.getId());
         if (task == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return task;
     }
 
     private URI getWorkersURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
+                path("processes").path(stage.getId()).
                 path("workers").
                 build();
     }
 
     private URI getWorkerURI(UriInfo uriInfo, Worker worker) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(process.getId()).
+                path("processes").path(stage.getId()).
                 path("workers").path(worker.getId().toString()).
                 build();
     }

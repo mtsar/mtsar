@@ -36,14 +36,14 @@ import static java.util.Objects.requireNonNull;
 
 @Singleton
 @XmlRootElement
-public class Process {
+public class Stage {
     protected final Definition definition;
     protected final WorkerRanker workerRanker;
     protected final TaskAllocator taskAllocator;
     protected final AnswerAggregator answerAggregator;
 
     @Inject
-    public Process(Definition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
+    public Stage(Definition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {
         this.definition = requireNonNull(definition);
         this.workerRanker = requireNonNull(workerRanker);
         this.taskAllocator = requireNonNull(taskAllocator);
@@ -127,7 +127,7 @@ public class Process {
         String getOptionsJSON();
 
         @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
-        class Builder extends Process_Definition_Builder {
+        class Builder extends Stage_Definition_Builder {
             public Builder setOptions(String json) {
                 return putAllOptions(PostgresUtils.parseJSONString(json));
             }

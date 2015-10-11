@@ -21,7 +21,7 @@ import io.dropwizard.cli.EnvironmentCommand;
 import io.dropwizard.setup.Environment;
 import mtsar.MechanicalTsarVersion;
 import mtsar.api.sql.AnswerDAO;
-import mtsar.api.sql.ProcessDAO;
+import mtsar.api.sql.StageDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.dropwizard.MechanicalTsarApplication;
@@ -88,8 +88,8 @@ public class ConsoleCommand extends EnvironmentCommand<MechanicalTsarConfigurati
         final Bindings bindings = engine.getBindings(ScriptContext.ENGINE_SCOPE);
 
         bindings.put("version", application.getLocator().getService(MechanicalTsarVersion.class));
-        bindings.put("processes", application.getProcesses());
-        bindings.put("processDAO", application.getLocator().getService(ProcessDAO.class));
+        bindings.put("stages", application.getStages());
+        bindings.put("stageDAO", application.getLocator().getService(StageDAO.class));
         bindings.put("workerDAO", application.getLocator().getService(WorkerDAO.class));
         bindings.put("taskDAO", application.getLocator().getService(TaskDAO.class));
         bindings.put("answerDAO", application.getLocator().getService(AnswerDAO.class));

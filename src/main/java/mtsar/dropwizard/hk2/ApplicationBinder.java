@@ -17,14 +17,14 @@
 package mtsar.dropwizard.hk2;
 
 import mtsar.MechanicalTsarVersion;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
-import mtsar.api.sql.ProcessDAO;
+import mtsar.api.sql.StageDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.dropwizard.MechanicalTsarVersionHealthCheck;
 import mtsar.resources.MetaResource;
-import mtsar.resources.ProcessResource;
+import mtsar.resources.StageResource;
 import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.skife.jdbi.v2.DBI;
@@ -35,28 +35,28 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 public class ApplicationBinder extends AbstractBinder {
-    public final static TypeLiteral<Map<String, Process>> STRING_PROCESS_MAP = new TypeLiteral<Map<String, Process>>() {
+    public final static TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
     };
 
     private final DBI jdbi;
-    private final Map<String, Process> processes;
+    private final Map<String, Stage> stages;
 
-    public ApplicationBinder(DBI jdbi, Map<String, Process> processes) {
+    public ApplicationBinder(DBI jdbi, Map<String, Stage> stages) {
         this.jdbi = requireNonNull(jdbi);
-        this.processes = requireNonNull(processes);
+        this.stages = requireNonNull(stages);
     }
 
     @Override
     protected void configure() {
         bind(jdbi).to(DBI.class);
-        bind(jdbi.onDemand(ProcessDAO.class)).to(ProcessDAO.class);
+        bind(jdbi.onDemand(StageDAO.class)).to(StageDAO.class);
         bind(jdbi.onDemand(WorkerDAO.class)).to(WorkerDAO.class);
         bind(jdbi.onDemand(TaskDAO.class)).to(TaskDAO.class);
         bind(jdbi.onDemand(AnswerDAO.class)).to(AnswerDAO.class);
-        bind(processes).to(STRING_PROCESS_MAP).named("processes");
+        bind(stages).to(STRING_STAGE_MAP).named("stages");
 
         bindAsContract(MetaResource.class).in(Singleton.class);
-        bindAsContract(ProcessResource.class).in(Singleton.class);
+        bindAsContract(StageResource.class).in(Singleton.class);
 
         bindAsContract(MechanicalTsarVersion.class).in(Singleton.class);
         bindAsContract(MechanicalTsarVersionHealthCheck.class).in(Singleton.class);

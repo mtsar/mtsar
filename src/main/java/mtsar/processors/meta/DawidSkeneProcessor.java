@@ -21,7 +21,6 @@ import com.ipeirotis.gal.core.AssignedLabel;
 import com.ipeirotis.gal.core.Category;
 import com.ipeirotis.gal.core.Datum;
 import mtsar.api.*;
-import mtsar.api.Process;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
@@ -49,13 +48,13 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
         return Comparator.comparingDouble(keyExtractor).reversed();
     }
 
-    private final Provider<Process> process;
+    private final Provider<Stage> stage;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public DawidSkeneProcessor(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.process = requireNonNull(process);
+    public DawidSkeneProcessor(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this.stage = requireNonNull(stage);
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
     }
@@ -63,7 +62,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(process.get(), "the process provider should not provide null");
+        requireNonNull(stage.get(), "the stage provider should not provide null");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
@@ -97,7 +96,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     }
 
     protected Map<Integer, Task> getTaskMap() {
-        return taskDAO.listForProcess(process.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
+        return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 
     protected DawidSkene compute(Map<Integer, Task> taskMap) {
@@ -107,7 +106,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
 
         final DawidSkene ds = new DawidSkene(categories);
 
-        final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
+        final List<Answer> answers = answerDAO.listForStage(stage.get().getId());
 
         for (final Answer answer : answers) {
             if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;

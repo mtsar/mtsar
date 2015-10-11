@@ -16,7 +16,7 @@
 
 package mtsar.worker;
 
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Worker;
 import mtsar.processors.WorkerRanker;
 import mtsar.processors.worker.ZeroRanker;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ZeroRankerTest {
-    private static final Process.Definition process = mock(Process.Definition.class);
+    private static final Stage.Definition process = mock(Stage.Definition.class);
     private static final Worker worker = fixture("worker1.json", Worker.class);
     private static final WorkerRanker ranker = new ZeroRanker();
 

@@ -17,7 +17,7 @@
 package mtsar.views;
 
 import io.dropwizard.views.View;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 
 import javax.inject.Inject;
@@ -27,37 +27,37 @@ import static java.util.Objects.requireNonNull;
 
 public class AnswersView extends View {
     private final UriInfo uriInfo;
-    private final Process process;
+    private final Stage stage;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public AnswersView(UriInfo uriInfo, Process process, AnswerDAO answerDAO) {
+    public AnswersView(UriInfo uriInfo, Stage stage, AnswerDAO answerDAO) {
         super("answers.mustache");
         this.uriInfo = requireNonNull(uriInfo);
-        this.process = requireNonNull(process);
+        this.stage = requireNonNull(stage);
         this.answerDAO = requireNonNull(answerDAO);
     }
 
     @SuppressWarnings("unused")
     public String getTitle() {
-        return String.format("Answers of \"%s\"", process.getId());
+        return String.format("Answers of \"%s\"", stage.getId());
     }
 
     @SuppressWarnings("unused")
-    public Process getProcess() {
-        return process;
+    public Stage getStage() {
+        return stage;
     }
 
     @SuppressWarnings("unused")
     public int getAnswerCount() {
-        return answerDAO.count(process.getId());
+        return answerDAO.count(stage.getId());
     }
 
     @SuppressWarnings("unused")
-    public String getProcessPath() {
+    public String getStagePath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
-                path(process.getId()).
+                path(stage.getId()).
                 toString();
     }
 
@@ -65,7 +65,7 @@ public class AnswersView extends View {
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
-                path(process.getId()).
+                path(stage.getId()).
                 path("answers").
                 toString();
     }

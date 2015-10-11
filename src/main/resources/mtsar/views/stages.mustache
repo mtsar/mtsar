@@ -13,7 +13,7 @@
             </tr>
             </thead>
             <tbody>
-            {{#processes}}
+            {{#stages}}
                 <tr>
                     <td><a href="/processes/{{id}}">{{id}}</a></td>
                     <td>{{description}}</td>
@@ -21,12 +21,12 @@
                     <td class="align-center">{{#taskCount}}{{id}}{{/taskCount}}</td>
                     <td class="align-center">{{#answerCount}}{{id}}{{/answerCount}}</td>
                 </tr>
-            {{/processes}}
-            {{^processes}}
+            {{/stages}}
+            {{^stages}}
                 <tr>
-                    <td colspan="5"><i class="fa fa-info"></i>&nbsp; No processes for you.</td>
+                    <td colspan="5"><i class="fa fa-info"></i>&nbsp; No stages for you.</td>
                 </tr>
-            {{/processes}}
+            {{/stages}}
             </tbody>
         </table>
     </div>

@@ -42,7 +42,7 @@ public class AboutCommand extends EnvironmentCommand<MechanicalTsarConfiguration
         System.out.println();
         System.out.format("Configuration: %s%n", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(configuration));
         System.out.println();
-        System.out.format("Processes: %s%n", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(application.getProcesses()));
+        System.out.format("Stages: %s%n", new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(application.getStages()));
         System.out.flush();
     }
 }

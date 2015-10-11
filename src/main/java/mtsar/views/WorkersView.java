@@ -17,7 +17,7 @@
 package mtsar.views;
 
 import io.dropwizard.views.View;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.WorkerDAO;
 
 import javax.inject.Inject;
@@ -27,37 +27,37 @@ import static java.util.Objects.requireNonNull;
 
 public class WorkersView extends View {
     private final UriInfo uriInfo;
-    private final Process process;
+    private final Stage stage;
     private final WorkerDAO workerDAO;
 
     @Inject
-    public WorkersView(UriInfo uriInfo, Process process, WorkerDAO workerDAO) {
+    public WorkersView(UriInfo uriInfo, Stage stage, WorkerDAO workerDAO) {
         super("workers.mustache");
         this.uriInfo = requireNonNull(uriInfo);
-        this.process = requireNonNull(process);
+        this.stage = requireNonNull(stage);
         this.workerDAO = requireNonNull(workerDAO);
     }
 
     @SuppressWarnings("unused")
     public String getTitle() {
-        return String.format("Workers of \"%s\"", process.getId());
+        return String.format("Workers of \"%s\"", stage.getId());
     }
 
     @SuppressWarnings("unused")
-    public Process getProcess() {
-        return process;
+    public Stage getStage() {
+        return stage;
     }
 
     @SuppressWarnings("unused")
     public int getWorkerCount() {
-        return workerDAO.count(process.getId());
+        return workerDAO.count(stage.getId());
     }
 
     @SuppressWarnings("unused")
-    public String getProcessPath() {
+    public String getStagePath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
-                path(process.getId()).
+                path(stage.getId()).
                 toString();
     }
 
@@ -65,7 +65,7 @@ public class WorkersView extends View {
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
                 path("processes").
-                path(process.getId()).
+                path(stage.getId()).
                 path("workers").
                 toString();
     }

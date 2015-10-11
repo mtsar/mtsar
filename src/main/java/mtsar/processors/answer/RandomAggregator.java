@@ -18,7 +18,7 @@ package mtsar.processors.answer;
 
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.AnswerAggregator;
@@ -31,22 +31,22 @@ import java.util.*;
 import static java.util.Objects.requireNonNull;
 
 public class RandomAggregator implements AnswerAggregator {
-    protected final Provider<Process> process;
+    protected final Provider<Stage> stage;
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public RandomAggregator(Provider<Process> processProvider, AnswerDAO answerDAO) {
-        this.process = requireNonNull(processProvider);
+    public RandomAggregator(Provider<Stage> stage, AnswerDAO answerDAO) {
+        this.stage = requireNonNull(stage);
         this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(process.get(), "the process provider should not provide null");
+        requireNonNull(stage.get(), "the stage provider should not provide null");
         final Map<Integer, AnswerAggregation> aggregations = new HashMap<>();
         for (final Task task : tasks) {
-            final List<Answer> answers = answerDAO.listForTask(task.getId(), process.get().getId());
+            final List<Answer> answers = answerDAO.listForTask(task.getId(), stage.get().getId());
             if (answers.isEmpty()) continue;
             Collections.shuffle(answers);
             aggregations.put(task.getId(), new AnswerAggregation.Builder().setTask(task).addAllAnswers(answers.get(0).getAnswers()).build());

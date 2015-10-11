@@ -22,7 +22,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Table;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -53,13 +53,13 @@ import static java.util.Objects.requireNonNull;
 public class KOSAggregator implements AnswerAggregator {
     public final static Predicate<Task> SINGLE_BINARY_TYPE = task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
 
-    private final Provider<Process> process;
+    private final Provider<Stage> stage;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public KOSAggregator(Provider<Process> process, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.process = requireNonNull(process);
+    public KOSAggregator(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this.stage = requireNonNull(stage);
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
     }
@@ -67,14 +67,14 @@ public class KOSAggregator implements AnswerAggregator {
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(process.get(), "the process provider should not provide null");
+        requireNonNull(stage.get(), "the stage provider should not provide null");
         checkArgument(tasks.stream().allMatch(SINGLE_BINARY_TYPE), "tasks should be of the type single and have only two possible answers");
         if (tasks.isEmpty()) return Collections.emptyMap();
 
-        final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
+        final List<Answer> answers = answerDAO.listForStage(stage.get().getId());
         if (answers.isEmpty()) return Collections.emptyMap();
 
-        final Map<Integer, Task> taskMap = taskDAO.listForProcess(process.get().getId()).stream().
+        final Map<Integer, Task> taskMap = taskDAO.listForStage(stage.get().getId()).stream().
                 filter(SINGLE_BINARY_TYPE).collect(Collectors.toMap(Task::getId, Function.identity()));
 
         final Map<Integer, BiMap<String, Short>> answerIndex = taskMap.values().stream().collect(Collectors.toMap(Task::getId,

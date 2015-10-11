@@ -17,7 +17,7 @@
 package mtsar.resources;
 
 import mtsar.MechanicalTsarVersion;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
@@ -37,13 +37,13 @@ import java.util.Map;
 @Produces(mtsar.MediaType.APPLICATION_JSON)
 public class MetaResource {
     protected final MechanicalTsarVersion version;
-    protected final Map<String, Process> processes;
+    protected final Map<String, Stage> processes;
     protected final TaskDAO taskDAO;
     protected final WorkerDAO workerDAO;
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public MetaResource(MechanicalTsarVersion version, @Named("processes") Map<String, Process> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public MetaResource(MechanicalTsarVersion version, @Named("stages") Map<String, Stage> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.version = version;
         this.processes = processes;
         this.taskDAO = taskDAO;

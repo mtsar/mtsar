@@ -18,7 +18,7 @@ package mtsar.processors.answer;
 
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
-import mtsar.api.Process;
+import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
@@ -41,19 +41,19 @@ import static java.util.Objects.requireNonNull;
 public class MajorityVoting implements AnswerAggregator {
     public final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
 
-    protected final Provider<Process> process;
+    protected final Provider<Stage> stage;
     protected final AnswerDAO answerDAO;
 
     @Inject
-    public MajorityVoting(Provider<Process> processProvider, AnswerDAO answerDAO) {
-        this.process = requireNonNull(processProvider);
+    public MajorityVoting(Provider<Stage> stage, AnswerDAO answerDAO) {
+        this.stage = requireNonNull(stage);
         this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Nonnull
     @Override
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(process.get(), "the process provider should not provide null");
+        requireNonNull(stage.get(), "the stage provider should not provide null");
         checkArgument(tasks.stream().allMatch(SINGLE_TYPE), "tasks should be of the type single");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
@@ -73,7 +73,7 @@ public class MajorityVoting implements AnswerAggregator {
         models.setResponseCategories(new TreeSet<>(categories));
 
         final Map<Integer, workersDataStruct<Integer, String>> workers = new HashMap<>();
-        final List<Answer> answers = answerDAO.listForProcess(process.get().getId());
+        final List<Answer> answers = answerDAO.listForStage(stage.get().getId());
         for (final Answer answer : answers) {
             if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;
             if (answer.getAnswers().isEmpty()) continue;
