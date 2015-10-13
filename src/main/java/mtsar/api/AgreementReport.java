@@ -90,8 +90,8 @@ public interface AgreementReport {
             final WeightedKappaAgreement weightedKappa = new WeightedKappaAgreement(study, new NominalDistanceFunction());
             super.setWeightedKappa(weightedKappa.calculateAgreement());
 
-            final RandolphKappaAgreement bennettS = new RandolphKappaAgreement(study);
-            super.setRandolphKappa(bennettS.calculateAgreement());
+            final RandolphKappaAgreement randolphKappa = new RandolphKappaAgreement(study);
+            super.setRandolphKappa(randolphKappa.calculateAgreement());
 
             return this;
         }
