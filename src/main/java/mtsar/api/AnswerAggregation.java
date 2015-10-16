@@ -31,6 +31,10 @@ public interface AnswerAggregation {
     String TYPE_DEFAULT = "aggregation";
     String TYPE_EMPTY = "empty";
 
+    static AnswerAggregation empty(Task task) {
+        return new Builder().setType(TYPE_EMPTY).setTask(task).build();
+    }
+
     @JsonProperty
     String getType();
 
@@ -45,9 +49,5 @@ public interface AnswerAggregation {
         public Builder() {
             setType(TYPE_DEFAULT);
         }
-    }
-
-    static AnswerAggregation empty(Task task) {
-        return new Builder().setType(TYPE_EMPTY).setTask(task).build();
     }
 }

@@ -36,6 +36,7 @@ public class MechanicalTsarVersion {
 
     /**
      * Check the availability of the actual version.
+     *
      * @return true if the version information is present in the classpath.
      */
     public boolean isAvailable() {
@@ -44,6 +45,7 @@ public class MechanicalTsarVersion {
 
     /**
      * Get the actual version.
+     *
      * @return the Mechanical Tsar version or "SNAPSHOT".
      */
     public String getVersion() {
@@ -52,8 +54,9 @@ public class MechanicalTsarVersion {
 
     /**
      * Get the actual version.
-     * @see #getVersion
+     *
      * @return the Mechanical Tsar version or "SNAPSHOT".
+     * @see #getVersion
      */
     public String toString() {
         return getVersion();

@@ -44,19 +44,18 @@ import static java.util.Objects.requireNonNull;
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>
  */
 public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
-    public static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
-        return Comparator.comparingDouble(keyExtractor).reversed();
-    }
-
     private final Provider<Stage> stage;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
-
     @Inject
     public DawidSkeneProcessor(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.stage = requireNonNull(stage);
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
+    }
+
+    public static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
+        return Comparator.comparingDouble(keyExtractor).reversed();
     }
 
     @Override

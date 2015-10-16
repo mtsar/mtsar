@@ -59,28 +59,7 @@ import static java.util.Objects.requireNonNull;
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
-    static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {
-        @Override
-        public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
-            return configuration.getDataSourceFactory();
-        }
-    }
-
-    static class ValidatorBinder extends AbstractBinder {
-        private final Environment environment;
-
-        public ValidatorBinder(Environment environment) {
-            this.environment = environment;
-        }
-
-        @Override
-        protected void configure() {
-            bind(environment.getValidator()).to(Validator.class);
-        }
-    }
-
     private final Map<String, Stage> processes = new HashMap<>();
-
     private DBI jdbi;
     private ServiceLocator locator;
 
@@ -162,5 +141,25 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         environment.jersey().register(requireNonNull(locator.getService(StageResource.class)));
 
         environment.healthChecks().register("version", requireNonNull(locator.getService(MechanicalTsarVersionHealthCheck.class)));
+    }
+
+    static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {
+        @Override
+        public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
+            return configuration.getDataSourceFactory();
+        }
+    }
+
+    static class ValidatorBinder extends AbstractBinder {
+        private final Environment environment;
+
+        public ValidatorBinder(Environment environment) {
+            this.environment = environment;
+        }
+
+        @Override
+        protected void configure() {
+            bind(environment.getValidator()).to(Validator.class);
+        }
     }
 }
