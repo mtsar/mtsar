@@ -116,7 +116,6 @@ public class WorkerResource {
     @Path("tagged/{tag}")
     public Worker getWorkerByTag(@PathParam("tag") String tag) {
         final Worker worker = workerDAO.findByTags(stage.getId(), Collections.singletonList(tag));
-        if (worker == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return worker;
     }
 
