@@ -48,7 +48,7 @@ public final class WorkerCSV {
 
         return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
             final String id = row.isSet("id") ? row.get("id") : null;
-            final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : null;
+            final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : new String[0];
             final String datetime = row.isSet("datetime") ? row.get("datetime") : null;
 
             return new Worker.Builder().

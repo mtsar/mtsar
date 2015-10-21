@@ -19,6 +19,7 @@ package mtsar.api.csv;
 import com.google.common.collect.Sets;
 import mtsar.api.Stage;
 import mtsar.api.Task;
+import mtsar.api.sql.TaskDAO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -48,10 +49,10 @@ public final class TaskCSV {
 
         return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
             final String id = row.isSet("id") ? row.get("id") : null;
-            final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : null;
+            final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : new String[0];
             final String type = row.get("type");
             final String description = row.isSet("description") ? row.get("description") : null;
-            final String[] answers = row.isSet("answers") && !StringUtils.isEmpty(row.get("answers")) ? row.get("answers").split("\\|") : null;
+            final String[] answers = row.isSet("answers") && !StringUtils.isEmpty(row.get("answers")) ? row.get("answers").split("\\|") : new String[0];
             final String datetime = row.isSet("datetime") ? row.get("datetime") : null;
 
             return new Task.Builder().
@@ -59,8 +60,8 @@ public final class TaskCSV {
                     setStage(stage.getId()).
                     addAllTags(Arrays.asList(tags)).
                     setDateTime(new Timestamp(StringUtils.isEmpty(datetime) ? System.currentTimeMillis() : Long.parseLong(datetime) * 1000L)).
-                    setType(StringUtils.defaultIfEmpty(type, null)).
-                    setDescription(StringUtils.defaultIfEmpty(description, null)).
+                    setType(StringUtils.defaultIfEmpty(type, TaskDAO.TASK_TYPE_SINGLE)).
+                    setDescription(description).
                     addAllAnswers(Arrays.asList(answers)).
                     build();
         }).iterator();
