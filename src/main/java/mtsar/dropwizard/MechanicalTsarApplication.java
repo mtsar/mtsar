@@ -49,7 +49,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.validation.Validator;
 import java.util.EnumSet;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +59,12 @@ import static java.util.Objects.requireNonNull;
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
-    private final Map<String, Stage> processes = new HashMap<>();
+    /**
+     * The application-wide map that contains stages. Since it is convenient to preserve the database
+     * row order, it is implemented as a <tt>LinkedHashMap</tt>.
+     */
+    private final Map<String, Stage> processes = new LinkedHashMap<>();
+
     private DBI jdbi;
     private ServiceLocator locator;
 
