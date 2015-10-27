@@ -25,23 +25,23 @@
     <packaging>jar</packaging>
     <name>Mechanical Tsar</name>
     <description>Mechanical Tsar is an engine for mechanized labor workflows.</description>
-    <url>https://github.com/dustalov/mtsar</url>
+    <url>https://github.com/mtsar/mtsar</url>
     <inceptionYear>2014</inceptionYear>
 
     <scm>
-        <connection>scm:git:https://github.com/dustalov/mtsar</connection>
-        <developerConnection>scm:git:ssh://git@github.com:dustalov/mtsar.git</developerConnection>
-        <url>https://github.com/dustalov/mtsar</url>
+        <connection>scm:git:https://github.com/mtsar/mtsar</connection>
+        <developerConnection>scm:git:ssh://git@github.com:mtsar/mtsar.git</developerConnection>
+        <url>https://github.com/mtsar/mtsar</url>
     </scm>
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/dustalov/mtsar/issues</url>
+        <url>https://github.com/mtsar/mtsar/issues</url>
     </issueManagement>
 
     <ciManagement>
         <system>Travis CI</system>
-        <url>https://travis-ci.org/dustalov/mtsar</url>
+        <url>https://travis-ci.org/mtsar/mtsar</url>
     </ciManagement>
 
     <developers>

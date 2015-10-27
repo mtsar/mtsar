@@ -4,18 +4,18 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 
 [![Build Status][travis_ci_badge]][travis_ci_link] [![Open Source][github_badge]][github_link] [![Docker Hub][docker_badge]][docker_link]
 
-[github_badge]: https://img.shields.io/github/license/dustalov/mtsar.svg
-[github_link]: https://github.com/dustalov/mtsar
-[travis_ci_badge]: https://travis-ci.org/dustalov/mtsar.svg
-[travis_ci_link]: https://travis-ci.org/dustalov/mtsar
+[github_badge]: https://img.shields.io/github/license/mtsar/mtsar.svg
+[github_link]: https://github.com/mtsar/mtsar
+[travis_ci_badge]: https://travis-ci.org/mtsar/mtsar.svg
+[travis_ci_link]: https://travis-ci.org/mtsar/mtsar
 [docker_badge]: https://img.shields.io/docker/pulls/mtsar/mtsar.svg
 [docker_link]: https://hub.docker.com/r/mtsar/mtsar/
 
-![Mechanical Tsar](https://raw.githubusercontent.com/wiki/dustalov/mtsar/images/Logo.png)
+![Mechanical Tsar](https://raw.githubusercontent.com/wiki/mtsar/mtsar/images/Logo.png)
 
 ## Documentation
 
-* [GitHub Wiki](https://github.com/dustalov/mtsar/wiki)
+* [GitHub Wiki](https://github.com/mtsar/mtsar/wiki)
 * [NLPub](https://nlpub.ru/Mechanical_Tsar) (in Russian)
 * Support on [NLPub Q&A](http://qa.nlpub.ru/c/mtsar) (in Russian and English)
 
