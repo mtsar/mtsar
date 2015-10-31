@@ -38,7 +38,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class TaskCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    static final String[] HEADER = {"id", "process", "datetime", "tags", "type", "description", "answers"};
+    static final String[] HEADER = {"id", "stage", "datetime", "tags", "type", "description", "answers"};
     static final Comparator<Task> ORDER = (t1, t2) -> t1.getId().compareTo(t2.getId());
 
     public static Iterator<Task> parse(Stage stage, CSVParser csv) {
@@ -71,7 +71,7 @@ public final class TaskCSV {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> tasks.stream().sorted(ORDER).map(task -> new String[]{
                     Integer.toString(task.getId()),                                 // id
-                    task.getStage(),                                                // process
+                    task.getStage(),                                                // stage
                     Long.toString(task.getDateTime().toInstant().getEpochSecond()), // datetime
                     String.join("|", task.getTags()),                               // tags
                     task.getType(),                                                 // type

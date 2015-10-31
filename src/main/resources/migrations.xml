@@ -255,4 +255,23 @@
                                  referencedTableName="processes"
                                  referencedColumnNames="id"/>
     </changeSet>
+
+    <changeSet id="7" author="dustalov">
+        <renameTable oldTableName="processes" newTableName="stages"/>
+        <renameColumn tableName="workers" oldColumnName="process" newColumnName="stage"/>
+        <renameColumn tableName="tasks" oldColumnName="process" newColumnName="stage"/>
+        <renameColumn tableName="answers" oldColumnName="process" newColumnName="stage"/>
+        <sql splitStatements="true">
+            <![CDATA[
+                ALTER TABLE workers RENAME CONSTRAINT "fk_workers_process" TO "fk_workers_stage";
+                ALTER TABLE tasks RENAME CONSTRAINT "fk_tasks_process" TO "fk_tasks_stage";
+                ALTER TABLE answers RENAME CONSTRAINT "fk_answers_process" TO "fk_answers_stage";
+            ]]>
+        </sql>
+        <dropView viewName="workers_tags"/>
+        <dropView viewName="tasks_tags"/>
+        <dropView viewName="tasks_answers"/>
+        <dropView viewName="answers_tags"/>
+        <dropView viewName="answers_answers"/>
+    </changeSet>
 </databaseChangeLog>

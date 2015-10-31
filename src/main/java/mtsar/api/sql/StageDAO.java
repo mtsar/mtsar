@@ -31,19 +31,19 @@ import java.util.List;
 
 @RegisterMapper(StageDAO.Mapper.class)
 public interface StageDAO {
-    @SqlQuery("select * from processes order by datetime")
+    @SqlQuery("select * from stages order by datetime")
     List<Stage.Definition> select();
 
-    @SqlQuery("select count(*) from processes")
+    @SqlQuery("select count(*) from stages")
     int count();
 
-    @SqlQuery("insert into processes (id, description, worker_ranker, task_allocator, answer_aggregator, options, datetime) values (:id, :description, :workerRanker, :taskAllocator, :answerAggregator, cast(:optionsJSON as jsonb), coalesce(:dateTime, localtimestamp)) returning id")
+    @SqlQuery("insert into stages (id, description, worker_ranker, task_allocator, answer_aggregator, options, datetime) values (:id, :description, :workerRanker, :taskAllocator, :answerAggregator, cast(:optionsJSON as jsonb), coalesce(:dateTime, localtimestamp)) returning id")
     String insert(@BindBean Stage.Definition t);
 
-    @SqlUpdate("delete from processes where id = :id")
+    @SqlUpdate("delete from stages where id = :id")
     void delete(@Bind("id") String id);
 
-    @SqlUpdate("delete from processes")
+    @SqlUpdate("delete from stages")
     void deleteAll();
 
     void close();
