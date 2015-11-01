@@ -20,6 +20,7 @@ import mtsar.api.*;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
+import mtsar.processors.SQUARE;
 import mtsar.processors.WorkerRanker;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.square.qa.algorithms.ZenCrowdEM;
@@ -39,9 +40,8 @@ import static java.util.Objects.requireNonNull;
  * ZenCrowd algorithm for worker ranking and answer aggregation.
  *
  * @see <a href="http://dx.doi.org/10.1007/s00778-013-0324-z">10.1007/s00778-013-0324-z</a>
- * @see <a href="http://www.aaai.org/ocs/index.php/HCOMP/HCOMP13/paper/view/7550">HCOMP13/7550</a>
  */
-public class ZenCrowd implements WorkerRanker, AnswerAggregator {
+public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
     private final Provider<Stage> stage;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
@@ -59,7 +59,9 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
         requireNonNull(stage.get(), "the stage provider should not provide null");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
-        final ZenCrowdEM<Integer, Integer, String> zenCrowd = compute(getTaskMap());
+        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage.get(), answerDAO, getTaskMap()).getZenModel();
+        final ZenCrowdEM<Integer, Integer, String> zenCrowd = new ZenCrowdEM<>(zenModel);
+        zenCrowd.computeLabelEstimates();
         final Map<Integer, AnswerAggregation> aggregations = zenCrowd.getCurrentModel().getCombinedEstLabels().entrySet().stream().
                 filter(entry -> taskIds.containsKey(entry.getKey())).
                 collect(Collectors.toMap(Map.Entry::getKey,
@@ -74,7 +76,9 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
         requireNonNull(stage.get(), "the stage provider should not provide null");
         if (workers.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Worker> workerIds = workers.stream().collect(Collectors.toMap(Worker::getId, Function.identity()));
-        final ZenCrowdEM<Integer, Integer, String> zenCrowd = compute(getTaskMap());
+        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage.get(), answerDAO, getTaskMap()).getZenModel();
+        final ZenCrowdEM<Integer, Integer, String> zenCrowd = new ZenCrowdEM<>(zenModel);
+        zenCrowd.computeLabelEstimates();
         try {
             @SuppressWarnings("unchecked") final Map<Integer, Double> reliability = (Map<Integer, Double>) FieldUtils.readField(zenCrowd, "workerReliabilityMap", true);
             final Map<Integer, WorkerRanking> rankings = reliability.entrySet().stream().
@@ -90,29 +94,5 @@ public class ZenCrowd implements WorkerRanker, AnswerAggregator {
 
     protected Map<Integer, Task> getTaskMap() {
         return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
-    }
-
-    protected ZenCrowdEM<Integer, Integer, String> compute(Map<Integer, Task> taskMap) {
-        final Models<Integer, Integer, String> models = new Models<>();
-
-        final Set<String> categories = taskMap.values().stream().flatMap(t -> t.getAnswers().stream()).collect(Collectors.toSet());
-        models.setResponseCategories(new TreeSet<>(categories));
-
-        final Map<Integer, workersDataStruct<Integer, String>> workers = new HashMap<>();
-        final List<Answer> answers = answerDAO.listForStage(stage.get().getId());
-        for (final Answer answer : answers) {
-            if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;
-            if (answer.getAnswers().isEmpty()) continue;
-            if (!workers.containsKey(answer.getWorkerId()))
-                workers.put(answer.getWorkerId(), new workersDataStruct<>());
-            final workersDataStruct<Integer, String> datum = workers.get(answer.getWorkerId());
-            datum.insertWorkerResponse(answer.getTaskId(), answer.getAnswer().get());
-        }
-        models.setWorkersMap(workers);
-
-        final ZenCrowdEM<Integer, Integer, String> zenCrowd = new ZenCrowdEM<>(models.getZenModel());
-        zenCrowd.computeLabelEstimates();
-
-        return zenCrowd;
     }
 }
