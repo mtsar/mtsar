@@ -95,7 +95,7 @@ public class InverseCountAllocator implements TaskAllocator {
 
     @RegisterMapper(CountDAO.Mapper.class)
     public interface CountDAO {
-        @SqlQuery("select tasks.id, count(answers.id) from tasks left join answers on answers.task_id = tasks.id and answers.process = tasks.process and answers.type <> 'skip' where tasks.process = :stage group by tasks.id")
+        @SqlQuery("select tasks.id, count(answers.id) from tasks left join answers on answers.task_id = tasks.id and answers.stage = tasks.stage and answers.type <> 'skip' where tasks.stage = :stage group by tasks.id")
         List<Pair<Integer, Integer>> getCountsSQL(@Bind("stage") String stage);
 
         class Mapper implements ResultSetMapper<Pair> {
