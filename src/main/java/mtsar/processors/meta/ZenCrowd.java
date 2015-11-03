@@ -25,12 +25,13 @@ import mtsar.processors.WorkerRanker;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.square.qa.algorithms.ZenCrowdEM;
 import org.square.qa.utilities.constructs.Models;
-import org.square.qa.utilities.constructs.workersDataStruct;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
