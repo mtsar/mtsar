@@ -139,7 +139,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
+            <version>1.7.13</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -159,7 +159,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4-1205-jdbc42</version>
+            <version>9.4-1206-jdbc42</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -215,7 +215,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
-            <version>4.4.0</version>
+            <version>4.5.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>
