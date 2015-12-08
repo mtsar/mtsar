@@ -71,7 +71,7 @@ public interface TaskDAO {
     @BatchChunkSize(1000)
     void insert(@BindBean Iterator<Task> tasks);
 
-    @SqlUpdate("delete from tasks where id = :id and stage = :stage")
+    @SqlUpdate("begin transaction; delete from answers where task_id = :id and stage = :stage; delete from tasks where id = :id and stage = :stage; commit")
     void delete(@Bind("id") Integer id, @Bind("stage") String stage);
 
     @SqlUpdate("delete from tasks where stage = :stage")

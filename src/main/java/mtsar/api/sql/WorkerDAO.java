@@ -56,7 +56,7 @@ public interface WorkerDAO {
     @SqlQuery("select count(*) from workers where stage = :stage")
     int count(@Bind("stage") String stage);
 
-    @SqlUpdate("delete from workers where where id = :id and stage = :stage")
+    @SqlUpdate("begin transaction; delete from answers where worker_id = :id and stage = :stage; delete from workers where id = :id and stage = :stage; commit")
     void delete(@Bind("id") Integer id, @Bind("stage") String stage);
 
     @SqlUpdate("delete from workers where stage = :stage")

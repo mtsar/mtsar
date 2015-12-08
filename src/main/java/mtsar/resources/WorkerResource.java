@@ -215,7 +215,7 @@ public class WorkerResource {
     }
 
     @DELETE
-    public void deleteTasks() {
+    public void deleteWorkers() {
         workerDAO.deleteAll(stage.getId());
         workerDAO.resetSequence();
     }
