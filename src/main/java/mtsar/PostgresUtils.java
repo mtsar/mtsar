@@ -19,7 +19,7 @@ package mtsar;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.postgresql.jdbc2.AbstractJdbc2Array;
+import org.postgresql.jdbc.PgArray;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class PostgresUtils {
             if (i > 0) sb.append(',');
             final String element = elements[i];
             if (element != null) {
-                AbstractJdbc2Array.escapeArrayElement(sb, element);
+                PgArray.escapeArrayElement(sb, element);
             } else {
                 sb.append("NULL");
             }
