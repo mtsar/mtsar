@@ -209,7 +209,7 @@
         <dependency>
             <groupId>org.inferred</groupId>
             <artifactId>freebuilder</artifactId>
-            <version>1.5</version>
+            <version>1.6</version>
             <optional>true</optional>
         </dependency>
         <dependency>
