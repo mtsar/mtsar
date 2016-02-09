@@ -57,6 +57,6 @@ This work is partially supported by the Russian Foundation for the Humanities, p
 
 ## Copyright
 
-Copyright (c) 2014-2015 [Dmitry Ustalov]. See LICENSE for details.
+Copyright (c) 2014-2016 [Dmitry Ustalov]. See LICENSE for details.
 
 [Dmitry Ustalov]: https://ustalov.name/
