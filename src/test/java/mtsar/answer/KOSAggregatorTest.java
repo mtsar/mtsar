@@ -56,8 +56,8 @@ public class KOSAggregatorTest {
         when(answerDAO.listForStage(anyString())).thenReturn(Arrays.asList(
                 new Answer.Builder().setWorkerId(1).setTaskId(1).addAnswers("1").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(1).addAnswers("1").buildPartial(),
-                new Answer.Builder().setWorkerId(3).setTaskId(1).addAnswers("2").buildPartial(),
-                new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("1").buildPartial(),
+                new Answer.Builder().setWorkerId(3).setTaskId(1).addAnswers("1").buildPartial(),
+                new Answer.Builder().setWorkerId(1).setTaskId(2).addAnswers("2").buildPartial(),
                 new Answer.Builder().setWorkerId(2).setTaskId(2).addAnswers("2").buildPartial(),
                 new Answer.Builder().setWorkerId(3).setTaskId(2).addAnswers("2").buildPartial()
         ));
