@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mtsar;
+package mtsar.util;
 
 public final class MediaType {
     public final static String APPLICATION_JSON = javax.ws.rs.core.MediaType.APPLICATION_JSON + "; charset=UTF-8";

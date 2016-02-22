@@ -16,6 +16,7 @@
 
 package mtsar;
 
+import mtsar.util.ParamsUtils;
 import org.junit.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;

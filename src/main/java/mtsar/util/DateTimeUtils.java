@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package mtsar;
+package mtsar.util;
 
 import javax.annotation.Nonnull;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public final class DefaultDateTime {
+public final class DateTimeUtils {
     @Nonnull
-    public static Timestamp get() {
+    public static Timestamp now() {
         return Timestamp.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant());
     }
 }

@@ -29,6 +29,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Path("/answers")
-@Produces(mtsar.MediaType.APPLICATION_JSON)
+@Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class AnswerResource {
     protected final Stage stage;
     protected final TaskDAO taskDAO;
@@ -86,7 +87,7 @@ public class AnswerResource {
 
     @GET
     @Path("aggregations.csv")
-    @Produces(mtsar.MediaType.TEXT_CSV)
+    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getAnswerAggregationsCSV() {
         final Map<Integer, AnswerAggregation> aggregations = getAnswerAggregations();
         return output -> AnswerAggregationCSV.write(aggregations.values(), output);

@@ -42,7 +42,7 @@ import java.util.Map;
 
 @Singleton
 @Path("/processes")
-@Produces(mtsar.MediaType.APPLICATION_JSON)
+@Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class StageResource {
     protected final Map<String, Stage> stages;
     protected final TaskDAO taskDAO;
@@ -88,7 +88,7 @@ public class StageResource {
 
     @GET
     @Path("{stage}/workers.csv")
-    @Produces(mtsar.MediaType.TEXT_CSV)
+    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getWorkersCSV(@PathParam("stage") String id) {
         final List<Worker> workers = workerDAO.listForStage(fetchStage(id).getId());
         return output -> WorkerCSV.write(workers, output);
@@ -101,7 +101,7 @@ public class StageResource {
 
     @GET
     @Path("{stage}/tasks.csv")
-    @Produces(mtsar.MediaType.TEXT_CSV)
+    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getTasksCSV(@PathParam("stage") String id) {
         final List<Task> tasks = taskDAO.listForStage(fetchStage(id).getId());
         return output -> TaskCSV.write(tasks, output);
@@ -114,7 +114,7 @@ public class StageResource {
 
     @GET
     @Path("{stage}/answers.csv")
-    @Produces(mtsar.MediaType.TEXT_CSV)
+    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getAnswersCSV(@PathParam("stage") String id) {
         final List<Answer> answers = answerDAO.listForStage(fetchStage(id).getId());
         return output -> AnswerCSV.write(answers, output);

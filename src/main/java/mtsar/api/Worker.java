@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import mtsar.DefaultDateTime;
-import mtsar.PostgresUtils;
+import mtsar.util.DateTimeUtils;
+import mtsar.util.PostgresUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public interface Worker {
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends Worker_Builder {
         public Builder() {
-            setDateTime(DefaultDateTime.get());
+            setDateTime(DateTimeUtils.now());
         }
 
         public Builder setMetadata(String json) {

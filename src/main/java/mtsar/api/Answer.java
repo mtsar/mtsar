@@ -20,8 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import mtsar.DefaultDateTime;
-import mtsar.PostgresUtils;
+import mtsar.util.DateTimeUtils;
+import mtsar.util.PostgresUtils;
 import mtsar.api.sql.AnswerDAO;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -82,7 +82,7 @@ public interface Answer {
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends Answer_Builder {
         public Builder() {
-            setDateTime(DefaultDateTime.get());
+            setDateTime(DateTimeUtils.now());
             setType(AnswerDAO.ANSWER_TYPE_DEFAULT);
         }
 

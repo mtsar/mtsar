@@ -17,8 +17,8 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.DefaultDateTime;
-import mtsar.ParamsUtils;
+import mtsar.util.*;
+import mtsar.util.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.csv.WorkerCSV;
 import mtsar.api.csv.WorkerRankingCSV;
@@ -37,6 +37,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,7 +49,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Path("/workers")
-@Produces(mtsar.MediaType.APPLICATION_JSON)
+@Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class WorkerResource {
     protected final Stage stage;
     protected final TaskDAO taskDAO;
@@ -75,7 +76,7 @@ public class WorkerResource {
 
     @GET
     @Path("rankings.csv")
-    @Produces(mtsar.MediaType.TEXT_CSV)
+    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getWorkerRankingsCSV() {
         final List<Worker> workers = workerDAO.listForStage(stage.getId());
         final Map<Integer, WorkerRanking> rankings = stage.getWorkerRanker().rank(workers);
@@ -166,7 +167,7 @@ public class WorkerResource {
     @Path("{worker}/answers")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response postAnswers(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("worker") Integer id, @FormParam("type") @DefaultValue(AnswerDAO.ANSWER_TYPE_DEFAULT) String type, @FormParam("tags") List<String> tags, @FormParam("datetime") String datetimeParam, MultivaluedMap<String, String> params) {
-        final Timestamp datetime = (datetimeParam == null) ? DefaultDateTime.get() : Timestamp.valueOf(datetimeParam);
+        final Timestamp datetime = (datetimeParam == null) ? DateTimeUtils.now() : Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(id);
         final Map<String, List<String>> nested = ParamsUtils.nested(params, "answers");
 

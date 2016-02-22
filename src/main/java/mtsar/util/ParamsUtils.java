@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mtsar;
+package mtsar.util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

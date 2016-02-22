@@ -34,7 +34,7 @@ import java.util.Map;
 
 @Singleton
 @Path("/")
-@Produces(mtsar.MediaType.APPLICATION_JSON)
+@Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class MetaResource {
     protected final MechanicalTsarVersion version;
     protected final Map<String, Stage> processes;
@@ -59,7 +59,7 @@ public class MetaResource {
 
     @GET
     @Path("version")
-    @Produces({MediaType.TEXT_PLAIN, mtsar.MediaType.APPLICATION_JSON})
+    @Produces({MediaType.TEXT_PLAIN, mtsar.util.MediaType.APPLICATION_JSON})
     public String getVersion() {
         return version.getVersion();
     }
