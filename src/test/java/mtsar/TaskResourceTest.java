@@ -26,7 +26,11 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Response;
+
 import static mtsar.TestHelper.fixture;
+import static mtsar.TestHelper.params;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -55,5 +59,18 @@ public class TaskResourceTest {
                 .get(Task.class))
                 .isEqualTo(task);
         verify(dao).find(1, "1");
+    }
+
+    @Test
+    public void testPostTask() {
+        reset(dao);
+        when(dao.insert(any(Task.class))).then((invocation) -> {
+            final Task task = new Task.Builder().mergeFrom(invocation.getArgumentAt(0, Task.class)).setId(2).build();
+            when(dao.find(eq(task.getId()), eq(task.getStage()))).thenReturn(task);
+            return task.getId();
+        });
+        assertThat(RULE.getJerseyTest().target("/tasks").request()
+                .post(Entity.form(params(task))).getStatusInfo())
+                .isEqualTo(Response.Status.CREATED);
     }
 }
