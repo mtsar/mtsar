@@ -17,7 +17,6 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.util.ParamsUtils;
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Stage;
@@ -31,8 +30,10 @@ import org.apache.commons.csv.CSVParser;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,10 +71,7 @@ public class TaskResource {
     }
 
     @POST
-    public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("description") String description, MultivaluedMap<String, String> params) {
-        final List<String> tags = ParamsUtils.extract(params, "tags");
-        final List<String> answers = ParamsUtils.extract(params, "answers");
-
+    public Response postTask(@Context UriInfo uriInfo, @FormParam("type") @DefaultValue("single") String type, @FormParam("tags") List<String> tags, @FormParam("description") String description, @FormParam("answers") List<String> answers) {
         int taskId = taskDAO.insert(new Task.Builder().
                 addAllTags(tags).
                 setType(type).

@@ -17,8 +17,6 @@
 package mtsar.resources;
 
 import io.dropwizard.jersey.PATCH;
-import mtsar.util.*;
-import mtsar.util.ParamsUtils;
 import mtsar.api.*;
 import mtsar.api.csv.WorkerCSV;
 import mtsar.api.csv.WorkerRankingCSV;
@@ -27,6 +25,8 @@ import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 import mtsar.api.validation.AnswerValidation;
 import mtsar.api.validation.TaskAnswerValidation;
+import mtsar.util.DateTimeUtils;
+import mtsar.util.ParamsUtils;
 import mtsar.views.WorkersView;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,7 +37,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -105,9 +104,7 @@ public class WorkerResource {
     }
 
     @POST
-    public Response postWorker(@Context UriInfo uriInfo, MultivaluedMap<String, String> params) {
-        final List<String> tags = ParamsUtils.extract(params, "tags");
-
+    public Response postWorker(@Context UriInfo uriInfo, @FormParam("tags") List<String> tags) {
         int workerId = workerDAO.insert(new Worker.Builder().
                 setStage(stage.getId()).
                 addAllTags(tags).
