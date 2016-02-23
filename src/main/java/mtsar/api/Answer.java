@@ -20,9 +20,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import mtsar.api.sql.AnswerDAO;
 import mtsar.util.DateTimeUtils;
 import mtsar.util.PostgresUtils;
-import mtsar.api.sql.AnswerDAO;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.annotation.Nullable;
