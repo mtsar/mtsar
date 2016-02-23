@@ -75,7 +75,6 @@ public class WorkerResource {
 
     @GET
     @Path("rankings")
-    @Produces(mtsar.util.MediaType.TEXT_CSV)
     public Map<Integer, WorkerRanking> getWorkerRankings() {
         final List<Worker> workers = workerDAO.listForStage(stage.getId());
         final Map<Integer, WorkerRanking> rankings = stage.getWorkerRanker().rank(workers);
