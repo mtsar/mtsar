@@ -94,7 +94,7 @@ public class AnswerResource {
 
     @GET
     @Path("agreement")
-    public AgreementReport getAgreement() {
+    public AgreementReport getAgreementReport() {
         return new AgreementReport.Builder().compute(stage, answerDAO).build();
     }
 
