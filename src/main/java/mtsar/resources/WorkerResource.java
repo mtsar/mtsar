@@ -201,8 +201,8 @@ public class WorkerResource {
         final Set<ConstraintViolation<Object>> violations = answers.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
 
-        int modified[] = answerDAO.insert(answers.keySet().iterator());
-        return Response.ok(modified).build();
+        answerDAO.insert(answers.keySet().iterator());
+        return Response.ok(answers.keySet()).build();
     }
 
     @PATCH
