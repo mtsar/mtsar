@@ -35,6 +35,7 @@ import java.util.List;
 public interface AnswerDAO {
     String ANSWER_TYPE_ANSWER = "answer";
     String ANSWER_TYPE_DEFAULT = ANSWER_TYPE_ANSWER;
+    String ANSWER_TYPE_SKIP = "skip";
 
     @SqlQuery("select * from answers where stage = :stage")
     List<Answer> listForStage(@Bind("stage") String stage);

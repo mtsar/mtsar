@@ -206,6 +206,32 @@ public class WorkerResource {
     }
 
     @PATCH
+    @Path("{worker}/answers/skip")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    public Response postAnswersSkip(@Context Validator validator, @Context UriInfo uriInfo, @PathParam("worker") Integer id, @FormParam("tags") List<String> tags, @FormParam("datetime") String datetimeParam, @FormParam("tasks") List<Integer> tasks) {
+        final Timestamp datetime = (datetimeParam == null) ? DateTimeUtils.now() : Timestamp.valueOf(datetimeParam);
+        final Worker worker = fetchWorker(id);
+
+        final List<Answer> answers = tasks.stream().map(taskId -> {
+            final Task task = fetchTask(taskId);
+
+            final Answer answer = new Answer.Builder().
+                    setStage(stage.getId()).
+                    addAllTags(tags).
+                    setType(AnswerDAO.ANSWER_TYPE_SKIP).
+                    setTaskId(task.getId()).
+                    setWorkerId(worker.getId()).
+                    setDateTime(datetime).
+                    build();
+
+            return answer;
+        }).collect(Collectors.toList());
+
+        answerDAO.insert(answers.iterator());
+        return Response.ok(answers).build();
+    }
+
+    @PATCH
     @Path("{worker}")
     public Worker patchWorker(@PathParam("worker") Integer id) {
         final Worker worker = fetchWorker(id);

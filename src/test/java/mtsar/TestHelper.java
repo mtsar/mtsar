@@ -42,6 +42,14 @@ public final class TestHelper {
         }
     }
 
+    public static <T> T fixture(String filename, TypeReference valueType) {
+        try {
+            return JSON.readValue(FixtureHelpers.fixture("fixtures/" + filename), valueType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T> MultivaluedMap<String, String> params(@Nonnull T object) {
         final MultivaluedMap<String, String> params = new MultivaluedHashMap<>();
         final Map<String, Object> attributes = JSON.convertValue(object, MAP_STRING_TO_OBJECT);
