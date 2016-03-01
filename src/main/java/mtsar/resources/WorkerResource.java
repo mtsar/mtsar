@@ -236,7 +236,7 @@ public class WorkerResource {
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
 
         answerDAO.insert(answers.keySet().iterator());
-        return Response.ok(answers).build();
+        return Response.ok(answers.keySet()).build();
     }
 
     @PATCH
