@@ -212,7 +212,7 @@ public class WorkerResource {
         final Timestamp datetime = (datetimeParam == null) ? DateTimeUtils.now() : Timestamp.valueOf(datetimeParam);
         final Worker worker = fetchWorker(id);
 
-        final List<Answer> answers = tasks.stream().map(taskId -> {
+        final Map<Answer, Set<ConstraintViolation<Object>>> answers = tasks.stream().map(taskId -> {
             final Task task = fetchTask(taskId);
 
             final Answer answer = new Answer.Builder().
@@ -224,10 +224,18 @@ public class WorkerResource {
                     setDateTime(datetime).
                     build();
 
-            return answer;
-        }).collect(Collectors.toList());
+            /* Since we are skipping the task, the only constraint we need is #answer-duplicate. */
+            final Set<ConstraintViolation<Object>> violations = ParamsUtils.validate(validator,
+                    new AnswerValidation.Builder().setAnswer(answer).setAnswerDAO(answerDAO).build()
+            );
 
-        answerDAO.insert(answers.iterator());
+            return Pair.of(answer, violations);
+        }).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+
+        final Set<ConstraintViolation<Object>> violations = answers.values().stream().flatMap(Set::stream).collect(Collectors.toSet());
+        if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
+
+        answerDAO.insert(answers.keySet().iterator());
         return Response.ok(answers).build();
     }
 
