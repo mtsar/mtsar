@@ -62,7 +62,7 @@ public final class ParamsUtils {
 
         final List<String> values = params.entrySet().stream().
                 filter(entries -> entries.getKey().matches(regexp) && entries.getValue() != null && !entries.getValue().isEmpty()).
-                flatMap(entries -> entries.getValue().stream().filter(value -> !value.isEmpty())).
+                flatMap(entries -> entries.getValue().stream().filter(value -> value != null && !value.isEmpty())).
                 collect(Collectors.toList());
 
         return values;
