@@ -27,8 +27,10 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapper(AnswerDAO.Mapper.class)
@@ -57,7 +59,14 @@ public interface AnswerDAO {
 
     @SqlBatch("insert into answers (id, stage, datetime, tags, type, worker_id, task_id, answers) values (coalesce(:id, nextval('answers_id_seq')), :stage, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]), cast(:type as answer_type), :workerId, :taskId, cast(:answersTextArray as text[]))")
     @BatchChunkSize(1000)
-    int[] insert(@BindBean Iterator<Answer> tasks);
+    int[] insert(@BindBean Iterator<Answer> answers);
+
+    /*
+     * This is a slow method for inserting the given collection of answers and returning all the inserted objects.
+     */
+    static List<Answer> insert(AnswerDAO dao, Collection<Answer> answers) {
+        return answers.stream().map(answer -> dao.find(dao.insert(answer), answer.getStage())).collect(Collectors.toList());
+    }
 
     @SqlQuery("select count(*) from answers")
     int count();
