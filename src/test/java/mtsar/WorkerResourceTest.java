@@ -42,9 +42,9 @@ import java.util.Map;
 
 import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WorkerResourceTest {
     public static final GenericType<List<Answer>> LIST_ANSWER = new GenericType<List<Answer>>() {
@@ -74,6 +74,12 @@ public class WorkerResourceTest {
 
     @Test
     public void testSkipAnswer() {
+        reset(answerDAO);
+        when(answerDAO.insert(any(Answer.class))).then((invocation) -> {
+            final Answer answer = new Answer.Builder().mergeFrom(invocation.getArgumentAt(0, Answer.class)).setId(1).build();
+            when(answerDAO.find(eq(answer.getId()), eq(answer.getStage()))).thenReturn(answer);
+            return answer.getId();
+        });
         final Map<String, String> fixture = fixture("answers1skip.json", PostgresUtils.MAP_STRING_TO_STRING);
         final MultivaluedMap<String, String> entity = new MultivaluedHashMap<>(fixture);
         final Response response = RULE.getJerseyTest().target("/workers/1/answers/skip").request()
