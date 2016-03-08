@@ -53,7 +53,10 @@ If you publish work that uses Mechanical Tsar, please cite it as follows.
 
 ## Acknowledgements
 
-This work is partially supported by the Russian Foundation for the Humanities, project № 13-04-12020 “New Open Electronic Thesaurus for Russian”.
+The corresponding studies are partially supported by the following organizations:
+
+* Russian Foundation for Basic Research, project № 16-37-00354 мол_а “Adaptive Crowdsourcing Methods for Linguistic Resources”.
+* Russian Foundation for the Humanities, project № 13-04-12020 “New Open Electronic Thesaurus for Russian”.
 
 ## Copyright
 
