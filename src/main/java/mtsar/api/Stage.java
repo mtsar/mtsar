@@ -37,10 +37,10 @@ import static java.util.Objects.requireNonNull;
 @Singleton
 @XmlRootElement
 public class Stage {
-    protected final Definition definition;
-    protected final WorkerRanker workerRanker;
-    protected final TaskAllocator taskAllocator;
-    protected final AnswerAggregator answerAggregator;
+    private final Definition definition;
+    private final WorkerRanker workerRanker;
+    private final TaskAllocator taskAllocator;
+    private final AnswerAggregator answerAggregator;
 
     @Inject
     public Stage(Definition definition, WorkerRanker workerRanker, TaskAllocator taskAllocator, AnswerAggregator answerAggregator) {

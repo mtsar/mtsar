@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class FixedNumberAllocator extends InverseCountAllocator {
-    private Integer answersPerTask = null;
+    protected Integer answersPerTask = null;
 
     @Inject
     public FixedNumberAllocator(Provider<Stage> stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {

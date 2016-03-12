@@ -44,7 +44,7 @@ public final class ParamsUtils {
         final Pattern pattern = Pattern.compile("^(" + Pattern.quote(prefix) + "\\[(\\w+?)\\])(\\[\\d+\\]|)$");
 
         final Map<String, Matcher> prefixes = params.keySet().stream().
-                map(param -> pattern.matcher(param)).
+                map(pattern::matcher).
                 filter(Matcher::matches).
                 collect(Collectors.toMap(matcher -> matcher.group(1), Function.identity(), (m1, m2) -> m1));
 

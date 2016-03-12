@@ -104,7 +104,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new AboutCommand(this));
     }
 
-    public void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
+    private void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
         synchronized (processes) {
             if (jdbi == null)
                 jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
@@ -148,7 +148,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         environment.healthChecks().register("version", requireNonNull(locator.getService(MechanicalTsarVersionHealthCheck.class)));
     }
 
-    static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {
+    private static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {
         @Override
         public DataSourceFactory getDataSourceFactory(MechanicalTsarConfiguration configuration) {
             return configuration.getDataSourceFactory();

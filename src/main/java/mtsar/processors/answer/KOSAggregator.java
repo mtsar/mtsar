@@ -51,11 +51,10 @@ import static java.util.Objects.requireNonNull;
  * @see MajorityVoting
  */
 public class KOSAggregator implements AnswerAggregator {
-    public final static Predicate<Task> SINGLE_BINARY_TYPE = task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
-
-    private final Provider<Stage> stage;
-    private final TaskDAO taskDAO;
-    private final AnswerDAO answerDAO;
+    protected final static Predicate<Task> SINGLE_BINARY_TYPE = task -> task.getAnswers().size() == 2 && task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
+    protected final Provider<Stage> stage;
+    protected final TaskDAO taskDAO;
+    protected final AnswerDAO answerDAO;
 
     @Inject
     public KOSAggregator(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
@@ -103,7 +102,7 @@ public class KOSAggregator implements AnswerAggregator {
         ));
     }
 
-    protected Map<Integer, Double> converge(Table<Integer, Integer, Short> graph, int kMax) {
+    private Map<Integer, Double> converge(Table<Integer, Integer, Short> graph, int kMax) {
         final RealDistribution distribution = new NormalDistribution(1, 1);
 
         Table<Integer, Integer, Double> ys = HashBasedTable.create(graph.rowKeySet().size(), graph.columnKeySet().size());
@@ -133,7 +132,7 @@ public class KOSAggregator implements AnswerAggregator {
         return estimations;
     }
 
-    protected Table<Integer, Integer, Double> tasksUpdate(Table<Integer, Integer, Short> graph, Table<Integer, Integer, Double> ys) {
+    private Table<Integer, Integer, Double> tasksUpdate(Table<Integer, Integer, Short> graph, Table<Integer, Integer, Double> ys) {
         final Table<Integer, Integer, Double> xs = HashBasedTable.create(graph.rowKeySet().size(), graph.columnKeySet().size());
 
         for (final Table.Cell<Integer, Integer, Short> cell : graph.cellSet()) {
@@ -153,7 +152,7 @@ public class KOSAggregator implements AnswerAggregator {
         return xs;
     }
 
-    protected Table<Integer, Integer, Double> workersUpdate(Table<Integer, Integer, Short> graph, Table<Integer, Integer, Double> xs) {
+    private Table<Integer, Integer, Double> workersUpdate(Table<Integer, Integer, Short> graph, Table<Integer, Integer, Double> xs) {
         final Table<Integer, Integer, Double> ys = HashBasedTable.create(graph.rowKeySet().size(), graph.columnKeySet().size());
 
         for (final Table.Cell<Integer, Integer, Short> cell : graph.cellSet()) {

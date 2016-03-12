@@ -36,11 +36,11 @@ import java.util.Map;
 @Path("/")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class MetaResource {
-    protected final MechanicalTsarVersion version;
-    protected final Map<String, Stage> processes;
-    protected final TaskDAO taskDAO;
-    protected final WorkerDAO workerDAO;
-    protected final AnswerDAO answerDAO;
+    private final MechanicalTsarVersion version;
+    private final Map<String, Stage> processes;
+    private final TaskDAO taskDAO;
+    private final WorkerDAO workerDAO;
+    private final AnswerDAO answerDAO;
 
     @Inject
     public MetaResource(MechanicalTsarVersion version, @Named("stages") Map<String, Stage> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {

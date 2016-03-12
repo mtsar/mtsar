@@ -42,12 +42,10 @@ import java.util.Map;
 
 import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 public class WorkerResourceTest {
-    public static final GenericType<List<Answer>> LIST_ANSWER = new GenericType<List<Answer>>() {
+    private static final GenericType<List<Answer>> LIST_ANSWER = new GenericType<List<Answer>>() {
     };
 
     private static final TaskDAO taskDAO = mock(TaskDAO.class);

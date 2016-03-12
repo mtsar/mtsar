@@ -89,6 +89,7 @@ public interface AnswerDAO {
     void close();
 
     class Mapper implements ResultSetMapper<Answer> {
+        @Override
         public Answer map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             return new Answer.Builder().
                     setId(r.getInt("id")).

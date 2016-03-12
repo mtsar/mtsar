@@ -93,7 +93,7 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
         }
     }
 
-    protected Map<Integer, Task> getTaskMap() {
+    private Map<Integer, Task> getTaskMap() {
         return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 }

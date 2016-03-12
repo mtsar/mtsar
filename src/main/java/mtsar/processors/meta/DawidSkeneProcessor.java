@@ -44,9 +44,10 @@ import static java.util.Objects.requireNonNull;
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>
  */
 public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
-    private final Provider<Stage> stage;
-    private final TaskDAO taskDAO;
-    private final AnswerDAO answerDAO;
+    protected final Provider<Stage> stage;
+    protected final TaskDAO taskDAO;
+    protected final AnswerDAO answerDAO;
+
     @Inject
     public DawidSkeneProcessor(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.stage = requireNonNull(stage);
@@ -54,7 +55,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
         this.answerDAO = requireNonNull(answerDAO);
     }
 
-    public static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
+    private static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
         return Comparator.comparingDouble(keyExtractor).reversed();
     }
 
@@ -94,13 +95,13 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
         return rankings;
     }
 
-    protected Map<Integer, Task> getTaskMap() {
+    private Map<Integer, Task> getTaskMap() {
         return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 
-    protected DawidSkene compute(Map<Integer, Task> taskMap) {
+    private DawidSkene compute(Map<Integer, Task> taskMap) {
         final Set<Category> categories = taskMap.values().stream().
-                flatMap(task -> task.getAnswers().stream().map(answer -> new Category(answer))).
+                flatMap(task -> task.getAnswers().stream().map(Category::new)).
                 collect(Collectors.toSet());
 
         final DawidSkene ds = new DawidSkene(categories);

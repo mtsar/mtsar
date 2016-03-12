@@ -45,7 +45,7 @@ public class DashboardView extends View {
         this.answerDAO = requireNonNull(answerDAO);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "SameReturnValue"})
     public String getTitle() {
         return "Dashboard";
     }

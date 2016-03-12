@@ -73,8 +73,7 @@ a, a:visited, a:hover, a:active {
 }
 
 #navigation {
-    margin: 0 auto;
-    margin-top: 3em;
+    margin: 3em auto 0;
     max-width: 960px;
 }
 

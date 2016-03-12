@@ -50,10 +50,10 @@ import java.util.stream.Collectors;
 @Path("/workers")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class WorkerResource {
-    protected final Stage stage;
-    protected final TaskDAO taskDAO;
-    protected final WorkerDAO workerDAO;
-    protected final AnswerDAO answerDAO;
+    private final Stage stage;
+    private final TaskDAO taskDAO;
+    private final WorkerDAO workerDAO;
+    private final AnswerDAO answerDAO;
 
     public WorkerResource(Stage stage, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.stage = stage;
@@ -142,7 +142,7 @@ public class WorkerResource {
     @Path("{worker}/tasks")
     public TaskAllocation getWorkerTaskAgain(@PathParam("worker") Integer id, @QueryParam("task_id") List<Integer> taskIds) {
         final Worker worker = fetchWorker(id);
-        final List<Task> tasks = taskIds.stream().map(taskId -> fetchTask(taskId)).collect(Collectors.toList());
+        final List<Task> tasks = taskIds.stream().map(this::fetchTask).collect(Collectors.toList());
         final Optional<TaskAllocation> optional = stage.getTaskAllocator().allocate(worker);
 
         if (optional.isPresent()) {

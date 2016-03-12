@@ -28,9 +28,9 @@ import java.util.Collection;
 import java.util.Comparator;
 
 public class WorkerRankingCSV {
-    public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    static final String[] HEADER = {"worker_id", "reputation"};
-    static final Comparator<WorkerRanking> ORDER = (r1, r2) -> r1.getWorker().getId().compareTo(r2.getWorker().getId());
+    private static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
+    private static final String[] HEADER = {"worker_id", "reputation"};
+    private static final Comparator<WorkerRanking> ORDER = (r1, r2) -> r1.getWorker().getId().compareTo(r2.getWorker().getId());
 
     public static void write(Collection<WorkerRanking> rankings, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {

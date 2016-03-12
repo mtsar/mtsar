@@ -56,7 +56,8 @@ public interface WorkerDAO {
     @SqlQuery("select count(*) from workers where stage = :stage")
     int count(@Bind("stage") String stage);
 
-    @SqlUpdate("begin transaction; delete from answers where worker_id = :id and stage = :stage; delete from workers where id = :id and stage = :stage; commit")
+    @Transaction
+    @SqlUpdate("delete from answers where worker_id = :id and stage = :stage; delete from workers where id = :id and stage = :stage")
     void delete(@Bind("id") Integer id, @Bind("stage") String stage);
 
     @SqlUpdate("delete from workers where stage = :stage")
@@ -71,6 +72,7 @@ public interface WorkerDAO {
     void close();
 
     class Mapper implements ResultSetMapper<Worker> {
+        @Override
         public Worker map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             return new Worker.Builder().
                     setId(r.getInt("id")).

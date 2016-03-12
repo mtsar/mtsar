@@ -38,8 +38,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class TaskCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    static final String[] HEADER = {"id", "stage", "datetime", "tags", "type", "description", "answers"};
-    static final Comparator<Task> ORDER = (t1, t2) -> t1.getId().compareTo(t2.getId());
+    private static final String[] HEADER = {"id", "stage", "datetime", "tags", "type", "description", "answers"};
+    private static final Comparator<Task> ORDER = (t1, t2) -> t1.getId().compareTo(t2.getId());
 
     public static Iterator<Task> parse(Stage stage, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();

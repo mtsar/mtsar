@@ -35,7 +35,7 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 
 public class ApplicationBinder extends AbstractBinder {
-    public final static TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
+    private final static TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
     };
 
     private final DBI jdbi;

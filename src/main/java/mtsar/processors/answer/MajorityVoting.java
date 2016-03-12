@@ -40,8 +40,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 public class MajorityVoting extends SQUARE implements AnswerAggregator {
-    public final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
-
+    protected final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
     protected final Provider<Stage> stage;
     protected final AnswerDAO answerDAO;
 

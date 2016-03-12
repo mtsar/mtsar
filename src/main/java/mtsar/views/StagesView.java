@@ -44,7 +44,7 @@ public class StagesView extends View {
         this.answerDAO = requireNonNull(answerDAO);
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "SameReturnValue"})
     public String getTitle() {
         return "Stages";
     }
@@ -56,16 +56,16 @@ public class StagesView extends View {
 
     @SuppressWarnings("unused")
     public Function<String, Integer> getWorkerCount() {
-        return id -> workerDAO.count(id);
+        return workerDAO::count;
     }
 
     @SuppressWarnings("unused")
     public Function<String, Integer> getTaskCount() {
-        return id -> taskDAO.count(id);
+        return taskDAO::count;
     }
 
     @SuppressWarnings("unused")
     public Function<String, Integer> getAnswerCount() {
-        return id -> answerDAO.count(id);
+        return answerDAO::count;
     }
 }

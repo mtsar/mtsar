@@ -37,8 +37,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public final class WorkerCSV {
     public static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    static final String[] HEADER = {"id", "stage", "datetime", "tags"};
-    static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
+    private static final String[] HEADER = {"id", "stage", "datetime", "tags"};
+    private static final Comparator<Worker> ORDER = (w1, w2) -> w1.getId().compareTo(w2.getId());
 
     public static Iterator<Worker> parse(Stage stage, CSVParser csv) {
         final Set<String> header = csv.getHeaderMap().keySet();

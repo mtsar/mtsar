@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class InverseCountAllocator implements TaskAllocator {
-    public static final Comparator<Triple<Integer, Integer, Double>> INVERSE_COUNT = Comparator.comparing(Triple<Integer, Integer, Double>::getMiddle).thenComparing(Triple::getRight);
+    protected static final Comparator<Triple<Integer, Integer, Double>> INVERSE_COUNT = Comparator.comparing(Triple<Integer, Integer, Double>::getMiddle).thenComparing(Triple::getRight);
     protected final Provider<Stage> stage;
     protected final DBI dbi;
     protected final TaskDAO taskDAO;
@@ -85,7 +85,7 @@ public class InverseCountAllocator implements TaskAllocator {
         return Optional.of(allocation);
     }
 
-    protected List<Integer> filterTasks(Map<Integer, Integer> counts) {
+    List<Integer> filterTasks(Map<Integer, Integer> counts) {
         return counts.entrySet().stream().
                 map(entry -> Triple.of(entry.getKey(), entry.getValue(), Math.random())).
                 sorted(INVERSE_COUNT).

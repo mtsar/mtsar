@@ -33,7 +33,6 @@ import java.util.Optional;
 
 import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class InverseCountAllocatorTest {
@@ -47,7 +46,7 @@ public class InverseCountAllocatorTest {
 
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Answer answer1 = mock(Answer.class), answer2 = mock(Answer.class), answer3 = mock(Answer.class);
-    private static final List<Answer> answers1 = Arrays.asList(answer1);
+    private static final List<Answer> answers1 = Collections.singletonList(answer1);
     private static final List<Answer> answers2 = Arrays.asList(answer2, answer3);
 
     private static final DBI dbi = mock(DBI.class);
@@ -58,8 +57,8 @@ public class InverseCountAllocatorTest {
         reset(taskDAO);
         reset(answerDAO);
         reset(countDAO);
-        when(taskDAO.select(eq(Collections.singletonList(1)), anyString())).thenReturn(Arrays.asList(task1));
-        when(taskDAO.select(eq(Collections.singletonList(2)), anyString())).thenReturn(Arrays.asList(task2));
+        when(taskDAO.select(eq(Collections.singletonList(1)), anyString())).thenReturn(Collections.singletonList(task1));
+        when(taskDAO.select(eq(Collections.singletonList(2)), anyString())).thenReturn(Collections.singletonList(task2));
         when(taskDAO.count(anyString())).thenReturn(tasks.size());
         when(answerDAO.listForWorker(anyInt(), anyString())).thenReturn(Collections.emptyList());
         when(dbi.onDemand(any())).thenReturn(countDAO);

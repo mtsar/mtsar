@@ -86,8 +86,8 @@ public interface TaskDAO {
     void close();
 
     class Mapper implements ResultSetMapper<Task> {
+        @Override
         public Task map(int index, ResultSet r, StatementContext ctx) throws SQLException {
-
             return new Task.Builder().
                     setId(r.getInt("id")).
                     setStage(r.getString("stage")).

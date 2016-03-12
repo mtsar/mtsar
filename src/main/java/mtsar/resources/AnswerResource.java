@@ -41,10 +41,10 @@ import java.util.Map;
 @Path("/answers")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class AnswerResource {
-    protected final Stage stage;
-    protected final TaskDAO taskDAO;
-    protected final WorkerDAO workerDAO;
-    protected final AnswerDAO answerDAO;
+    private final Stage stage;
+    private final TaskDAO taskDAO;
+    private final WorkerDAO workerDAO;
+    private final AnswerDAO answerDAO;
 
     public AnswerResource(Stage stage, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.stage = stage;

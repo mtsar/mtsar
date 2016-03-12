@@ -44,10 +44,10 @@ import java.util.Map;
 @Path("/processes")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class StageResource {
-    protected final Map<String, Stage> stages;
-    protected final TaskDAO taskDAO;
-    protected final WorkerDAO workerDAO;
-    protected final AnswerDAO answerDAO;
+    private final Map<String, Stage> stages;
+    private final TaskDAO taskDAO;
+    private final WorkerDAO workerDAO;
+    private final AnswerDAO answerDAO;
 
     @Inject
     public StageResource(@Named("stages") Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
@@ -120,7 +120,7 @@ public class StageResource {
         return output -> AnswerCSV.write(answers, output);
     }
 
-    protected Stage fetchStage(String id) {
+    private Stage fetchStage(String id) {
         if (!stages.containsKey(id)) throw new WebApplicationException(Response.Status.NOT_FOUND);
         return stages.get(id);
     }
