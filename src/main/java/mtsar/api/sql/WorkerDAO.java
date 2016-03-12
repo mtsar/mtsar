@@ -33,45 +33,44 @@ import java.util.List;
 
 @UseStringTemplate3StatementLocator
 @RegisterMapper(WorkerDAO.Mapper.class)
-public abstract class WorkerDAO {
+public interface WorkerDAO {
     @SqlQuery("select * from workers where stage = :stage")
-    public abstract List<Worker> listForStage(@Bind("stage") String stage);
+    List<Worker> listForStage(@Bind("stage") String stage);
 
     @SqlQuery("select * from workers where id = :id and stage = :stage limit 1")
-    public abstract Worker find(@Bind("id") Integer id, @Bind("stage") String stage);
+    Worker find(@Bind("id") Integer id, @Bind("stage") String stage);
 
     @SqlQuery("select * from workers where stage = :stage and tags @\\> ARRAY[<tags>]\\:\\:text[] limit 1")
-    public abstract Worker findByTags(@Bind("stage") String stage, @BindIn("tags") List<String> tags);
+    Worker findByTags(@Bind("stage") String stage, @BindIn("tags") List<String> tags);
 
     @SqlQuery("insert into workers (stage, datetime, tags) values (:stage, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[])) returning id")
-    public abstract int insert(@BindBean Worker t);
+    int insert(@BindBean Worker t);
 
     @SqlBatch("insert into workers (id, stage, datetime, tags) values (coalesce(:id, nextval('workers_id_seq')), :stage, coalesce(:dateTime, localtimestamp), cast(:tagsTextArray as text[]))")
     @BatchChunkSize(1000)
-    public abstract void insert(@BindBean Iterator<Worker> tasks);
+    void insert(@BindBean Iterator<Worker> tasks);
 
     @SqlQuery("select count(*) from workers")
-    public abstract int count();
+    int count();
 
     @SqlQuery("select count(*) from workers where stage = :stage")
-    public abstract int count(@Bind("stage") String stage);
+    int count(@Bind("stage") String stage);
 
-    @Transaction
-    @SqlUpdate("delete from answers where worker_id = :id and stage = :stage; delete from workers where id = :id and stage = :stage")
-    public abstract void delete(@Bind("id") Integer id, @Bind("stage") String stage);
+    @SqlUpdate("begin transaction; delete from answers where worker_id = :id and stage = :stage; delete from workers where id = :id and stage = :stage; commit")
+    void delete(@Bind("id") Integer id, @Bind("stage") String stage);
 
     @SqlUpdate("delete from workers where stage = :stage")
-    public abstract void deleteAll(@Bind("stage") String stage);
+    void deleteAll(@Bind("stage") String stage);
 
     @SqlUpdate("delete from workers")
-    public abstract void deleteAll();
+    void deleteAll();
 
     @SqlUpdate("select setval('workers_id_seq', coalesce((select max(id) + 1 from workers), 1), false)")
-    public abstract void resetSequence();
+    void resetSequence();
 
-    public abstract void close();
+    void close();
 
-    public static class Mapper implements ResultSetMapper<Worker> {
+    class Mapper implements ResultSetMapper<Worker> {
         public Worker map(int index, ResultSet r, StatementContext ctx) throws SQLException {
             return new Worker.Builder().
                     setId(r.getInt("id")).
