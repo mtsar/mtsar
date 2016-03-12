@@ -16,9 +16,15 @@
 
 package mtsar;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.Maps;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.views.ViewMessageBodyWriter;
+import io.dropwizard.views.mustache.MustacheViewRenderer;
 import mtsar.api.Stage;
+import mtsar.api.sql.AnswerDAO;
+import mtsar.api.sql.TaskDAO;
+import mtsar.api.sql.WorkerDAO;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
@@ -30,37 +36,60 @@ import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
 
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class StageResourceTest {
+    private static final GenericType<Collection<Map>> MAP_COLLECTION = new GenericType<Collection<Map>>() {
+    };
+
     private static final Stage.Definition definition = mock(Stage.Definition.class);
     private static final WorkerRanker workerRanker = mock(WorkerRanker.class);
     private static final TaskAllocator taskAllocator = mock(TaskAllocator.class);
     private static final AnswerAggregator answerAggregator = mock(AnswerAggregator.class);
     private static final Stage stage = new Stage(definition, workerRanker, taskAllocator, answerAggregator);
+    private static final WorkerDAO workerDAO = mock(WorkerDAO.class);
+    private static final TaskDAO taskDAO = mock(TaskDAO.class);
+    private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
 
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .addResource(new StageResource(Maps.asMap(Sets.newSet("1"), (id) -> stage), null, null, null))
+            .addResource(new StageResource(Maps.asMap(Sets.newSet("1"), (id) -> stage), taskDAO, workerDAO, answerDAO))
+            .addProvider(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(new MustacheViewRenderer())))
             .build();
 
     @Before
     public void setup() {
+        reset(taskDAO);
+        reset(workerDAO);
+        reset(answerDAO);
         when(stage.getId()).thenReturn("1");
     }
 
     @Test
     public void testGetStages() {
-        final Collection<Map> processes = RULE.getJerseyTest().target("/processes").request().get(new GenericType<Collection<Map>>() {
-        });
+        final Collection<Map> processes = RULE.getJerseyTest().target("/processes").request()
+                .accept(MediaType.APPLICATION_JSON_TYPE).get(MAP_COLLECTION);
         assertThat(processes).hasSize(1);
         final Map representation = processes.iterator().next();
         assertThat(representation.get("id")).isEqualTo(stage.getId());
+    }
+
+    @Test
+    public void testGetStagesView() {
+        when(taskDAO.count(anyString())).thenReturn(0);
+        when(workerDAO.count(anyString())).thenReturn(0);
+        when(answerDAO.count(anyString())).thenReturn(0);
+        assertThat(RULE.getJerseyTest().target("/processes").request()
+                .accept(MediaType.TEXT_HTML_TYPE).get().getStatusInfo())
+                .isEqualTo(Response.Status.OK);
     }
 }
