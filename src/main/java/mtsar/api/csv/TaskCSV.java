@@ -45,7 +45,7 @@ public final class TaskCSV {
         final Set<String> header = csv.getHeaderMap().keySet();
         checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
-        final Iterable<CSVRecord> iterable = () -> csv.iterator();
+        final Iterable<CSVRecord> iterable = csv::iterator;
 
         return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
             final String id = row.isSet("id") ? row.get("id") : null;
