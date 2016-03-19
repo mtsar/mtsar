@@ -16,7 +16,6 @@
 
 package mtsar.views;
 
-import com.google.common.base.Function;
 import io.dropwizard.views.View;
 import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
@@ -26,6 +25,7 @@ import mtsar.api.sql.WorkerDAO;
 import javax.inject.Inject;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 
