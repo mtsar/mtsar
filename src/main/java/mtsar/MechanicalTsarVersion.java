@@ -49,7 +49,7 @@ public class MechanicalTsarVersion {
      * @return the Mechanical Tsar version or "SNAPSHOT".
      */
     public String getVersion() {
-        return location.getVersion().or("SNAPSHOT");
+        return location.getVersion().orElse("SNAPSHOT");
     }
 
     /**
