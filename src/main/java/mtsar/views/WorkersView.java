@@ -56,7 +56,7 @@ public class WorkersView extends View {
     @SuppressWarnings("unused")
     public String getStagePath() {
         return uriInfo.getBaseUriBuilder().
-                path("processes").
+                path("stages").
                 path(stage.getId()).
                 toString();
     }
@@ -64,7 +64,7 @@ public class WorkersView extends View {
     @SuppressWarnings("unused")
     public String getPath() {
         return uriInfo.getBaseUriBuilder().
-                path("processes").
+                path("stages").
                 path(stage.getId()).
                 path("workers").
                 toString();

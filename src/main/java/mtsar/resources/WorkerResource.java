@@ -274,14 +274,14 @@ public class WorkerResource {
 
     private URI getWorkersURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(stage.getId()).
+                path("stages").path(stage.getId()).
                 path("workers").
                 build();
     }
 
     private URI getWorkerURI(UriInfo uriInfo, Worker worker) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(stage.getId()).
+                path("stages").path(stage.getId()).
                 path("workers").path(worker.getId().toString()).
                 build();
     }

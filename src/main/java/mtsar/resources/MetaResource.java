@@ -37,15 +37,15 @@ import java.util.Map;
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class MetaResource {
     private final MechanicalTsarVersion version;
-    private final Map<String, Stage> processes;
+    private final Map<String, Stage> stages;
     private final TaskDAO taskDAO;
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
 
     @Inject
-    public MetaResource(MechanicalTsarVersion version, @Named("stages") Map<String, Stage> processes, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public MetaResource(MechanicalTsarVersion version, @Named("stages") Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         this.version = version;
-        this.processes = processes;
+        this.stages = stages;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -54,7 +54,7 @@ public class MetaResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public DashboardView getDashboardView() {
-        return new DashboardView(version, processes, taskDAO, workerDAO, answerDAO);
+        return new DashboardView(version, stages, taskDAO, workerDAO, answerDAO);
     }
 
     @GET

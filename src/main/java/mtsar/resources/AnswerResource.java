@@ -133,7 +133,7 @@ public class AnswerResource {
 
     private URI getAnswersURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(stage.getId()).
+                path("stages").path(stage.getId()).
                 path("answers").
                 build();
     }

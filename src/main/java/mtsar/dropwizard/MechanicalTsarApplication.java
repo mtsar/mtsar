@@ -63,7 +63,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
      * The application-wide map that contains stages. Since it is convenient to preserve the database
      * row order, it is implemented as a <tt>LinkedHashMap</tt>.
      */
-    private final Map<String, Stage> processes = new LinkedHashMap<>();
+    private final Map<String, Stage> stages = new LinkedHashMap<>();
 
     private DBI jdbi;
     private ServiceLocator locator;
@@ -82,7 +82,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     }
 
     public Map<String, Stage> getStages() {
-        return processes;
+        return stages;
     }
 
     @Override
@@ -105,16 +105,16 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     }
 
     private void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        synchronized (processes) {
+        synchronized (stages) {
             if (jdbi == null)
                 jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
 
             if (locator == null)
-                locator = Injections.createLocator(new ApplicationBinder(jdbi, processes));
+                locator = Injections.createLocator(new ApplicationBinder(jdbi, stages));
 
             final StageDAO stageDAO = requireNonNull(locator.getService(StageDAO.class));
             final List<Stage.Definition> definitions = stageDAO.select();
-            processes.clear();
+            stages.clear();
 
             for (final Stage.Definition definition : definitions) {
                 final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
@@ -122,7 +122,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
                 final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
                 final ServiceLocator processLocator = Injections.createLocator(locator, new StageBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
                 final Stage stage = requireNonNull(processLocator.getService(Stage.class));
-                processes.put(definition.getId(), stage);
+                stages.put(definition.getId(), stage);
             }
         }
     }

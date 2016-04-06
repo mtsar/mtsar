@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-@Path("/processes")
+@Path("/stages")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class StageResource {
     private final Map<String, Stage> stages;

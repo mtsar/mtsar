@@ -144,14 +144,14 @@ public class TaskResource {
 
     private URI getTasksURI(UriInfo uriInfo) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(stage.getId()).
+                path("stages").path(stage.getId()).
                 path("tasks").
                 build();
     }
 
     private URI getTaskURI(UriInfo uriInfo, Task task) {
         return uriInfo.getBaseUriBuilder().
-                path("processes").path(stage.getId()).
+                path("stages").path(stage.getId()).
                 path("tasks").path(task.getId().toString()).
                 build();
     }

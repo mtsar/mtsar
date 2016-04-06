@@ -76,10 +76,10 @@ public class StageResourceTest {
 
     @Test
     public void testGetStages() {
-        final Collection<Map> processes = RULE.getJerseyTest().target("/processes").request()
+        final Collection<Map> stages = RULE.getJerseyTest().target("/stages").request()
                 .accept(MediaType.APPLICATION_JSON_TYPE).get(MAP_COLLECTION);
-        assertThat(processes).hasSize(1);
-        final Map representation = processes.iterator().next();
+        assertThat(stages).hasSize(1);
+        final Map representation = stages.iterator().next();
         assertThat(representation.get("id")).isEqualTo(stage.getId());
     }
 
@@ -88,7 +88,7 @@ public class StageResourceTest {
         when(taskDAO.count(anyString())).thenReturn(0);
         when(workerDAO.count(anyString())).thenReturn(0);
         when(answerDAO.count(anyString())).thenReturn(0);
-        assertThat(RULE.getJerseyTest().target("/processes").request()
+        assertThat(RULE.getJerseyTest().target("/stages").request()
                 .accept(MediaType.TEXT_HTML_TYPE).get().getStatusInfo())
                 .isEqualTo(Response.Status.OK);
     }
