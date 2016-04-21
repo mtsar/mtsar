@@ -183,13 +183,13 @@
         <dependency>
             <groupId>org.inferred</groupId>
             <artifactId>freebuilder</artifactId>
-            <version>1.7.2</version>
+            <version>1.8</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
-            <version>4.5.0</version>
+            <version>4.6.1</version>
             <optional>true</optional>
         </dependency>
         <dependency>
