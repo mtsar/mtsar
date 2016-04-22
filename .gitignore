@@ -1,5 +1,6 @@
 *.class
 dependency-reduced-pom.xml
+release.properties
 /target
 
 # vim
@@ -23,7 +24,7 @@ dependency-reduced-pom.xml
 hs_err_pid*
 
 # Dropwizard & friends
-/heroku.yml
-/environment.yml
-/development.yml
-/docker-compose.yml
+!/docker-compose.yml.example
+*.yml
+*.sql
+*.sh
