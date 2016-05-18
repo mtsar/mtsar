@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mtsar.task;
+package mtsar.processors.task;
 
 import mtsar.api.Stage;
 import mtsar.api.Task;
@@ -22,7 +22,6 @@ import mtsar.api.TaskAllocation;
 import mtsar.api.Worker;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
-import mtsar.processors.task.RandomAllocator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +41,7 @@ public class RandomAllocatorTest {
     private static final Task task1 = fixture("task1.json", Task.class);
     private static final Task task2 = fixture("task2.json", Task.class);
     private static final List<Task> tasks = Arrays.asList(task1, task2);
-    private static final TaskAllocator allocator = new RandomAllocator(() -> stage, taskDAO);
+    private static final TaskAllocator allocator = new RandomAllocator(stage, taskDAO);
 
     @Before
     public void setup() {

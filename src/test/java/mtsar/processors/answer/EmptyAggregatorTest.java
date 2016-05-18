@@ -14,31 +14,25 @@
  * limitations under the License.
  */
 
-package mtsar.answer;
+package mtsar.processors.answer;
 
 import mtsar.api.AnswerAggregation;
 import mtsar.api.Task;
+import mtsar.processors.AnswerAggregator;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static mtsar.TestHelper.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AnswerAggregationTest {
+public class EmptyAggregatorTest {
     private static final Task task = fixture("task1.json", Task.class);
+    private static final AnswerAggregator aggregator = new EmptyAggregator();
 
     @Test
-    public void testDefault() {
-        final AnswerAggregation aggregation = new AnswerAggregation.Builder().setTask(task).build();
-        assertThat(aggregation.getType()).isEqualTo(AnswerAggregation.TYPE_DEFAULT);
-        assertThat(aggregation.getTask()).isEqualTo(task);
-        assertThat(aggregation.getAnswers()).isEmpty();
-    }
-
-    @Test
-    public void testEmpty() {
-        final AnswerAggregation aggregation = AnswerAggregation.empty(task);
-        assertThat(aggregation.getType()).isEqualTo(AnswerAggregation.TYPE_EMPTY);
-        assertThat(aggregation.getTask()).isEqualTo(task);
-        assertThat(aggregation.getAnswers()).isEmpty();
+    public void testEmptyCase() {
+        final Optional<AnswerAggregation> winner = aggregator.aggregate(task);
+        assertThat(winner.isPresent()).isFalse();
     }
 }

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package mtsar.task;
+package mtsar.processors.task;
 
 import mtsar.api.*;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.TaskAllocator;
-import mtsar.processors.task.InverseCountAllocator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +70,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testUnequalAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Arrays.asList(Pair.of(1, 1), Pair.of(2, 0)));
-        final TaskAllocator allocator = new InverseCountAllocator(() -> stage, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(stage, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -85,7 +84,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEqualAllocation() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Arrays.asList(Pair.of(1, 0), Pair.of(2, 0)));
-        final TaskAllocator allocator = new InverseCountAllocator(() -> stage, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(stage, dbi, taskDAO, answerDAO);
 
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isTrue();
@@ -99,7 +98,7 @@ public class InverseCountAllocatorTest {
     @Test
     public void testEmpty() {
         when(countDAO.getCountsSQL(anyString())).thenReturn(Collections.emptyList());
-        final TaskAllocator allocator = new InverseCountAllocator(() -> stage, dbi, taskDAO, answerDAO);
+        final TaskAllocator allocator = new InverseCountAllocator(stage, dbi, taskDAO, answerDAO);
         final Optional<TaskAllocation> optional = allocator.allocate(worker);
         assertThat(optional.isPresent()).isFalse();
     }

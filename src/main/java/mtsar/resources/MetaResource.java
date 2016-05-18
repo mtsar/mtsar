@@ -17,35 +17,33 @@
 package mtsar.resources;
 
 import mtsar.MechanicalTsarVersion;
-import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.dropwizard.hk2.StagesService;
 import mtsar.views.DashboardView;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.Map;
 
 @Singleton
 @Path("/")
 @Produces(mtsar.util.MediaType.APPLICATION_JSON)
 public class MetaResource {
     private final MechanicalTsarVersion version;
-    private final Map<String, Stage> stages;
     private final TaskDAO taskDAO;
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
+    private final StagesService stagesService;
 
     @Inject
-    public MetaResource(MechanicalTsarVersion version, @Named("stages") Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+    public MetaResource(StagesService stagesService, MechanicalTsarVersion version, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        this.stagesService = stagesService;
         this.version = version;
-        this.stages = stages;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -54,7 +52,7 @@ public class MetaResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public DashboardView getDashboardView() {
-        return new DashboardView(version, stages, taskDAO, workerDAO, answerDAO);
+        return new DashboardView(version, stagesService.getStages(), taskDAO, workerDAO, answerDAO);
     }
 
     @GET

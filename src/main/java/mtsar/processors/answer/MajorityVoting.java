@@ -28,7 +28,6 @@ import org.square.qa.utilities.constructs.Models;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -41,23 +40,28 @@ import static java.util.Objects.requireNonNull;
 
 public class MajorityVoting extends SQUARE implements AnswerAggregator {
     protected final static Predicate<Task> SINGLE_TYPE = task -> task.getType().equalsIgnoreCase(TaskDAO.TASK_TYPE_SINGLE);
-    protected final Provider<Stage> stage;
+    @Inject
+    protected Stage stage;
     protected final AnswerDAO answerDAO;
 
+    MajorityVoting(Stage stage, AnswerDAO answerDAO) {
+        this(answerDAO);
+        this.stage = stage;
+    }
+
     @Inject
-    public MajorityVoting(Provider<Stage> stage, AnswerDAO answerDAO) {
-        this.stage = requireNonNull(stage);
+    public MajorityVoting(AnswerDAO answerDAO) {
         this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Nonnull
     @Override
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
+        requireNonNull(stage, "the stage provider should not provide null");
         checkArgument(tasks.stream().allMatch(SINGLE_TYPE), "tasks should be of the type single");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
-        final Models.MajorityModel<Integer, Integer, String> majorityModel = compute(stage.get(), answerDAO, taskIds).getMajorityModel();
+        final Models.MajorityModel<Integer, Integer, String> majorityModel = compute(stage, answerDAO, taskIds).getMajorityModel();
         final MajorityVoteGeneralized<Integer, Integer, String> majorityVoting = new MajorityVoteGeneralized<>(majorityModel);
         majorityVoting.computeLabelEstimates();
         final Map<Integer, AnswerAggregation> aggregations = majorityVoting.getCurrentModel().getCombinedEstLabels().entrySet().stream().

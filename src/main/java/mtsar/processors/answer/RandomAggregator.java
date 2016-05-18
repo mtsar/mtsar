@@ -25,28 +25,31 @@ import mtsar.processors.AnswerAggregator;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
 public class RandomAggregator implements AnswerAggregator {
-    protected final Provider<Stage> stage;
+    @Inject
+    protected Stage stage;
     protected final AnswerDAO answerDAO;
 
+    RandomAggregator(Stage stage, AnswerDAO answerDAO) {
+        this(answerDAO);
+        this.stage = stage;
+    }
     @Inject
-    public RandomAggregator(Provider<Stage> stage, AnswerDAO answerDAO) {
-        this.stage = requireNonNull(stage);
+    public RandomAggregator(AnswerDAO answerDAO) {
         this.answerDAO = requireNonNull(answerDAO);
     }
 
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
+        requireNonNull(stage, "the stage provider should not provide null");
         final Map<Integer, AnswerAggregation> aggregations = new HashMap<>();
         for (final Task task : tasks) {
-            final List<Answer> answers = answerDAO.listForTask(task.getId(), stage.get().getId());
+            final List<Answer> answers = answerDAO.listForTask(task.getId(), stage.getId());
             if (answers.isEmpty()) continue;
             Collections.shuffle(answers);
             aggregations.put(task.getId(), new AnswerAggregation.Builder().setTask(task).addAllAnswers(answers.get(0).getAnswers()).build());

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package mtsar.worker;
+package mtsar.processors.worker;
 
 import mtsar.api.Stage;
 import mtsar.api.Worker;
 import mtsar.processors.WorkerRanker;
-import mtsar.processors.worker.ZeroRanker;
 import org.junit.Before;
 import org.junit.Test;
 
