@@ -34,14 +34,14 @@ public class RandomAggregator implements AnswerAggregator {
     protected Stage stage;
     protected final AnswerDAO answerDAO;
 
-    RandomAggregator(Stage stage, AnswerDAO answerDAO) {
-        this(answerDAO);
-        this.stage = stage;
+    @Inject
+    protected RandomAggregator(AnswerDAO answerDAO) {
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
-    @Inject
-    public RandomAggregator(AnswerDAO answerDAO) {
-        this.answerDAO = requireNonNull(answerDAO);
+    public RandomAggregator(Stage stage, AnswerDAO answerDAO) {
+        this(answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Override

@@ -48,15 +48,15 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     @Inject
     protected Stage stage;
 
-    DawidSkeneProcessor(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this(taskDAO, answerDAO);
-        this.stage = stage;
-    }
-
     @Inject
-    public DawidSkeneProcessor(TaskDAO taskDAO, AnswerDAO answerDAO) {
+    protected DawidSkeneProcessor(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
+    }
+
+    public DawidSkeneProcessor(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(taskDAO, answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     private static <T> Comparator<T> comparingDouble(ToDoubleFunction<T> keyExtractor) {

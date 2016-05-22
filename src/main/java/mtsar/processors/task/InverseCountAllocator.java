@@ -48,16 +48,17 @@ public class InverseCountAllocator implements TaskAllocator {
     protected final AnswerDAO answerDAO;
     protected final CountDAO countDAO;
 
-    InverseCountAllocator(Stage stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this(dbi, taskDAO, answerDAO);
-        this.stage = stage;
-    }
     @Inject
-    public InverseCountAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+    protected InverseCountAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.dbi = requireNonNull(dbi);
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
         this.countDAO = requireNonNull(dbi.onDemand(CountDAO.class));
+    }
+
+    public InverseCountAllocator(Stage stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(dbi, taskDAO, answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Override

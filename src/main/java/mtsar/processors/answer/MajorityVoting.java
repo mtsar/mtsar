@@ -44,14 +44,14 @@ public class MajorityVoting extends SQUARE implements AnswerAggregator {
     protected Stage stage;
     protected final AnswerDAO answerDAO;
 
-    MajorityVoting(Stage stage, AnswerDAO answerDAO) {
-        this(answerDAO);
-        this.stage = stage;
+    @Inject
+    protected MajorityVoting(AnswerDAO answerDAO) {
+        this.answerDAO = requireNonNull(answerDAO);
     }
 
-    @Inject
-    public MajorityVoting(AnswerDAO answerDAO) {
-        this.answerDAO = requireNonNull(answerDAO);
+    public MajorityVoting(Stage stage, AnswerDAO answerDAO) {
+        this(answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Nonnull

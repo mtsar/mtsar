@@ -16,6 +16,7 @@
 
 package mtsar.processors.task;
 
+import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import org.apache.commons.lang3.tuple.Triple;
@@ -32,8 +33,13 @@ public class FixedNumberAllocator extends InverseCountAllocator {
     protected Integer answersPerTask = null;
 
     @Inject
-    public FixedNumberAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+    protected FixedNumberAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
         super(dbi, taskDAO, answerDAO);
+    }
+
+    public FixedNumberAllocator(Stage stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(dbi, taskDAO, answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Override

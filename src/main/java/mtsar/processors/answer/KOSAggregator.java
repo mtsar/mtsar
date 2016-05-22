@@ -56,15 +56,15 @@ public class KOSAggregator implements AnswerAggregator {
     protected final TaskDAO taskDAO;
     protected final AnswerDAO answerDAO;
 
-    KOSAggregator(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this(taskDAO, answerDAO);
-        this.stage = stage;
-    }
-
     @Inject
-    public KOSAggregator(TaskDAO taskDAO, AnswerDAO answerDAO) {
+    protected KOSAggregator(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
+    }
+
+    public KOSAggregator(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(taskDAO, answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Override

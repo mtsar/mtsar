@@ -47,15 +47,15 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
 
-    ZenCrowd(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this(taskDAO, answerDAO);
-        this.stage = stage;
-    }
-
     @Inject
-    public ZenCrowd(TaskDAO taskDAO, AnswerDAO answerDAO) {
+    protected ZenCrowd(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
+    }
+
+    public ZenCrowd(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(taskDAO, answerDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Nonnull

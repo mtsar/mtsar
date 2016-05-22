@@ -38,14 +38,14 @@ public class RandomAllocator implements TaskAllocator {
     protected Stage stage;
     protected final TaskDAO taskDAO;
 
-    RandomAllocator(Stage stage, TaskDAO taskDAO) {
-        this(taskDAO);
-        this.stage = stage;
+    @Inject
+    protected RandomAllocator(TaskDAO taskDAO) {
+        this.taskDAO = requireNonNull(taskDAO);
     }
 
-    @Inject
-    public RandomAllocator(TaskDAO taskDAO) {
-        this.taskDAO = requireNonNull(taskDAO);
+    public RandomAllocator(Stage stage, TaskDAO taskDAO) {
+        this(taskDAO);
+        this.stage = requireNonNull(stage);
     }
 
     @Override
