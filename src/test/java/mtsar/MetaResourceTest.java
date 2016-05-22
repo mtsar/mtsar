@@ -25,7 +25,7 @@ import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
-import mtsar.dropwizard.hk2.StagesService;
+import mtsar.dropwizard.hk2.StageService;
 import mtsar.resources.MetaResource;
 import org.glassfish.jersey.test.grizzly.GrizzlyTestContainerFactory;
 import org.junit.Before;
@@ -47,12 +47,12 @@ public class MetaResourceTest {
     private static final WorkerDAO workerDAO = mock(WorkerDAO.class);
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
-    private static final StagesService stagesService = mock(StagesService.class);
+    private static final StageService STAGE_SERVICE = mock(StageService.class);
 
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .addResource(new MetaResource(stagesService, version, taskDAO, workerDAO, answerDAO))
+            .addResource(new MetaResource(STAGE_SERVICE, version, taskDAO, workerDAO, answerDAO))
             .addProvider(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(new MustacheViewRenderer())))
             .build();
 
@@ -62,7 +62,7 @@ public class MetaResourceTest {
         reset(workerDAO);
         reset(answerDAO);
         when(version.getVersion()).thenReturn("SNAPSHOT");
-        when(stagesService.getStages()).thenReturn(Maps.asMap(Sets.newSet("1"), (id) -> stage));
+        when(STAGE_SERVICE.getStages()).thenReturn(Maps.asMap(Sets.newSet("1"), (id) -> stage));
     }
 
     @Test

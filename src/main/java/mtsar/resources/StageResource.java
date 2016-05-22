@@ -28,7 +28,7 @@ import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.StageDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
-import mtsar.dropwizard.hk2.StagesService;
+import mtsar.dropwizard.hk2.StageService;
 import mtsar.views.StageView;
 import mtsar.views.StagesView;
 
@@ -49,11 +49,11 @@ public class StageResource {
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
     private final StageDAO stageDAO;
-    private final StagesService stagesService;
+    private final StageService stageService;
 
     @Inject
-    public StageResource(StagesService stagesService, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO, StageDAO stageDAO) {
-        this.stagesService = stagesService;
+    public StageResource(StageService stageService, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO, StageDAO stageDAO) {
+        this.stageService = stageService;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
         this.answerDAO = answerDAO;
@@ -66,7 +66,7 @@ public class StageResource {
     }
 
     private Map<String, Stage> getStagesMap() {
-        return stagesService.getStages();
+        return stageService.getStages();
     }
 
     @GET

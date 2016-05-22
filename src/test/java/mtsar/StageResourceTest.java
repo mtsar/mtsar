@@ -26,7 +26,7 @@ import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.StageDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
-import mtsar.dropwizard.hk2.StagesService;
+import mtsar.dropwizard.hk2.StageService;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
@@ -61,12 +61,12 @@ public class StageResourceTest {
     private static final TaskDAO taskDAO = mock(TaskDAO.class);
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final StageDAO stageDAO = mock(StageDAO.class);
-    private static final StagesService stagesService = mock(StagesService.class);
+    private static final StageService STAGE_SERVICE = mock(StageService.class);
 
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .setTestContainerFactory(new GrizzlyTestContainerFactory())
-            .addResource(new StageResource(stagesService, taskDAO, workerDAO, answerDAO, stageDAO))
+            .addResource(new StageResource(STAGE_SERVICE, taskDAO, workerDAO, answerDAO, stageDAO))
             .addProvider(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(new MustacheViewRenderer())))
             .build();
 
@@ -76,7 +76,7 @@ public class StageResourceTest {
         reset(workerDAO);
         reset(answerDAO);
         when(stage.getId()).thenReturn("1");
-        when(stagesService.getStages()).thenReturn(Maps.asMap(Sets.newSet("1"), (id) -> stage));
+        when(STAGE_SERVICE.getStages()).thenReturn(Maps.asMap(Sets.newSet("1"), (id) -> stage));
     }
 
     @Test

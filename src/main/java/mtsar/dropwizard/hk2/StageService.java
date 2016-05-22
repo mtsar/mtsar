@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class StagesService {
+public class StageService {
     private final Logger logger;
     private final Map<String, Class<?>> CLASS_CACHE = new ConcurrentHashMap<>();
     private final StageDAO stageDAO;
     private final ServiceLocator locator;
 
     @Inject
-    public StagesService(StageDAO stageDAO, ServiceLocator locator) {
+    public StageService(StageDAO stageDAO, ServiceLocator locator) {
         this.logger = LoggerFactory.getLogger(getClass());
         this.stageDAO = stageDAO;
         this.locator = locator;

@@ -57,7 +57,7 @@ public class ApplicationBinder extends AbstractBinder {
         bind(jdbi.onDemand(TaskDAO.class)).to(TaskDAO.class);
         bind(jdbi.onDemand(AnswerDAO.class)).to(AnswerDAO.class);
 
-        bindAsContract(StagesService.class).in(Singleton.class);
+        bindAsContract(StageService.class).in(Singleton.class);
         bindAsContract(MetaResource.class).in(Singleton.class);
         bindAsContract(StageResource.class).in(Singleton.class);
 
@@ -66,6 +66,6 @@ public class ApplicationBinder extends AbstractBinder {
     }
 
     public Map<String, Stage> getStages() {
-        return locator.getService(StagesService.class).getStages();
+        return locator.getService(StageService.class).getStages();
     }
 }

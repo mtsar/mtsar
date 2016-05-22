@@ -20,7 +20,7 @@ import mtsar.MechanicalTsarVersion;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
-import mtsar.dropwizard.hk2.StagesService;
+import mtsar.dropwizard.hk2.StageService;
 import mtsar.views.DashboardView;
 
 import javax.inject.Inject;
@@ -38,11 +38,11 @@ public class MetaResource {
     private final TaskDAO taskDAO;
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
-    private final StagesService stagesService;
+    private final StageService stageService;
 
     @Inject
-    public MetaResource(StagesService stagesService, MechanicalTsarVersion version, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
-        this.stagesService = stagesService;
+    public MetaResource(StageService stageService, MechanicalTsarVersion version, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
+        this.stageService = stageService;
         this.version = version;
         this.taskDAO = taskDAO;
         this.workerDAO = workerDAO;
@@ -52,7 +52,7 @@ public class MetaResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public DashboardView getDashboardView() {
-        return new DashboardView(version, stagesService.getStages(), taskDAO, workerDAO, answerDAO);
+        return new DashboardView(version, stageService.getStages(), taskDAO, workerDAO, answerDAO);
     }
 
     @GET
