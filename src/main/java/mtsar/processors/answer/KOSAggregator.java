@@ -27,6 +27,7 @@ import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.processors.AnswerAggregator;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
 
@@ -97,7 +98,7 @@ public class KOSAggregator implements AnswerAggregator {
             graph.put(answer.getTaskId(), answer.getWorkerId(), answerIndex.get(answer.getTaskId()).get(answer.getAnswers().get(0)));
         }
 
-        final Map<Integer, Double> estimations = converge(graph, 10);
+        final Map<Integer, Double> estimations = converge(graph, getKMax());
         return estimations.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
                 estimation -> {
                     final String answer = answerIndex.get(estimation.getKey()).inverse().get(estimation.getValue() < 0 ? (short) -1 : (short) +1);
@@ -174,5 +175,9 @@ public class KOSAggregator implements AnswerAggregator {
         }
 
         return ys;
+    }
+
+    private int getKMax() {
+        return NumberUtils.toInt(stage.getOptions().get("kMax"), 10);
     }
 }
