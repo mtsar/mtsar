@@ -76,7 +76,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
                     final Task task = taskMap.get(Integer.valueOf(datum.getName()));
                     final Map<String, Double> probabilities = datum.getProbabilityVector(Datum.ClassificationMethod.DS_Soft);
                     final Map.Entry<String, Double> winner = probabilities.entrySet().stream().sorted(comparingDouble(Map.Entry::getValue)).findFirst().get();
-                    return new AnswerAggregation.Builder().setTask(task).addAnswers(winner.getKey()).build();
+                    return new AnswerAggregation.Builder().setTask(task).addAnswers(winner.getKey()).addConfidences(winner.getValue()).build();
                 }
         ));
 

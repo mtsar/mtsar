@@ -26,17 +26,20 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public final class AnswerAggregationCSV {
     private static final CSVFormat FORMAT = CSVFormat.EXCEL.withHeader();
-    private static final String[] HEADER = {"task_id", "answers"};
+    private static final String[] HEADER = {"task_id", "answers", "confidences"};
     private static final Comparator<AnswerAggregation> ORDER = (a1, a2) -> a1.getTask().getId().compareTo(a2.getTask().getId());
 
     public static void write(Collection<AnswerAggregation> aggregations, OutputStream output) throws IOException {
         try (final Writer writer = new OutputStreamWriter(output, StandardCharsets.UTF_8)) {
             final Iterable<String[]> iterable = () -> aggregations.stream().sorted(ORDER).map(aggregation -> new String[]{
                     Integer.toString(aggregation.getTask().getId()), // task_id
-                    String.join("|", aggregation.getAnswers())       // answers
+                    String.join("|", aggregation.getAnswers()),      // answers
+                    String.join("|", aggregation.getConfidences().stream().
+                            map(e -> e.toString()).collect(Collectors.toList())) // confidences
             }).iterator();
 
             FORMAT.withHeader(HEADER).print(writer).printRecords(iterable);

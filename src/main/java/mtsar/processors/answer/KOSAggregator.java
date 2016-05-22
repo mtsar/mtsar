@@ -100,8 +100,13 @@ public class KOSAggregator implements AnswerAggregator {
         final Map<Integer, Double> estimations = converge(graph, 10);
         return estimations.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
                 estimation -> {
-                    final String answer = answerIndex.get(estimation.getKey()).inverse().get(estimation.getValue() < 0 ? (short) -1 : (short) +1);
-                    return new AnswerAggregation.Builder().setTask(taskMap.get(estimation.getKey())).addAnswers(answer).build();
+                    final Double confidence = estimation.getValue();
+                    final String answer = answerIndex.get(estimation.getKey()).inverse().get(confidence < 0 ? (short) -1 : (short) +1);
+                    return new AnswerAggregation.Builder().
+                            setTask(taskMap.get(estimation.getKey())).
+                            addAnswers(answer).
+                            addConfidences(confidence).
+                            build();
                 }
         ));
     }
