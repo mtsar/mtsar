@@ -60,6 +60,7 @@ public class KOSAggregator implements AnswerAggregator {
         this(taskDAO, answerDAO);
         this.stage = stage;
     }
+
     @Inject
     public KOSAggregator(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
@@ -88,7 +89,7 @@ public class KOSAggregator implements AnswerAggregator {
                 }
         ));
 
-        /* rows are tasks IDs, columns are answer IDs, values are answers */
+        /* rows are tasks IDs, columns are worker IDs, values are answers */
         final Table<Integer, Integer, Short> graph = HashBasedTable.create();
 
         for (final Answer answer : answers) {

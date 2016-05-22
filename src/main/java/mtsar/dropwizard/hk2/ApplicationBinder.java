@@ -29,7 +29,6 @@ import mtsar.dropwizard.MechanicalTsarVersionHealthCheck;
 import mtsar.resources.MetaResource;
 import mtsar.resources.StageResource;
 import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.internal.inject.Injections;
 import org.skife.jdbi.v2.DBI;
@@ -38,16 +37,8 @@ import javax.inject.Singleton;
 import java.util.Map;
 
 public class ApplicationBinder extends AbstractBinder {
-    public static final TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
-    };
-
-
     private final DBI jdbi;
     private final ServiceLocator locator;
-
-    public DBI getJdbi() {
-        return jdbi;
-    }
 
     public ServiceLocator getLocator() {
         return locator;

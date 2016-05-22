@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import mtsar.processors.AnswerAggregator;
 import mtsar.processors.TaskAllocator;
 import mtsar.processors.WorkerRanker;
+import mtsar.util.DateTimeUtils;
 import mtsar.util.PostgresUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
@@ -126,6 +127,10 @@ public class Stage {
 
         @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
         class Builder extends Stage_Definition_Builder {
+            public Builder() {
+                setDateTime(DateTimeUtils.now());
+            }
+
             public Builder setOptions(String json) {
                 return putAllOptions(PostgresUtils.parseJSONString(json));
             }

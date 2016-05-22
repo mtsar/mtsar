@@ -55,7 +55,7 @@ public final class TestHelper {
         final Map<String, Object> attributes = JSON.convertValue(object, MAP_STRING_TO_OBJECT);
         for (final Map.Entry<String, Object> attribute : attributes.entrySet()) {
             if (attribute.getValue() instanceof Collection) {
-                for (final Object item : (Collection)attribute.getValue()) {
+                for (final Object item : (Collection) attribute.getValue()) {
                     params.add(attribute.getKey(), item.toString());
                 }
             } else {

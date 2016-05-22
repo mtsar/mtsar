@@ -38,6 +38,7 @@ public class RandomAggregator implements AnswerAggregator {
         this(answerDAO);
         this.stage = stage;
     }
+
     @Inject
     public RandomAggregator(AnswerDAO answerDAO) {
         this.answerDAO = requireNonNull(answerDAO);

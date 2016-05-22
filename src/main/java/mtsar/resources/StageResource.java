@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
@@ -89,6 +88,33 @@ public class StageResource {
         return new StageView(fetchStage(id), taskDAO, workerDAO, answerDAO);
     }
 
+    @POST
+    public Response createStage(@Context UriInfo uriInfo, @FormParam("id") String id, @FormParam("description") String description, @FormParam("workerRanker") String workerRanker, @FormParam("taskAllocator") String taskAllocator, @FormParam("answerAggregator") String answerAggregator) {
+        if (stageDAO.find(id) != null) throw new WebApplicationException(Response.Status.CONFLICT);
+        final String stageId = stageDAO.insert(new Stage.Definition.Builder().
+                setId(id).
+                setDescription(description).
+                setWorkerRanker(workerRanker).
+                setTaskAllocator(taskAllocator).
+                setAnswerAggregator(answerAggregator).
+                build());
+        return Response.created(getStageURI(uriInfo, stageId)).build();
+    }
+
+    @PATCH
+    @Path("{stage}")
+    public Response updateStage(@Context UriInfo uriInfo, @PathParam("stage") String id, @FormParam("description") String description, @FormParam("workerRanker") String workerRanker, @FormParam("taskAllocator") String taskAllocator, @FormParam("answerAggregator") String answerAggregator) {
+        final Stage.Definition definition = stageDAO.find(id);
+        if (definition == null) throw new WebApplicationException(Response.Status.NOT_FOUND);
+        stageDAO.update(Stage.Definition.Builder.from(definition).
+                setDescription(description).
+                setWorkerRanker(workerRanker).
+                setTaskAllocator(taskAllocator).
+                setAnswerAggregator(answerAggregator).
+                build());
+        return Response.seeOther(getStageURI(uriInfo, definition.getId())).build();
+    }
+
     @Path("{stage}/workers")
     public WorkerResource getWorkers(@PathParam("stage") String id) {
         return new WorkerResource(fetchStage(id), taskDAO, workerDAO, answerDAO);
@@ -120,41 +146,18 @@ public class StageResource {
         return new AnswerResource(fetchStage(id), taskDAO, workerDAO, answerDAO);
     }
 
-    @PATCH
-    @Path("{stage}")
-    public Response updateStage(@Context UriInfo uriInfo, @PathParam("stage") String stageId,
-                                @FormParam("description") String description,
-                                @FormParam("workerRanker") String workerRanker,
-                                @FormParam("taskAllocator") String taskAllocator,
-                                @FormParam("answerAggregator") String answerAggregator
-    ) throws IOException {
-        stagesService.createOrUpdate(stageId, description, workerRanker, taskAllocator, answerAggregator);
-        return Response.seeOther(getStageURI(uriInfo, stageId)).build();
-    }
-
-    @POST
-    public Response createNewStage(@Context UriInfo uriInfo, @FormParam("id") String stageId,
-                                   @FormParam("description") String description,
-                                   @FormParam("workerRanker") String workerRanker,
-                                   @FormParam("taskAllocator") String taskAllocator,
-                                   @FormParam("answerAggregator") String answerAggregator
-    ) throws IOException {
-        stagesService.createOrUpdate(stageId, description, workerRanker, taskAllocator, answerAggregator);
-        return Response.seeOther(getStageURI(uriInfo, stageId)).build();
-    }
-
-    private URI getStageURI(UriInfo uriInfo, String stageId) {
-        return uriInfo.getBaseUriBuilder().
-                path("stages").path(stageId).
-                build();
-    }
-
     @GET
     @Path("{stage}/answers.csv")
     @Produces(mtsar.util.MediaType.TEXT_CSV)
     public StreamingOutput getAnswersCSV(@PathParam("stage") String id) {
         final List<Answer> answers = answerDAO.listForStage(fetchStage(id).getId());
         return output -> AnswerCSV.write(answers, output);
+    }
+
+    private URI getStageURI(UriInfo uriInfo, String id) {
+        return uriInfo.getBaseUriBuilder().
+                path("stages").path(id).
+                build();
     }
 
     private Stage fetchStage(String id) {

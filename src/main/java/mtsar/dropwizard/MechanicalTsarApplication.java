@@ -33,7 +33,6 @@ import mtsar.dropwizard.hk2.ApplicationBinder;
 import mtsar.resources.MetaResource;
 import mtsar.resources.StageResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
-import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 
@@ -60,10 +59,6 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         return "Mechanical Tsar";
     }
 
-    public ServiceLocator getLocator() {
-        return binder.getLocator();
-    }
-
     @Override
     public void initialize(Bootstrap<MechanicalTsarConfiguration> bootstrap) {
         bootstrap.addBundle(new MechanicalTsarMigrationsBundle());
@@ -83,15 +78,9 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new AboutCommand(this));
     }
 
-    private synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        if (binder == null) {
-            binder = new ApplicationBinder(configuration, environment);
-        }
-    }
-
     @Override
     public void run(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        bootstrap(configuration, environment);
+        binder = new ApplicationBinder(configuration, environment);
 
         final FilterRegistration.Dynamic filter = environment.servlets().addFilter("CORS", CrossOriginFilter.class);
         filter.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
@@ -104,10 +93,10 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
         environment.jersey().register(new ValidatorBinder(environment));
-        environment.jersey().register(requireNonNull(getLocator().getService(MetaResource.class)));
-        environment.jersey().register(requireNonNull(getLocator().getService(StageResource.class)));
+        environment.jersey().register(requireNonNull(binder.getLocator().getService(MetaResource.class)));
+        environment.jersey().register(requireNonNull(binder.getLocator().getService(StageResource.class)));
 
-        environment.healthChecks().register("version", requireNonNull(getLocator().getService(MechanicalTsarVersionHealthCheck.class)));
+        environment.healthChecks().register("version", requireNonNull(binder.getLocator().getService(MechanicalTsarVersionHealthCheck.class)));
     }
 
     public Map<String, Stage> getStages() {
