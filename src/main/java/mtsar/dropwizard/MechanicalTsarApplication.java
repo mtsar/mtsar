@@ -33,6 +33,7 @@ import mtsar.dropwizard.hk2.ApplicationBinder;
 import mtsar.resources.MetaResource;
 import mtsar.resources.StageResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.ServerProperties;
 
@@ -49,6 +50,10 @@ import static java.util.Objects.requireNonNull;
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
     private ApplicationBinder binder;
+
+    public ServiceLocator getLocator() {
+        return binder.getLocator();
+    }
 
     public static void main(String[] args) throws Exception {
         new MechanicalTsarApplication().run(args);
@@ -93,10 +98,10 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
         environment.jersey().register(new ValidatorBinder(environment));
-        environment.jersey().register(requireNonNull(binder.getLocator().getService(MetaResource.class)));
-        environment.jersey().register(requireNonNull(binder.getLocator().getService(StageResource.class)));
+        environment.jersey().register(requireNonNull(getLocator().getService(MetaResource.class)));
+        environment.jersey().register(requireNonNull(getLocator().getService(StageResource.class)));
 
-        environment.healthChecks().register("version", requireNonNull(binder.getLocator().getService(MechanicalTsarVersionHealthCheck.class)));
+        environment.healthChecks().register("version", requireNonNull(getLocator().getService(MechanicalTsarVersionHealthCheck.class)));
     }
 
     public Map<String, Stage> getStages() {
