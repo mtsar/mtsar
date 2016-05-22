@@ -28,7 +28,6 @@ import org.square.qa.utilities.constructs.Models;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -43,13 +42,18 @@ import static java.util.Objects.requireNonNull;
  * @see <a href="http://dx.doi.org/10.1007/s00778-013-0324-z">10.1007/s00778-013-0324-z</a>
  */
 public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
-    private final Provider<Stage> stage;
+    @Inject
+    private Stage stage;
     private final TaskDAO taskDAO;
     private final AnswerDAO answerDAO;
 
+    ZenCrowd(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(taskDAO, answerDAO);
+        this.stage = stage;
+    }
+
     @Inject
-    public ZenCrowd(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.stage = requireNonNull(stage);
+    public ZenCrowd(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
     }
@@ -57,10 +61,10 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
     @Nonnull
     @Override
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
+        requireNonNull(stage, "the stage provider should not provide null");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskIds = tasks.stream().collect(Collectors.toMap(Task::getId, Function.identity()));
-        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage.get(), answerDAO, getTaskMap()).getZenModel();
+        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage, answerDAO, getTaskMap()).getZenModel();
         final ZenCrowdEM<Integer, Integer, String> zenCrowd = new ZenCrowdEM<>(zenModel);
         zenCrowd.computeLabelEstimates();
         final Map<Integer, AnswerAggregation> aggregations = zenCrowd.getCurrentModel().getCombinedEstLabels().entrySet().stream().
@@ -74,10 +78,10 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
     @Nonnull
     @Override
     public Map<Integer, WorkerRanking> rank(@Nonnull Collection<Worker> workers) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
+        requireNonNull(stage, "the stage provider should not provide null");
         if (workers.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Worker> workerIds = workers.stream().collect(Collectors.toMap(Worker::getId, Function.identity()));
-        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage.get(), answerDAO, getTaskMap()).getZenModel();
+        final Models.ZenModel<Integer, Integer, String> zenModel = compute(stage, answerDAO, getTaskMap()).getZenModel();
         final ZenCrowdEM<Integer, Integer, String> zenCrowd = new ZenCrowdEM<>(zenModel);
         zenCrowd.computeLabelEstimates();
         try {
@@ -94,6 +98,6 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
     }
 
     private Map<Integer, Task> getTaskMap() {
-        return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
+        return taskDAO.listForStage(stage.getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 }

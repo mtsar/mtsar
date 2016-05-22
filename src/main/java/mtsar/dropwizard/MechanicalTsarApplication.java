@@ -20,37 +20,27 @@ import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.forms.MultiPartBundle;
-import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import mtsar.api.Stage;
-import mtsar.api.sql.StageDAO;
 import mtsar.cli.AboutCommand;
 import mtsar.cli.ConsoleCommand;
 import mtsar.cli.EvaluateCommand;
 import mtsar.cli.SimulateCommand;
 import mtsar.dropwizard.hk2.ApplicationBinder;
-import mtsar.dropwizard.hk2.StageBinder;
-import mtsar.processors.AnswerAggregator;
-import mtsar.processors.TaskAllocator;
-import mtsar.processors.WorkerRanker;
 import mtsar.resources.MetaResource;
 import mtsar.resources.StageResource;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.internal.inject.Injections;
 import org.glassfish.jersey.server.ServerProperties;
-import org.skife.jdbi.v2.DBI;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.validation.Validator;
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -59,14 +49,7 @@ import static java.util.Objects.requireNonNull;
  * Mechanical Tsar is an engine for mechanized labor workflows.
  */
 public class MechanicalTsarApplication extends Application<MechanicalTsarConfiguration> {
-    /**
-     * The application-wide map that contains stages. Since it is convenient to preserve the database
-     * row order, it is implemented as a <tt>LinkedHashMap</tt>.
-     */
-    private final Map<String, Stage> stages = new LinkedHashMap<>();
-
-    private DBI jdbi;
-    private ServiceLocator locator;
+    private ApplicationBinder binder;
 
     public static void main(String[] args) throws Exception {
         new MechanicalTsarApplication().run(args);
@@ -78,11 +61,7 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
     }
 
     public ServiceLocator getLocator() {
-        return locator;
-    }
-
-    public Map<String, Stage> getStages() {
-        return stages;
+        return binder.getLocator();
     }
 
     @Override
@@ -104,26 +83,9 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
         bootstrap.addCommand(new AboutCommand(this));
     }
 
-    private void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
-        synchronized (stages) {
-            if (jdbi == null)
-                jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
-
-            if (locator == null)
-                locator = Injections.createLocator(new ApplicationBinder(jdbi, stages));
-
-            final StageDAO stageDAO = requireNonNull(locator.getService(StageDAO.class));
-            final List<Stage.Definition> definitions = stageDAO.select();
-            stages.clear();
-
-            for (final Stage.Definition definition : definitions) {
-                final Class<? extends WorkerRanker> workerRankerClass = Class.forName(definition.getWorkerRanker()).asSubclass(WorkerRanker.class);
-                final Class<? extends TaskAllocator> taskAllocatorClass = Class.forName(definition.getTaskAllocator()).asSubclass(TaskAllocator.class);
-                final Class<? extends AnswerAggregator> answerAggregatorClass = Class.forName(definition.getAnswerAggregator()).asSubclass(AnswerAggregator.class);
-                final ServiceLocator processLocator = Injections.createLocator(locator, new StageBinder(definition, workerRankerClass, taskAllocatorClass, answerAggregatorClass));
-                final Stage stage = requireNonNull(processLocator.getService(Stage.class));
-                stages.put(definition.getId(), stage);
-            }
+    private synchronized void bootstrap(MechanicalTsarConfiguration configuration, Environment environment) throws ClassNotFoundException {
+        if (binder == null) {
+            binder = new ApplicationBinder(configuration, environment);
         }
     }
 
@@ -142,10 +104,14 @@ public class MechanicalTsarApplication extends Application<MechanicalTsarConfigu
 
         environment.jersey().disable(ServerProperties.WADL_FEATURE_DISABLE);
         environment.jersey().register(new ValidatorBinder(environment));
-        environment.jersey().register(requireNonNull(locator.getService(MetaResource.class)));
-        environment.jersey().register(requireNonNull(locator.getService(StageResource.class)));
+        environment.jersey().register(requireNonNull(getLocator().getService(MetaResource.class)));
+        environment.jersey().register(requireNonNull(getLocator().getService(StageResource.class)));
 
-        environment.healthChecks().register("version", requireNonNull(locator.getService(MechanicalTsarVersionHealthCheck.class)));
+        environment.healthChecks().register("version", requireNonNull(getLocator().getService(MechanicalTsarVersionHealthCheck.class)));
+    }
+
+    public Map<String, Stage> getStages() {
+        return binder.getStages();
     }
 
     private static class MechanicalTsarMigrationsBundle extends MigrationsBundle<MechanicalTsarConfiguration> {

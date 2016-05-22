@@ -26,7 +26,6 @@ import mtsar.processors.TaskAllocator;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,20 +34,25 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 public class RandomAllocator implements TaskAllocator {
-    protected final Provider<Stage> stage;
+    @Inject
+    protected Stage stage;
     protected final TaskDAO taskDAO;
 
+    RandomAllocator(Stage stage, TaskDAO taskDAO) {
+        this(taskDAO);
+        this.stage = stage;
+    }
+
     @Inject
-    public RandomAllocator(Provider<Stage> processProvider, TaskDAO taskDAO) {
-        this.stage = requireNonNull(processProvider);
+    public RandomAllocator(TaskDAO taskDAO) {
         this.taskDAO = requireNonNull(taskDAO);
     }
 
     @Override
     @Nonnull
     public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
-        final List<Task> tasks = taskDAO.listForStage(stage.get().getId());
+        requireNonNull(stage, "the stage provider should not provide null");
+        final List<Task> tasks = taskDAO.listForStage(stage.getId());
 
         if (tasks.isEmpty()) return Optional.empty();
         Collections.shuffle(tasks);

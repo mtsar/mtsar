@@ -23,7 +23,6 @@ import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
@@ -35,7 +34,6 @@ public class DashboardView extends View {
     private final WorkerDAO workerDAO;
     private final AnswerDAO answerDAO;
 
-    @Inject
     public DashboardView(MechanicalTsarVersion version, Map<String, Stage> stages, TaskDAO taskDAO, WorkerDAO workerDAO, AnswerDAO answerDAO) {
         super("dashboard.mustache");
         this.version = requireNonNull(version);

@@ -28,7 +28,6 @@ import mtsar.processors.WorkerRanker;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
@@ -44,25 +43,30 @@ import static java.util.Objects.requireNonNull;
  * @see <a href="http://www.jstor.org/stable/2346806">10.2307/2346806</a>
  */
 public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
-    protected final Provider<Stage> stage;
     protected final TaskDAO taskDAO;
     protected final AnswerDAO answerDAO;
+    @Inject
+    protected Stage stage;
+
+    DawidSkeneProcessor(Stage stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(taskDAO, answerDAO);
+        this.stage = stage;
+    }
 
     @Inject
-    public DawidSkeneProcessor(Provider<Stage> stage, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.stage = requireNonNull(stage);
+    public DawidSkeneProcessor(TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
     }
 
-    private static <T> Comparator<T> comparingDouble(ToDoubleFunction<? super T> keyExtractor) {
+    private static <T> Comparator<T> comparingDouble(ToDoubleFunction<T> keyExtractor) {
         return Comparator.comparingDouble(keyExtractor).reversed();
     }
 
     @Override
     @Nonnull
     public Map<Integer, AnswerAggregation> aggregate(@Nonnull Collection<Task> tasks) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
+        requireNonNull(stage, "the stage provider should not provide null");
         if (tasks.isEmpty()) return Collections.emptyMap();
         final Map<Integer, Task> taskMap = getTaskMap();
         final DawidSkene ds = compute(taskMap);
@@ -96,7 +100,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
     }
 
     private Map<Integer, Task> getTaskMap() {
-        return taskDAO.listForStage(stage.get().getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
+        return taskDAO.listForStage(stage.getId()).stream().collect(Collectors.toMap(Task::getId, Function.identity()));
     }
 
     private DawidSkene compute(Map<Integer, Task> taskMap) {
@@ -106,7 +110,7 @@ public class DawidSkeneProcessor implements WorkerRanker, AnswerAggregator {
 
         final DawidSkene ds = new DawidSkene(categories);
 
-        final List<Answer> answers = answerDAO.listForStage(stage.get().getId());
+        final List<Answer> answers = answerDAO.listForStage(stage.getId());
 
         for (final Answer answer : answers) {
             if (!answer.getType().equalsIgnoreCase(AnswerDAO.ANSWER_TYPE_ANSWER)) continue;

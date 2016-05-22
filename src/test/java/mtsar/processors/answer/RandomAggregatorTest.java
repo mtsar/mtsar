@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package mtsar.answer;
+package mtsar.processors.answer;
 
 import mtsar.api.Answer;
 import mtsar.api.AnswerAggregation;
@@ -22,7 +22,6 @@ import mtsar.api.Stage;
 import mtsar.api.Task;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.processors.AnswerAggregator;
-import mtsar.processors.answer.RandomAggregator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,7 +37,7 @@ public class RandomAggregatorTest {
     private static final AnswerDAO answerDAO = mock(AnswerDAO.class);
     private static final Stage stage = mock(Stage.class);
     private static final Task task = fixture("task1.json", Task.class);
-    private static final AnswerAggregator aggregator = new RandomAggregator(() -> stage, answerDAO);
+    private static final AnswerAggregator aggregator = new RandomAggregator(stage, answerDAO);
 
     @Before
     public void setup() {

@@ -16,34 +16,46 @@
 
 package mtsar.dropwizard.hk2;
 
+import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.setup.Environment;
 import mtsar.MechanicalTsarVersion;
 import mtsar.api.Stage;
 import mtsar.api.sql.AnswerDAO;
 import mtsar.api.sql.StageDAO;
 import mtsar.api.sql.TaskDAO;
 import mtsar.api.sql.WorkerDAO;
+import mtsar.dropwizard.MechanicalTsarConfiguration;
 import mtsar.dropwizard.MechanicalTsarVersionHealthCheck;
 import mtsar.resources.MetaResource;
 import mtsar.resources.StageResource;
+import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import org.glassfish.jersey.internal.inject.Injections;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Singleton;
 import java.util.Map;
 
-import static java.util.Objects.requireNonNull;
-
 public class ApplicationBinder extends AbstractBinder {
-    private final static TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
+    public static final TypeLiteral<Map<String, Stage>> STRING_STAGE_MAP = new TypeLiteral<Map<String, Stage>>() {
     };
 
-    private final DBI jdbi;
-    private final Map<String, Stage> stages;
 
-    public ApplicationBinder(DBI jdbi, Map<String, Stage> stages) {
-        this.jdbi = requireNonNull(jdbi);
-        this.stages = requireNonNull(stages);
+    private final DBI jdbi;
+    private final ServiceLocator locator;
+
+    public DBI getJdbi() {
+        return jdbi;
+    }
+
+    public ServiceLocator getLocator() {
+        return locator;
+    }
+
+    public ApplicationBinder(MechanicalTsarConfiguration configuration, Environment environment) {
+        jdbi = new DBIFactory().build(environment, configuration.getDataSourceFactory(), "postgresql");
+        locator = Injections.createLocator(this);
     }
 
     @Override
@@ -53,12 +65,16 @@ public class ApplicationBinder extends AbstractBinder {
         bind(jdbi.onDemand(WorkerDAO.class)).to(WorkerDAO.class);
         bind(jdbi.onDemand(TaskDAO.class)).to(TaskDAO.class);
         bind(jdbi.onDemand(AnswerDAO.class)).to(AnswerDAO.class);
-        bind(stages).to(STRING_STAGE_MAP).named("stages");
 
+        bindAsContract(StagesService.class).in(Singleton.class);
         bindAsContract(MetaResource.class).in(Singleton.class);
         bindAsContract(StageResource.class).in(Singleton.class);
 
         bindAsContract(MechanicalTsarVersion.class).in(Singleton.class);
         bindAsContract(MechanicalTsarVersionHealthCheck.class).in(Singleton.class);
+    }
+
+    public Map<String, Stage> getStages() {
+        return locator.getService(StagesService.class).getStages();
     }
 }

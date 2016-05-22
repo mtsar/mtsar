@@ -32,7 +32,6 @@ import org.skife.jdbi.v2.tweak.ResultSetMapper;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -42,15 +41,19 @@ import static java.util.Objects.requireNonNull;
 
 public class InverseCountAllocator implements TaskAllocator {
     protected static final Comparator<Triple<Integer, Integer, Double>> INVERSE_COUNT = Comparator.comparing(Triple<Integer, Integer, Double>::getMiddle).thenComparing(Triple::getRight);
-    protected final Provider<Stage> stage;
+    @Inject
+    protected Stage stage;
     protected final DBI dbi;
     protected final TaskDAO taskDAO;
     protected final AnswerDAO answerDAO;
     protected final CountDAO countDAO;
 
+    InverseCountAllocator(Stage stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        this(dbi, taskDAO, answerDAO);
+        this.stage = stage;
+    }
     @Inject
-    public InverseCountAllocator(Provider<Stage> stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        this.stage = requireNonNull(stage);
+    public InverseCountAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.dbi = requireNonNull(dbi);
         this.taskDAO = requireNonNull(taskDAO);
         this.answerDAO = requireNonNull(answerDAO);
@@ -60,11 +63,11 @@ public class InverseCountAllocator implements TaskAllocator {
     @Override
     @Nonnull
     public Optional<TaskAllocation> allocate(@Nonnull Worker worker, @Nonnegative int n) {
-        requireNonNull(stage.get(), "the stage provider should not provide null");
-        final Set<Integer> answered = answerDAO.listForWorker(worker.getId(), stage.get().getId()).stream().
+        requireNonNull(stage, "the stage provider should not provide null");
+        final Set<Integer> answered = answerDAO.listForWorker(worker.getId(), stage.getId()).stream().
                 map(Answer::getTaskId).collect(Collectors.toSet());
 
-        final Map<Integer, Integer> counts = countDAO.getCountsSQL(stage.get().getId()).stream().
+        final Map<Integer, Integer> counts = countDAO.getCountsSQL(stage.getId()).stream().
                 filter(pair -> !answered.contains(pair.getKey())).
                 collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
@@ -73,9 +76,9 @@ public class InverseCountAllocator implements TaskAllocator {
 
         if (ids.isEmpty()) return Optional.empty();
         if (taskRemaining > n) ids.subList(n, ids.size()).clear();
-        final List<Task> tasks = taskDAO.select(ids, stage.get().getId());
+        final List<Task> tasks = taskDAO.select(ids, stage.getId());
 
-        final int taskCount = taskDAO.count(stage.get().getId());
+        final int taskCount = taskDAO.count(stage.getId());
         final TaskAllocation allocation = new TaskAllocation.Builder().
                 setWorker(worker).
                 addAllTasks(tasks).

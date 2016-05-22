@@ -23,7 +23,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.skife.jdbi.v2.DBI;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,8 +33,8 @@ public class FixedNumberAllocator extends InverseCountAllocator {
     protected Integer answersPerTask = null;
 
     @Inject
-    public FixedNumberAllocator(Provider<Stage> stage, DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
-        super(stage, dbi, taskDAO, answerDAO);
+    public FixedNumberAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
+        super(dbi, taskDAO, answerDAO);
     }
 
     @Override
@@ -51,6 +50,6 @@ public class FixedNumberAllocator extends InverseCountAllocator {
 
     private void checkAnswersPerTask() {
         if (this.answersPerTask != null) return;
-        this.answersPerTask = requireNonNull(Integer.parseInt(stage.get().getOptions().get("answersPerTask")), "answersPerTask option is not set");
+        this.answersPerTask = requireNonNull(Integer.parseInt(stage.getOptions().get("answersPerTask")), "answersPerTask option is not set");
     }
 }

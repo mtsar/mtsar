@@ -27,14 +27,12 @@ import mtsar.util.PostgresUtils;
 import org.inferred.freebuilder.FreeBuilder;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.sql.Timestamp;
 import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
-@Singleton
 @XmlRootElement
 public class Stage {
     private final Definition definition;
