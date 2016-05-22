@@ -44,18 +44,10 @@ public interface AnswerAggregation {
     @JsonProperty
     List<String> getAnswers();
 
-    @JsonProperty
-    List<Double> getConfidences();
-
     @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
     class Builder extends AnswerAggregation_Builder {
         public Builder() {
             setType(TYPE_DEFAULT);
-        }
-
-        public AnswerAggregation build() {
-            while (getConfidences().size() < getAnswers().size()) addConfidences(0.0);
-            return super.build();
         }
     }
 }

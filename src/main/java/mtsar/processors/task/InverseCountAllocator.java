@@ -52,7 +52,6 @@ public class InverseCountAllocator implements TaskAllocator {
         this(dbi, taskDAO, answerDAO);
         this.stage = stage;
     }
-
     @Inject
     public InverseCountAllocator(DBI dbi, TaskDAO taskDAO, AnswerDAO answerDAO) {
         this.dbi = requireNonNull(dbi);

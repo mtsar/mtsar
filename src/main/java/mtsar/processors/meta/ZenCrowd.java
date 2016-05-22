@@ -70,11 +70,7 @@ public class ZenCrowd extends SQUARE implements WorkerRanker, AnswerAggregator {
         final Map<Integer, AnswerAggregation> aggregations = zenCrowd.getCurrentModel().getCombinedEstLabels().entrySet().stream().
                 filter(entry -> taskIds.containsKey(entry.getKey())).
                 collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> new AnswerAggregation.Builder().
-                                setTask(taskIds.get(entry.getKey())).
-                                addAnswers(entry.getValue().getFirst()).
-                                addConfidences(entry.getValue().getSecond().get(entry.getValue().getFirst())).
-                                build()
+                        entry -> new AnswerAggregation.Builder().setTask(taskIds.get(entry.getKey())).addAnswers(entry.getValue().getFirst()).build()
                 ));
         return aggregations;
     }
