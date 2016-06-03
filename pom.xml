@@ -64,8 +64,8 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <dropwizard.version>1.0.0-rc2</dropwizard.version>
-        <jersey.version>2.22.2</jersey.version>
+        <dropwizard.version>1.0.0-rc3</dropwizard.version>
+        <jersey.version>2.23</jersey.version>
     </properties>
 
     <licenses>
@@ -189,7 +189,7 @@
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
-            <version>4.6.2</version>
+            <version>4.6.3</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -264,7 +264,10 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                        <arg>-Xlint:deprecation</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>

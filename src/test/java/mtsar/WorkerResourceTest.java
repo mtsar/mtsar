@@ -74,7 +74,7 @@ public class WorkerResourceTest {
     public void testSkipAnswer() {
         reset(answerDAO);
         when(answerDAO.insert(any(Answer.class))).then((invocation) -> {
-            final Answer answer = new Answer.Builder().mergeFrom(invocation.getArgumentAt(0, Answer.class)).setId(1).build();
+            final Answer answer = new Answer.Builder().mergeFrom((Answer)invocation.getArgument(0)).setId(1).build();
             when(answerDAO.find(eq(answer.getId()), eq(answer.getStage()))).thenReturn(answer);
             return answer.getId();
         });

@@ -65,7 +65,7 @@ public class TaskResourceTest {
     public void testPostTask() {
         reset(dao);
         when(dao.insert(any(Task.class))).then((invocation) -> {
-            final Task task = new Task.Builder().mergeFrom(invocation.getArgumentAt(0, Task.class)).setId(2).build();
+            final Task task = new Task.Builder().mergeFrom((Task)invocation.getArgument(0)).setId(2).build();
             when(dao.find(eq(task.getId()), eq(task.getStage()))).thenReturn(task);
             return task.getId();
         });
