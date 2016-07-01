@@ -68,7 +68,7 @@ public interface Task {
     @JsonIgnore
     String getAnswersTextArray();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends Task_Builder {
         public Builder() {
             setDateTime(DateTimeUtils.now());

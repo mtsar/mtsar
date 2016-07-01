@@ -125,7 +125,7 @@ public class Stage {
         @JsonIgnore
         String getOptionsJSON();
 
-        @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+        @JsonPOJOBuilder(withPrefix = "set")
         class Builder extends Stage_Definition_Builder {
             public Builder() {
                 setDateTime(DateTimeUtils.now());

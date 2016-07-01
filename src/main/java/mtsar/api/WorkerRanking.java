@@ -38,7 +38,7 @@ public interface WorkerRanking {
     @JsonProperty
     Double getReputation();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends WorkerRanking_Builder {
         public Builder() {
             setReputation(0.0);

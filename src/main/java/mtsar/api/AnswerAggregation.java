@@ -44,7 +44,7 @@ public interface AnswerAggregation {
     @JsonProperty
     List<String> getAnswers();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends AnswerAggregation_Builder {
         public Builder() {
             setType(TYPE_DEFAULT);

@@ -46,9 +46,7 @@ public final class AnswerCSV {
         final Set<String> header = csv.getHeaderMap().keySet();
         checkArgument(!Sets.intersection(header, Sets.newHashSet(HEADER)).isEmpty(), "Unknown CSV header: %s", String.join(",", header));
 
-        final Iterable<CSVRecord> iterable = csv::iterator;
-
-        return StreamSupport.stream(iterable.spliterator(), false).map(row -> {
+        return StreamSupport.stream(csv.spliterator(), false).map(row -> {
             final String id = row.isSet("id") ? row.get("id") : null;
             final String[] tags = row.isSet("tags") && !StringUtils.isEmpty(row.get("tags")) ? row.get("tags").split("\\|") : new String[0];
             final String type = row.isSet("type") ? row.get("type") : null;

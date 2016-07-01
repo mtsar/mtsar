@@ -56,7 +56,7 @@ public interface Worker {
     @JsonIgnore
     String getMetadataJSON();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends Worker_Builder {
         public Builder() {
             setDateTime(DateTimeUtils.now());

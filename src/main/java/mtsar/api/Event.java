@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @JsonDeserialize(builder = Event.Builder.class)
 public interface Event {
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends Event_Builder {
     }
 }

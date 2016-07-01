@@ -54,7 +54,7 @@ public interface AgreementReport {
     @JsonProperty
     double getRandolphKappa();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends AgreementReport_Builder {
         public Builder compute(Stage stage, AnswerDAO answerDAO) {
             final List<Answer> answers = answerDAO.listForStage(stage.getId());

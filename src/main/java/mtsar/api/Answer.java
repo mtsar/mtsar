@@ -79,7 +79,7 @@ public interface Answer {
     @JsonIgnore
     String getAnswersTextArray();
 
-    @JsonPOJOBuilder(buildMethodName = "build", withPrefix = "set")
+    @JsonPOJOBuilder(withPrefix = "set")
     class Builder extends Answer_Builder {
         public Builder() {
             setDateTime(DateTimeUtils.now());
