@@ -17,13 +17,12 @@ COPY README.md LICENSE pom.xml src mtsar.docker.sh /mtsar/
 # do a couple of nasty things to make the build possible.
 
 RUN \
-mkdir -p /mtsar/src && \
+mkdir -p /mtsar/src /mtsar/log && \
 mv -fv main /mtsar/src && \
 mvn -T 4 -B package && \
 mv -fv target/mtsar-*.jar mtsar.jar && \
 mvn -B clean && \
 rm -rf dependency-reduced-pom.xml /mtsar/.m2 && \
-mkdir -p log && \
 touch mtsar.docker.yml && \
 chown -R nobody log mtsar.docker.yml && \
 mv /mtsar/mtsar.docker.sh /mtsar/mtsar.sh
