@@ -2,6 +2,7 @@
 dependency-reduced-pom.xml
 release.properties
 /target
+/log
 
 # vim
 *.swp
