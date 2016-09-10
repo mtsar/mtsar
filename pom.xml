@@ -133,7 +133,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.4.1209</version>
+            <version>9.4.1210</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>org.inferred</groupId>
             <artifactId>freebuilder</artifactId>
-            <version>1.10.4</version>
+            <version>1.10.5</version>
             <optional>true</optional>
         </dependency>
         <dependency>
