@@ -20,7 +20,7 @@ RUN \
 mkdir -p /mtsar/src /mtsar/log && \
 mv -fv main /mtsar/src && \
 mvn -T 4 -B package && \
-mv -fv target/mtsar-*.jar mtsar.jar && \
+mv -fv target/mtsar.jar mtsar.jar && \
 mvn -B clean && \
 rm -rf dependency-reduced-pom.xml /mtsar/.m2 && \
 touch mtsar.docker.yml && \

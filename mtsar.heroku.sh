@@ -44,7 +44,7 @@ logging:
       target: stdout
 YAML
 
-ln -sf target/mtsar-*.jar mtsar.jar
+ln -sf target/mtsar.jar mtsar.jar
 
 if [ -z "$1" ]; then
     java $JAVA_OPTS -jar mtsar.jar db migrate mtsar.heroku.yml
