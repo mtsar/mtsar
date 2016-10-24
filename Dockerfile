@@ -4,10 +4,8 @@ MAINTAINER Dmitry Ustalov <dmitry.ustalov@gmail.com>
 
 EXPOSE 8080 8081
 
-ENV MAVEN_OPTS \
--Dmaven.test.skip=true \
--Dmaven.javadoc.skip=true \
--Dmaven.repo.local=/mtsar/.m2
+ENV MAVEN_OPTS=-Dmaven.test.skip=true\ -Dmaven.javadoc.skip=true\ -Dmaven.repo.local=/mtsar/.m2\ -Duser.home=/var/maven \
+    MAVEN_CONFIG=/var/maven/.m2
 
 WORKDIR /mtsar
 
@@ -17,6 +15,8 @@ COPY README.md LICENSE pom.xml src mtsar.docker.sh /mtsar/
 # do a couple of nasty things to make the build possible.
 
 RUN \
+mkdir -p $MAVEN_CONFIG && \
+chown -R nobody $MAVEN_CONFIG && \
 mkdir -p /mtsar/src /mtsar/log && \
 mv -fv main /mtsar/src && \
 mvn -T 4 -B package && \
