@@ -165,9 +165,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.github.dustalov</groupId>
+            <groupId>com.github.utir</groupId>
             <artifactId>square</artifactId>
-            <version>89f315b082</version>
+            <version>effb036aba</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
