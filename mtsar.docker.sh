@@ -1,24 +1,22 @@
-#!/bin/sh
+#!/bin/sh -e
 
 # This script is intended to be runned in the Docker environment.
 # Otherwise, you do not really have to care about it.
 
-if [ -z "$POSTGRES_PORT" ]; then
-    POSTGRES_URL="192.168.1.2:5432"
-else
-    POSTGRES_URL=`echo $POSTGRES_PORT | sed -e 's|^tcp://||'`
+if [ -z "$POSTGRES_URL" ]; then
+    POSTGRES_URL='postgres:5432'
 fi
 
 if [ -z "$POSTGRES_DATABASE" ]; then
-    POSTGRES_DATABASE=mtsar
+    POSTGRES_DATABASE='mtsar'
 fi
 
 if [ -z "$POSTGRES_USER" ]; then
-    POSTGRES_USER=mtsar
+    POSTGRES_USER='mtsar'
 fi
 
 if [ -z "$POSTGRES_PASSWORD" ]; then
-    POSTGRES_PASSWORD=mtsar
+    POSTGRES_PASSWORD='mtsar'
 fi
 
 MTSAR_ROOT="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd -P)"
