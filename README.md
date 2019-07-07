@@ -15,13 +15,12 @@ Mechanical Tsar is an engine for mechanized labor workflows.
 
 * [GitHub Wiki](https://github.com/mtsar/mtsar/wiki)
 * [NLPub](https://nlpub.ru/Mechanical_Tsar) (in Russian)
-* Support on [NLPub Q&A](http://qa.nlpub.ru/c/mtsar) (in Russian and English)
 
 ## Citation
 
 If you publish work that uses Mechanical Tsar, please cite it as follows.
 
-* Ustalov, D.: [A Crowdsourcing Engine for Mechanized Labor](http://dx.doi.org/10.15514/ISPRAS-2015-27%283%29-25). Proceedings of the Institute for System Programming, Vol. 27(3), 351–364 (2015)
+* Ustalov, D.: [A Crowdsourcing Engine for Mechanized Labor](https://doi.org/10.15514/ISPRAS-2015-27%283%29-25). Proceedings of the Institute for System Programming, Vol. 27(3), 351–364 (2015)
 
 ```latex
 @article{Ustalov:15:ispras,
@@ -32,9 +31,8 @@ If you publish work that uses Mechanical Tsar, please cite it as follows.
   volume    = {27},
   number    = {3},
   year      = {2015},
-  address   = {Moscow},
+  address   = {Moscow, Russia},
   publisher = {ISP RAS},
-  url       = {http://www.ispras.ru/proceedings/docs/2015/27/3/isp\_27\_2015\_3\_351.pdf},
   issn      = {2220-6426},
   doi       = {10.15514/ISPRAS-2015-27(3)-25},
   language  = {english},
@@ -51,13 +49,10 @@ If you publish work that uses Mechanical Tsar, please cite it as follows.
 
 ## Acknowledgements
 
-The corresponding studies are partially supported by the following organizations:
-
-* Russian Foundation for Basic Research, project № 16-37-00354 мол_а “Adaptive Crowdsourcing Methods for Linguistic Resources”.
-* Russian Foundation for the Humanities, project № 13-04-12020 “New Open Electronic Thesaurus for Russian”.
+The corresponding studies are partially supported by the Russian Foundation for Basic Research (project no.&nbsp;16-37-00354&nbsp;мол&#95;а) and the Russian Foundation for the Humanities (project no.&nbsp;13-04-12020).
 
 ## Copyright
 
-Copyright (c) 2014-2016 [Dmitry Ustalov]. See LICENSE for details.
+Copyright (c) 2014&ndash;2019 [Dmitry Ustalov]. See LICENSE for details.
 
-[Dmitry Ustalov]: https://ustalov.name/
+[Dmitry Ustalov]: https://github.com/dustalov
